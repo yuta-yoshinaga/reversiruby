@@ -183,187 +183,189 @@ class Reversi
 		if (self.checkPara(y,0,@mMasuCnt) == 0 && self.checkPara(x,0,this.mMasuCnt) == 0) then
 			ret = this.mMasuSts[y][x]
 		end
-		ret
+		return ret
+	end
+
+	# ////////////////////////////////////////////////////////////////////////////////
+	# ///	@brief			以前のマスステータスを取得
+	# ///	@fn				getMasuStsOld(y, x)
+	# ///	@param[in]		y			取得するマスのY座標
+	# ///	@param[in]		x			取得するマスのX座標
+	# ///	@return			-1 : 失敗 それ以外 : マスステータス
+	# ///	@author			Yuta Yoshinaga
+	# ///	@date			2018.04.01
+	# ///
+	# ////////////////////////////////////////////////////////////////////////////////
+	def getMasuStsOld(y, x)
+		ret = -1;
+		if (self.checkPara(y, 0, @mMasuCnt) == 0 && self.checkPara(x, 0, @mMasuCnt) == 0) then
+			ret = @mMasuStsOld[y][x]
+		end
+		return ret
+	end
+
+	# ////////////////////////////////////////////////////////////////////////////////
+	# ///	@brief			指定座標に指定色を置けるかチェック
+	# ///	@fn				getMasuStsEna(color, y, x)
+	# ///	@param[in]		color		コマ色
+	# ///	@param[in]		y			マスのY座標
+	# ///	@param[in]		x			マスのX座標
+	# ///	@return			1 : 成功 それ以外 : 失敗
+	# ///	@author			Yuta Yoshinaga
+	# ///	@date			2018.04.01
+	# ///
+	# ////////////////////////////////////////////////////////////////////////////////
+	def getMasuStsEna(color, y, x)
+		ret = 0
+		if (self.checkPara(y,0,@mMasuCnt) == 0 && self.checkPara(x,0,@mMasuCnt) == 0) then
+			if (color == ReversiConst.REVERSI_STS_BLACK) then
+				ret = @mMasuStsEnaB[y][x]
+			else
+				ret = @mMasuStsEnaW[y][x]
+			end
+		end
+		return ret
+	end
+
+	# ////////////////////////////////////////////////////////////////////////////////
+	# ///	@brief			指定座標の獲得コマ数取得
+	# ///	@fn				getMasuStsCnt(color, y, x)
+	# ///	@param[in]		color		コマ色
+	# ///	@param[in]		y			マスのY座標
+	# ///	@param[in]		x			マスのX座標
+	# ///	@return			-1 : 失敗 それ以外 : 獲得コマ数
+	# ///	@author			Yuta Yoshinaga
+	# ///	@date			2018.04.01
+	# ///
+	# ////////////////////////////////////////////////////////////////////////////////
+	def getMasuStsCnt(color, y, x)
+		ret = -1
+		if (self.checkPara(y,0,@mMasuCnt) == 0 && self.checkPara(x,0,@mMasuCnt) == 0) then
+			if (color == ReversiConst.REVERSI_STS_BLACK) then
+				ret = @mMasuStsCntB[y][x]
+			else
+				ret = @mMasuStsCntW[y][x]
+			end
+		end
+		return ret
+	end
+
+	# ////////////////////////////////////////////////////////////////////////////////
+	# ///	@brief			指定色が現在置ける場所があるかチェック
+	# ///	@fn				getColorEna(color)
+	# ///	@param[in]		color		コマ色
+	# ///	@return			0 : 成功 それ以外 : 失敗
+	# ///	@author			Yuta Yoshinaga
+	# ///	@date			2018.04.01
+	# ///
+	# ////////////////////////////////////////////////////////////////////////////////
+	def getColorEna(color)
+		ret = -1
+		for i in 0..@mMasuCntMax do
+			for j in 0..@mMasuCntMax do
+				if (self.getMasuStsEna(color,i,j) != 0) then
+					ret = 0
+					break
+				end
+			end
+		end
+		return ret
+	end
+
+	# ////////////////////////////////////////////////////////////////////////////////
+	# ///	@brief			ゲーム終了かチェック
+	# ///	@fn				getGameEndSts
+	# ///	@return			0 : 続行 それ以外 : ゲーム終了
+	# ///	@author			Yuta Yoshinaga
+	# ///	@date			2018.04.01
+	# ///
+	# ////////////////////////////////////////////////////////////////////////////////
+	def getGameEndSts
+		ret = 1
+		if (self.getColorEna(ReversiConst.REVERSI_STS_BLACK) == 0) then
+			ret = 0
+		end
+		if (self.getColorEna(ReversiConst.REVERSI_STS_WHITE) == 0) then
+			ret = 0
+		end
+		return ret
+	end
+
+	# ////////////////////////////////////////////////////////////////////////////////
+	# ///	@brief			指定座標にコマを置く
+	# ///	@fn				setMasuSts(color, y, x)
+	# ///	@param[in]		color		コマ色
+	# ///	@param[in]		y			マスのY座標
+	# ///	@param[in]		x			マスのX座標
+	# ///	@return			0 : 成功 それ以外 : 失敗
+	# ///	@author			Yuta Yoshinaga
+	# ///	@date			2018.04.01
+	# ///
+	# ////////////////////////////////////////////////////////////////////////////////
+	def setMasuSts(color, y, x)
+		ret = -1
+		if (self.getMasuStsEna(color,y,x) != 0) then
+			ret = 0
+			@mMasuStsOld = Marshal.load(Marshal.dump(@mMasuSts))
+			@mMasuSts[y][x] = color
+			self.revMasuSts(color,y,x)
+			self.makeMasuSts(ReversiConst.REVERSI_STS_BLACK)
+			self.makeMasuSts(ReversiConst.REVERSI_STS_WHITE)
+			# // *** 履歴保存 *** //
+			if (@mMasuHistCur < (@mMasuCntMax * @mMasuCntMax)) then
+				@mMasuHist[@mMasuHistCur].setColor(color)
+				@mMasuHist[@mMasuHistCur].getPoint().setY(y)
+				@mMasuHist[@mMasuHistCur].getPoint().setX(x)
+				@mMasuHistCur += 1
+			end
+		end
+		return ret
+	end
+
+	# ////////////////////////////////////////////////////////////////////////////////
+	# ///	@brief			指定座標にコマを強制的に置く
+	# ///	@fn				setMasuStsForcibly(color, y, x)
+	# ///	@param[in]		color		コマ色
+	# ///	@param[in]		y			マスのY座標
+	# ///	@param[in]		x			マスのX座標
+	# ///	@return			0 : 成功 それ以外 : 失敗
+	# ///	@author			Yuta Yoshinaga
+	# ///	@date			2018.04.01
+	# ///
+	# ////////////////////////////////////////////////////////////////////////////////
+	def setMasuStsForcibly(color, y, x)
+		ret = 0
+		@mMasuStsOld = Marshal.load(Marshal.dump(@mMasuSts))
+		@mMasuSts[y][x] = color
+		return ret
+	end
+
+	# ////////////////////////////////////////////////////////////////////////////////
+	# ///	@brief			マスの数変更
+	# ///	@fn				setMasuCnt(cnt)
+	# ///	@param[in]		cnt		マスの数
+	# ///	@return			0 : 成功 それ以外 : 失敗
+	# ///	@author			Yuta Yoshinaga
+	# ///	@date			2018.04.01
+	# ///
+	# ////////////////////////////////////////////////////////////////////////////////
+	def setMasuCnt(cnt)
+		ret = -1
+		chg = 0
+		if (checkPara(cnt,0,this.mMasuCntMax) == 0) then
+			if (@mMasuCnt != cnt) then
+				chg = 1
+			end
+			@mMasuCnt = cnt
+			ret = 0
+			if (chg == 1) then
+				self.reset()
+			end
+		end
+		return ret
 	end
 
 =begin 
-	////////////////////////////////////////////////////////////////////////////////
-	///	@brief			以前のマスステータスを取得
-	///	@fn				int getMasuStsOld(int y, int x)
-	///	@param[in]		int y			取得するマスのY座標
-	///	@param[in]		int x			取得するマスのX座標
-	///	@return			-1 : 失敗 それ以外 : マスステータス
-	///	@author			Yuta Yoshinaga
-	///	@date			2017.10.20
-	///
-	////////////////////////////////////////////////////////////////////////////////
-	public int getMasuStsOld(int y, int x)
-	{
-		int ret = -1;
-		if (this.checkPara(y, 0, this.mMasuCnt) == 0 && this.checkPara(x, 0, this.mMasuCnt) == 0) ret = this.mMasuStsOld[y][x];
-		return ret;
-	}
-
-	////////////////////////////////////////////////////////////////////////////////
-	///	@brief			指定座標に指定色を置けるかチェック
-	///	@fn				public int getMasuStsEna(int color,int y,int x)
-	///	@param[in]		int color		コマ色
-	///	@param[in]		int y			マスのY座標
-	///	@param[in]		int x			マスのX座標
-	///	@return			1 : 成功 それ以外 : 失敗
-	///	@author			Yuta Yoshinaga
-	///	@date			2018.04.01
-	///
-	////////////////////////////////////////////////////////////////////////////////
-	public int getMasuStsEna(int color,int y,int x)
-	{
-		int ret = 0;
-		if(this.checkPara(y,0,this.mMasuCnt) == 0 && this.checkPara(x,0,this.mMasuCnt) == 0){
-			if(color == ReversiConst.REVERSI_STS_BLACK)	ret = this.mMasuStsEnaB[y][x];
-			else										ret = this.mMasuStsEnaW[y][x];
-		}
-		return ret;
-	}
-
-	////////////////////////////////////////////////////////////////////////////////
-	///	@brief			指定座標の獲得コマ数取得
-	///	@fn				public int getMasuStsCnt(int color,int y,int x)
-	///	@param[in]		int color		コマ色
-	///	@param[in]		int y			マスのY座標
-	///	@param[in]		int x			マスのX座標
-	///	@return			-1 : 失敗 それ以外 : 獲得コマ数
-	///	@author			Yuta Yoshinaga
-	///	@date			2018.04.01
-	///
-	////////////////////////////////////////////////////////////////////////////////
-	public int getMasuStsCnt(int color,int y,int x)
-	{
-		int ret = -1;
-		if(this.checkPara(y,0,this.mMasuCnt) == 0 && this.checkPara(x,0,this.mMasuCnt) == 0){
-			if(color == ReversiConst.REVERSI_STS_BLACK)	ret = this.mMasuStsCntB[y][x];
-			else										ret = this.mMasuStsCntW[y][x];
-		}
-		return ret;
-	}
-
-	////////////////////////////////////////////////////////////////////////////////
-	///	@brief			指定色が現在置ける場所があるかチェック
-	///	@fn				public int getColorEna(int color)
-	///	@param[in]		int color		コマ色
-	///	@return			0 : 成功 それ以外 : 失敗
-	///	@author			Yuta Yoshinaga
-	///	@date			2018.04.01
-	///
-	////////////////////////////////////////////////////////////////////////////////
-	public int getColorEna(int color)
-	{
-		int ret = -1;
-		for(int i=0;i<this.mMasuCnt;i++){
-			for(int j=0;j<this.mMasuCnt;j++){
-				if(this.getMasuStsEna(color,i,j) != 0){
-					ret = 0;
-					break;
-				}
-			}
-		}
-		return ret;
-	}
-
-	////////////////////////////////////////////////////////////////////////////////
-	///	@brief			ゲーム終了かチェック
-	///	@fn				public int getGameEndSts()
-	///	@return			0 : 続行 それ以外 : ゲーム終了
-	///	@author			Yuta Yoshinaga
-	///	@date			2018.04.01
-	///
-	////////////////////////////////////////////////////////////////////////////////
-	public int getGameEndSts()
-	{
-		int ret = 1;
-		if(getColorEna(ReversiConst.REVERSI_STS_BLACK) == 0) ret = 0;
-		if(getColorEna(ReversiConst.REVERSI_STS_WHITE) == 0) ret = 0;
-		return ret;
-	}
-
-	////////////////////////////////////////////////////////////////////////////////
-	///	@brief			指定座標にコマを置く
-	///	@fn				public int setMasuSts(int color,int y,int x)
-	///	@param[in]		int color		コマ色
-	///	@param[in]		int y			マスのY座標
-	///	@param[in]		int x			マスのX座標
-	///	@return			0 : 成功 それ以外 : 失敗
-	///	@author			Yuta Yoshinaga
-	///	@date			2018.04.01
-	///
-	////////////////////////////////////////////////////////////////////////////////
-	public int setMasuSts(int color,int y,int x)
-	{
-		int ret = -1;
-		if(this.getMasuStsEna(color,y,x) != 0){
-			ret = 0;
-			for (int i = 0; i < mMasuCntMax; i++){
-				System.arraycopy(this.mMasuSts[i], 0, this.mMasuStsOld[i], 0, this.mMasuSts[i].length);
-			}
-			this.mMasuSts[y][x] = color;
-			this.revMasuSts(color,y,x);
-			this.makeMasuSts(ReversiConst.REVERSI_STS_BLACK);
-			this.makeMasuSts(ReversiConst.REVERSI_STS_WHITE);
-			// *** 履歴保存 *** //
-			if(this.mMasuHistCur < (this.mMasuCntMax * this.mMasuCntMax)){
-				this.mMasuHist[this.mMasuHistCur].setColor(color);
-				this.mMasuHist[this.mMasuHistCur].getPoint().setY(y);
-				this.mMasuHist[this.mMasuHistCur].getPoint().setX(x);
-				this.mMasuHistCur++;
-			}
-		}
-		return ret;
-	}
-
-	////////////////////////////////////////////////////////////////////////////////
-	///	@brief			指定座標にコマを強制的に置く
-	///	@fn				public int setMasuStsForcibly(int color,int y,int x)
-	///	@param[in]		int color		コマ色
-	///	@param[in]		int y			マスのY座標
-	///	@param[in]		int x			マスのX座標
-	///	@return			0 : 成功 それ以外 : 失敗
-	///	@author			Yuta Yoshinaga
-	///	@date			2018.04.01
-	///
-	////////////////////////////////////////////////////////////////////////////////
-	public int setMasuStsForcibly(int color,int y,int x)
-	{
-		int ret = -1;
-		ret = 0;
-		for (int i = 0; i < mMasuCntMax; i++){
-			System.arraycopy(this.mMasuSts[i], 0, this.mMasuStsOld[i], 0, this.mMasuSts[i].length);
-		}
-		this.mMasuSts[y][x] = color;
-		return ret;
-	}
-
-	////////////////////////////////////////////////////////////////////////////////
-	///	@brief			マスの数変更
-	///	@fn				public int setMasuCnt(int cnt)
-	///	@param[in]		int cnt		マスの数
-	///	@return			0 : 成功 それ以外 : 失敗
-	///	@author			Yuta Yoshinaga
-	///	@date			2018.04.01
-	///
-	////////////////////////////////////////////////////////////////////////////////
-	public int setMasuCnt(int cnt)
-	{
-		int ret = -1,chg = 0;
-
-		if(checkPara(cnt,0,this.mMasuCntMax) == 0){
-			if(this.mMasuCnt != cnt) chg = 1;
-			this.mMasuCnt = cnt;
-			ret = 0;
-			if(chg == 1) this.reset();
-		}
-
-		return ret;
-	}
-
 	////////////////////////////////////////////////////////////////////////////////
 	///	@brief			ポイント座標取得
 	///	@fn				public ReversiPoint getPoint(int color,int num)
