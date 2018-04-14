@@ -365,139 +365,146 @@ class Reversi
 		return ret
 	end
 
+	# ////////////////////////////////////////////////////////////////////////////////
+	# ///	@brief			ポイント座標取得
+	# ///	@fn				getPoint(color, num)
+	# ///	@param[in]		color		コマ色
+	# ///	@param[in]		num			ポイント
+	# ///	@return			ポイント座標 nil : 失敗
+	# ///	@author			Yuta Yoshinaga
+	# ///	@date			2018.04.01
+	# ///
+	# ////////////////////////////////////////////////////////////////////////////////
+	def getPoint(color,num)
+		ret = nil
+		if (self.checkPara(num,0,(@mMasuCnt * @mMasuCnt)) == 0) then
+			if(color == ReversiConst.REVERSI_STS_BLACK) then
+				ret = @mMasuPointB[num]
+			else
+				ret = @mMasuPointW[num]
+			end
+		end
+		return ret
+	end
+
+	# ////////////////////////////////////////////////////////////////////////////////
+	# ///	@brief			ポイント座標数取得
+	# ///	@fn				getPointCnt(color)
+	# ///	@param[in]		color		コマ色
+	# ///	@return			ポイント座標数取得
+	# ///	@author			Yuta Yoshinaga
+	# ///	@date			2018.04.01
+	# ///
+	# ////////////////////////////////////////////////////////////////////////////////
+	def getPointCnt(color)
+		ret = 0
+		if (color == ReversiConst.REVERSI_STS_BLACK) then
+			ret = @mMasuPointCntB
+		else
+			ret = @mMasuPointCntW
+		end
+		return ret
+	end
+
+	# ////////////////////////////////////////////////////////////////////////////////
+	# ///	@brief			コマ数取得
+	# ///	@fn				getBetCnt(color)
+	# ///	@param[in]		color		コマ色
+	# ///	@return			コマ数取得
+	# ///	@author			Yuta Yoshinaga
+	# ///	@date			2018.04.01
+	# ///
+	# ////////////////////////////////////////////////////////////////////////////////
+	def getBetCnt(color)
+		ret = 0
+		if (color == ReversiConst.REVERSI_STS_BLACK) then
+			ret = @mMasuBetCntB
+		else
+			ret = @mMasuBetCntW
+		end
+		return ret
+	end
+
+	# ////////////////////////////////////////////////////////////////////////////////
+	# ///	@brief			パス判定
+	# ///	@fn				getPassEna(color, y, x)
+	# ///	@param[in]		color		コマ色
+	# ///	@param[in]		y			マスのY座標
+	# ///	@param[in]		x			マスのX座標
+	# ///	@return			パス判定
+	# ///					- 0 : NOT PASS
+	# ///					- 1 : PASS
+	# ///
+	# ///	@author			Yuta Yoshinaga
+	# ///	@date			2018.04.01
+	# ///
+	# ////////////////////////////////////////////////////////////////////////////////
+	def getPassEna(color, y, x)
+		ret = 0
+		if (self.checkPara(y,0,@mMasuCnt) == 0 && self.checkPara(x,0,@mMasuCnt) == 0) then
+			if (color == ReversiConst.REVERSI_STS_BLACK) then
+				ret = @mMasuStsPassB[y][x]
+			else
+				ret = @mMasuStsPassW[y][x]
+			end
+		end
+		return ret
+	end
+
+	# ////////////////////////////////////////////////////////////////////////////////
+	# ///	@brief			履歴取得
+	# ///	@fn				getHistory(num)
+	# ///	@param[in]		num			ポイント
+	# ///	@return			履歴 nil : 失敗
+	# ///	@author			Yuta Yoshinaga
+	# ///	@date			2018.04.01
+	# ///
+	# ////////////////////////////////////////////////////////////////////////////////
+	def getHistory(num)
+		ret = nil
+		if (self.checkPara(num,0,(@mMasuCnt * @mMasuCnt)) == 0) then
+			ret = @mMasuHist[num]
+		end
+		return ret
+	end
+
+	# ////////////////////////////////////////////////////////////////////////////////
+	# ///	@brief			履歴数取得
+	# ///	@fn				getHistoryCnt(color)
+	# ///	@return			履歴数
+	# ///	@author			Yuta Yoshinaga
+	# ///	@date			2018.04.01
+	# ///
+	# ////////////////////////////////////////////////////////////////////////////////
+	def getHistoryCnt()
+		ret = @mMasuHistCur
+		return ret
+	end
+
+	# ////////////////////////////////////////////////////////////////////////////////
+	# ///	@brief			ポイント座標解析取得
+	# ///	@fn				getPointAnz(color, y, x)
+	# ///	@param[in]		color		コマ色
+	# ///	@param[in]		y			マスのY座標
+	# ///	@param[in]		x			マスのX座標
+	# ///	@return			ポイント座標解析 nil : 失敗
+	# ///	@author			Yuta Yoshinaga
+	# ///	@date			2018.04.01
+	# ///
+	# ////////////////////////////////////////////////////////////////////////////////
+	def getPointAnz(color, y, x)
+		ret = nil
+		if (self.checkPara(y,0,@mMasuCnt) == 0 && self.checkPara(x,0,@mMasuCnt) == 0) then
+			if (color == ReversiConst.REVERSI_STS_BLACK) then
+				ret = @mMasuStsAnzB[y][x]
+			else
+				ret = @mMasuStsAnzW[y][x]
+			end
+		end
+		return ret
+	end
+
 =begin 
-	////////////////////////////////////////////////////////////////////////////////
-	///	@brief			ポイント座標取得
-	///	@fn				public ReversiPoint getPoint(int color,int num)
-	///	@param[in]		int color		コマ色
-	///	@param[in]		int num			ポイント
-	///	@return			ポイント座標 null : 失敗
-	///	@author			Yuta Yoshinaga
-	///	@date			2018.04.01
-	///
-	////////////////////////////////////////////////////////////////////////////////
-	public ReversiPoint getPoint(int color,int num)
-	{
-		ReversiPoint ret = null;
-		if(this.checkPara(num,0,(this.mMasuCnt * this.mMasuCnt)) == 0){
-			if(color == ReversiConst.REVERSI_STS_BLACK)	ret = this.mMasuPointB[num];
-			else										ret = this.mMasuPointW[num];
-		}
-		return ret;
-	}
-
-	////////////////////////////////////////////////////////////////////////////////
-	///	@brief			ポイント座標数取得
-	///	@fn				public int getPointCnt(int color)
-	///	@param[in]		int color		コマ色
-	///	@return			ポイント座標数取得
-	///	@author			Yuta Yoshinaga
-	///	@date			2018.04.01
-	///
-	////////////////////////////////////////////////////////////////////////////////
-	public int getPointCnt(int color)
-	{
-		int ret = 0;
-		if(color == ReversiConst.REVERSI_STS_BLACK)	ret = this.mMasuPointCntB;
-		else										ret = this.mMasuPointCntW;
-		return ret;
-	}
-
-	////////////////////////////////////////////////////////////////////////////////
-	///	@brief			コマ数取得
-	///	@fn				public int getBetCnt(int color)
-	///	@param[in]		int color		コマ色
-	///	@return			コマ数取得
-	///	@author			Yuta Yoshinaga
-	///	@date			2018.04.01
-	///
-	////////////////////////////////////////////////////////////////////////////////
-	public int getBetCnt(int color)
-	{
-		int ret = 0;
-		if(color == ReversiConst.REVERSI_STS_BLACK)	ret = this.mMasuBetCntB;
-		else										ret = this.mMasuBetCntW;
-		return ret;
-	}
-
-	////////////////////////////////////////////////////////////////////////////////
-	///	@brief			パス判定
-	///	@fn				public int getPassEna(int color,int y,int x)
-	///	@param[in]		int color		コマ色
-	///	@param[in]		int y			マスのY座標
-	///	@param[in]		int x			マスのX座標
-	///	@return			パス判定
-	///					- 0 : NOT PASS
-	///					- 1 : PASS
-	///
-	///	@author			Yuta Yoshinaga
-	///	@date			2018.04.01
-	///
-	////////////////////////////////////////////////////////////////////////////////
-	public int getPassEna(int color,int y,int x)
-	{
-		int ret = 0;
-		if(this.checkPara(y,0,this.mMasuCnt) == 0 && this.checkPara(x,0,this.mMasuCnt) == 0){
-			if(color == ReversiConst.REVERSI_STS_BLACK)	ret = this.mMasuStsPassB[y][x];
-			else										ret = this.mMasuStsPassW[y][x];
-		}
-		return ret;
-	}
-
-	////////////////////////////////////////////////////////////////////////////////
-	///	@brief			履歴取得
-	///	@fn				public ReversiHistory getHistory(int num)
-	///	@param[in]		int num			ポイント
-	///	@return			履歴 null : 失敗
-	///	@author			Yuta Yoshinaga
-	///	@date			2018.04.01
-	///
-	////////////////////////////////////////////////////////////////////////////////
-	public ReversiHistory getHistory(int num)
-	{
-		ReversiHistory ret = null;
-		if(this.checkPara(num,0,(this.mMasuCnt * this.mMasuCnt)) == 0){
-			ret = this.mMasuHist[num];
-		}
-		return ret;
-	}
-
-	////////////////////////////////////////////////////////////////////////////////
-	///	@brief			履歴数取得
-	///	@fn				public int getHistoryCnt(int color)
-	///	@return			履歴数
-	///	@author			Yuta Yoshinaga
-	///	@date			2018.04.01
-	///
-	////////////////////////////////////////////////////////////////////////////////
-	public int getHistoryCnt()
-	{
-		int ret = 0;
-		ret = this.mMasuHistCur;
-		return ret;
-	}
-
-	////////////////////////////////////////////////////////////////////////////////
-	///	@brief			ポイント座標解析取得
-	///	@fn				public ReversiAnz getPointAnz(int color,int y,int x)
-	///	@param[in]		int color		コマ色
-	///	@param[in]		int y			マスのY座標
-	///	@param[in]		int x			マスのX座標
-	///	@return			ポイント座標解析 null : 失敗
-	///	@author			Yuta Yoshinaga
-	///	@date			2018.04.01
-	///
-	////////////////////////////////////////////////////////////////////////////////
-	public ReversiAnz getPointAnz(int color,int y,int x)
-	{
-		ReversiAnz ret = null;
-		if(this.checkPara(y,0,this.mMasuCnt) == 0 && this.checkPara(x,0,this.mMasuCnt) == 0){
-			if(color == ReversiConst.REVERSI_STS_BLACK)	ret = this.mMasuStsAnzB[y][x];
-			else										ret = this.mMasuStsAnzW[y][x];
-		}
-		return ret;
-	}
-
 	////////////////////////////////////////////////////////////////////////////////
 	///	@brief			角の隣に置いても角を取られないマス検索
 	///	@fn				public int checkEdge(int y,int x)
