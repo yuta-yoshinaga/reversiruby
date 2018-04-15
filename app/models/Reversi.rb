@@ -61,13 +61,13 @@ class Reversi
 		@mMasuStsCntB	= Array.new(@mMasuCntMax).map{Array.new(@mMasuCntMax,0)}
 		@mMasuStsPassB	= Array.new(@mMasuCntMax).map{Array.new(@mMasuCntMax,0)}
 		@mMasuStsAnzB	= Array.new(@mMasuCntMax).map{Array.new(@mMasuCntMax,nil)}
-		for i in 0..@mMasuCntMax do
+		for i in 0..(@mMasuCntMax - 1) do
 			for j in 0..@mMasuCntMax do
 				@mMasuStsAnzB[i][j] = new ReversiAnz()
 			end
 		end
 		@mMasuPointB	= Array.new(@mMasuCntMax).map{Array.new(@mMasuCntMax,nil)}
-		for i in 0..(@mMasuCntMax * @mMasuCntMax) do
+		for i in 0..((@mMasuCntMax * @mMasuCntMax) - 1) do
 			@mMasuPointB[i] = new ReversiPoint()
 		end
 		@mMasuPointCntB	= 0;
@@ -75,20 +75,20 @@ class Reversi
 		@mMasuStsCntW	= Array.new(@mMasuCntMax).map{Array.new(@mMasuCntMax,0)}
 		@mMasuStsPassW	= Array.new(@mMasuCntMax).map{Array.new(@mMasuCntMax,0)}
 		@mMasuStsAnzW	= Array.new(@mMasuCntMax).map{Array.new(@mMasuCntMax,nil)}
-		for i in 0..@mMasuCntMax do
-			for j in 0..@mMasuCntMax do
+		for i in 0..(@mMasuCntMax - 1) do
+			for j in 0..(@mMasuCntMax - 1) do
 				@mMasuStsAnzW[i][j] = new ReversiAnz()
 			end
 		end
 		@mMasuPointW	= Array.new(@mMasuCntMax).map{Array.new(@mMasuCntMax,nil)}
-		for i in 0..(@mMasuCntMax * @mMasuCntMax) do
+		for i in 0..((@mMasuCntMax * @mMasuCntMax) - 1) do
 			@mMasuPointW[i] = new ReversiPoint()
 		end
 		@mMasuPointCntW	= 0;
 		@mMasuBetCntB	= 0;
 		@mMasuBetCntW	= 0;
 		@mMasuHist		= Array.new(@mMasuCntMax).map{Array.new(@mMasuCntMax,nil)}
-		for i in 0..(@mMasuCntMax * @mMasuCntMax) do
+		for i in 0..((@mMasuCntMax * @mMasuCntMax) - 1) do
 			@mMasuHist[i] = new ReversiHistory()
 		end
 		@mMasuHistCur = 0;
@@ -105,8 +105,8 @@ class Reversi
 	# ///
 	# ////////////////////////////////////////////////////////////////////////////////
 	def reset
-		for i in 0..@mMasuCntMax do
-			for j in 0..@mMasuCntMax do
+		for i in 0..(@mMasuCntMax - 1) do
+			for j in 0..(@mMasuCntMax - 1) do
 				@mMasuSts[i][j] = ReversiConst.REVERSI_STS_NONE
 				@mMasuStsPassB[i][j] = 0
 				@mMasuStsAnzB[i][j].reset()
@@ -119,8 +119,8 @@ class Reversi
 		@mMasuSts[(@mMasuCnt >> 1) - 1][(@mMasuCnt >> 1)]		= ReversiConst.REVERSI_STS_WHITE
 		@mMasuSts[(@mMasuCnt >> 1)][(@mMasuCnt >> 1) - 1]		= ReversiConst.REVERSI_STS_WHITE
 		@mMasuSts[(@mMasuCnt >> 1)][(@mMasuCnt >> 1)]			= ReversiConst.REVERSI_STS_BLACK
-		@makeMasuSts(ReversiConst.REVERSI_STS_BLACK)
-		@makeMasuSts(ReversiConst.REVERSI_STS_WHITE)
+		self.makeMasuSts(ReversiConst.REVERSI_STS_BLACK)
+		self.makeMasuSts(ReversiConst.REVERSI_STS_WHITE)
 		@mMasuHistCur = 0
 		@mMasuStsOld = Marshal.load(Marshal.dump(@mMasuSts))
 	end
@@ -137,8 +137,8 @@ class Reversi
 	# ///////////////////////////////////////////////////////////////////////////////
 	def AnalysisReversi(bPassEna,wPassEna)
 		# // *** 相手をパスさせることができるマス検索 *** //
-		for i in 0..@mMasuCntMax do
-			for j in 0..@mMasuCntMax do
+		for i in 0..(@mMasuCntMax - 1) do
+			for j in 0..(@mMasuCntMax - 1) do
 				@mMasuStsPassB[i][j] = 0
 				@mMasuStsAnzB[i][j].reset()
 				@mMasuStsPassW[i][j] = 0
@@ -152,8 +152,8 @@ class Reversi
 		self.makeMasuSts(ReversiConst.REVERSI_STS_WHITE)
 
 		# // *** パスマスを取得 *** //
-		for i in 0..@mMasuCntMax do
-			for j in 0..@mMasuCntMax do
+		for i in 0..(@mMasuCntMax - 1) do
+			for j in 0..(@mMasuCntMax - 1) do
 				if @mMasuStsPassB[i][j] != 0 then
 					if bPassEna != 0 then
 						@mMasuStsEnaB[i][j] = 3
@@ -261,8 +261,8 @@ class Reversi
 	# ////////////////////////////////////////////////////////////////////////////////
 	def getColorEna(color)
 		ret = -1
-		for i in 0..@mMasuCntMax do
-			for j in 0..@mMasuCntMax do
+		for i in 0..(@mMasuCntMax - 1) do
+			for j in 0..(@mMasuCntMax - 1) do
 				if (self.getMasuStsEna(color,i,j) != 0) then
 					ret = 0
 					break
@@ -504,233 +504,363 @@ class Reversi
 		return ret
 	end
 
+	# ////////////////////////////////////////////////////////////////////////////////
+	# ///	@brief			角の隣に置いても角を取られないマス検索
+	# ///	@fn				checkEdge(color,y,x)
+	# ///	@param[in]		color		色
+	# ///	@param[in]		y			Y座標
+	# ///	@param[in]		x			X座標
+	# ///	@return			0 : 取られる それ以外 : 取られない
+	# ///	@author			Yuta Yoshinaga
+	# ///	@date			2018.04.01
+	# ///
+	# ////////////////////////////////////////////////////////////////////////////////
+	def checkEdge(color,y,x)
+		style = 0
+		flg1 = 0
+		flg2 = 0
+		loop1 = 0
+		loop2 = 0
+		if (y == 0 && x == 1) then
+			flg1 = 0
+			flg2 = 0
+			for loop1 in x..(@mMasuCnt - 1) do
+				if (self.getMasuSts(y,loop1) == color) then
+					flg1 = 1
+				end
+				if (flg1 == 1 && self.getMasuSts(y,loop1) == ReversiConst.REVERSI_STS_NONE) then
+					break
+				end
+				if ((flg1 == 1) && (self.getMasuSts(y,loop1) != color) && (self.getMasuSts(y,loop1) != ReversiConst.REVERSI_STS_NONE)) then
+					flg2 = 1
+				end
+			end
+			if((flg1 == 1) && (flg2 == 0)) then
+				style = 1
+			end
+		end
+		if (y == 1 && x == 0) then
+			flg1 = 0
+			flg2 = 0
+			for loop1 in y..(@mMasuCnt - 1) do
+				if (self.getMasuSts(loop1,x) == color) then
+					flg1 = 1
+				end
+				if (flg1 == 1 && self.getMasuSts(loop1,x) == ReversiConst.REVERSI_STS_NONE) then
+					break
+				end
+				if ((flg1 == 1) && (self.getMasuSts(loop1,x) != color) && (self.getMasuSts(loop1,x) != ReversiConst.REVERSI_STS_NONE)) then
+					flg2 = 1
+				end
+			end
+			if ((flg1 == 1) && (flg2 == 0)) then
+				style = 1
+			end
+		end
+		if (y == 1 && x == 1) then
+			flg1 = 0
+			flg2 = 0
+			for loop1 in y..(@mMasuCnt - 1) do
+				if (self.getMasuSts(loop1,loop1) == color) then
+					flg1 = 1
+				end
+				if (flg1 == 1 && self.getMasuSts(loop1,loop1) == ReversiConst.REVERSI_STS_NONE) then
+					break
+				end
+				if ((flg1 == 1) && (self.getMasuSts(loop1,loop1) != color) && (self.getMasuSts(loop1,loop1) != ReversiConst.REVERSI_STS_NONE)) then
+					flg2 = 1
+				end
+			end
+			if ((flg1 == 1) && (flg2 == 0)) then
+				style = 1
+			end
+		end
+		if (y == 0 && x == (@mMasuCnt-2)) then
+			flg1 = 0
+			flg2 = 0
+			for loop1 in 0..(x - 1) do
+				loop1 = x - (loop1 + 1)
+				if (self.getMasuSts(y,loop1) == color) then
+					flg1 = 1
+				end
+				if (flg1 == 1 && self.getMasuSts(y,loop1) == ReversiConst.REVERSI_STS_NONE) then
+					break
+				end
+				if ((flg1 == 1) && (self.getMasuSts(y,loop1) != color) && (self.getMasuSts(y,loop1) != ReversiConst.REVERSI_STS_NONE)) then
+					flg2 = 1
+				end
+			end
+			if ((flg1 == 1) && (flg2 == 0))
+				style = 1
+			end
+		end
+		if (y == 1 && x == (@mMasuCnt-1)) then
+			flg1 = 0
+			flg2 = 0
+			for loop1 in y..(@mMasuCnt - 1) do
+				if (self.getMasuSts(loop1,x) == color) then
+					flg1 = 1
+				end
+				if (flg1 == 1 && self.getMasuSts(loop1,x) == ReversiConst.REVERSI_STS_NONE) then
+					break
+				end
+				if ((flg1 == 1) && (self.getMasuSts(loop1,x) != color) && (self.getMasuSts(loop1,x) != ReversiConst.REVERSI_STS_NONE)) then
+					flg2 = 1
+				end
+			end
+			if ((flg1 == 1) && (flg2 == 0)) then
+				style = 1
+			end
+		end
+		if (y == 1 && x == (@mMasuCnt-2)) then
+			flg1 = 0
+			flg2 = 0
+			loop2 = x
+			for loop1 in y..(@mMasuCnt - 1) do
+				if (self.getMasuSts(loop1,loop2) == color) then
+					flg1 = 1
+				end
+				if (flg1 == 1 && self.getMasuSts(loop1,loop2) == ReversiConst.REVERSI_STS_NONE) then
+					break
+				end
+				if ((flg1 == 1) && (self.getMasuSts(loop1,loop2) != color) && (self.getMasuSts(loop1,loop2) != ReversiConst.REVERSI_STS_NONE)) then
+					flg2 = 1
+				end
+				loop2 -= 1
+			end
+			if ((flg1 == 1) && (flg2 == 0)) then
+				style = 1
+			end
+		end
+		if (y == (@mMasuCnt-2) && x == 0) then
+			flg1 = 0
+			flg2 = 0
+			for loop1 in 0..(y - 1) do
+				loop1 = y - (loop1 + 1)
+				if (self.getMasuSts(loop1,x) == color) then
+					flg1=1
+				end
+				if (flg1 == 1 && self.getMasuSts(loop1,x) == ReversiConst.REVERSI_STS_NONE) then
+					break
+				end
+				if ((flg1 == 1) && (self.getMasuSts(loop1,x) != color) && (self.getMasuSts(loop1,x) != ReversiConst.REVERSI_STS_NONE)) then
+					flg2 = 1
+				end
+			end
+			if ((flg1 == 1) && (flg2 == 0)) then
+				style = 1
+			end
+		end
+		if (y == (@mMasuCnt-1) && x == 1) then
+			flg1 = 0
+			flg2 = 0
+			for loop1 in x..(@mMasuCnt - 1) do
+				if (self.getMasuSts(y,loop1) == color) then
+					flg1 = 1
+				end
+				if (flg1 == 1 && self.getMasuSts(y,loop1) == ReversiConst.REVERSI_STS_NONE) then
+					break
+				end
+				if ((flg1 == 1) && (self.getMasuSts(y,loop1) != color) && (self.getMasuSts(y,loop1) != ReversiConst.REVERSI_STS_NONE)) then
+					flg2 = 1
+				end
+			end
+			if ((flg1 == 1) && (flg2 == 0)) then
+				style = 1
+			end
+		end
+		if (y == (@mMasuCnt-2) && x == 1) then
+			flg1 = 0
+			flg2 = 0
+			loop2 = x
+			for loop1 in 0..(y - 1) do
+				loop1 = y - (loop1 + 1)
+				if (self.getMasuSts(loop1,loop2) == color) then
+					flg1 = 1
+				end
+				if (flg1 == 1 && self.getMasuSts(loop1,loop2) == ReversiConst.REVERSI_STS_NONE) then
+					break
+				end
+				if ((flg1 == 1) && (self.getMasuSts(loop1,loop2) != color) && (self.getMasuSts(loop1,loop2) != ReversiConst.REVERSI_STS_NONE)) then
+					flg2 = 1
+				end
+			end
+			if ((flg1 == 1) && (flg2 == 0)) then
+				style = 1
+			end
+			loop2 -= 1
+		end
+		if (y == (@mMasuCnt-2) && x == (@mMasuCnt-1)) then
+			flg1 = 0
+			flg2 = 0
+			for loop1 in 0..(y - 1) do
+				loop1 = y - (loop1 + 1)
+				if (self.getMasuSts(loop1,x) == color) then
+					flg1 = 1
+				end
+				if (flg1 == 1 && self.getMasuSts(loop1,x) == ReversiConst.REVERSI_STS_NONE) then
+					break
+				end
+				if ((flg1 == 1) && (self.getMasuSts(loop1,x) != color) && (self.getMasuSts(loop1,x) != ReversiConst.REVERSI_STS_NONE)) then
+					flg2 = 1
+				end
+			end
+			if ((flg1 == 1) && (flg2 == 0)) then
+				style = 1
+			end
+		end
+		if (y == (@mMasuCnt-1) && x == (@mMasuCnt-2)) then
+			flg1 = 0
+			flg2 = 0
+			for loop1 in 0..(x - 1) do
+				loop1 = x - (loop1 + 1)
+				if (self.getMasuSts(y,loop1) == color) then
+					flg1 = 1
+				end
+				if (flg1 == 1 && self.getMasuSts(y,loop1) == ReversiConst.REVERSI_STS_NONE) then
+					break
+				end
+				if ((flg1 == 1) && (self.getMasuSts(y,loop1) != color) && (self.getMasuSts(y,loop1) != ReversiConst.REVERSI_STS_NONE)) then
+					flg2 = 1
+				end
+			end
+			if ((flg1 == 1) && (flg2 == 0)) then
+				style = 1
+			end
+		end
+		if (y == (@mMasuCnt-2) && x == (@mMasuCnt-2)) then
+			flg1 = 0
+			flg2 = 0
+			loop2 = x
+			for loop1 in 0..(y - 1) do
+				loop1 = y - (loop1 + 1)
+				if (self.getMasuSts(loop1,loop2) == color) then
+					flg1 = 1
+				end
+				if (flg1 == 1 && self.getMasuSts(loop1,loop2) == ReversiConst.REVERSI_STS_NONE) then
+					break
+				end
+				if ((flg1 == 1) && (self.getMasuSts(loop1,loop2) != color) && (self.getMasuSts(loop1,loop2) != ReversiConst.REVERSI_STS_NONE)) then
+					flg2 = 1
+				end
+			end
+			if ((flg1 == 1) && (flg2 == 0)) then
+				style = 1
+			end
+			loop2 -= 1
+		end
+		return style
+	end
+
+	# ////////////////////////////////////////////////////////////////////////////////
+	# ///	@brief			指定座標が角か取得
+	# ///	@fn				getEdgeSideZero(y, x)
+	# ///	@param[in]		y			Y座標
+	# ///	@param[in]		x			X座標
+	# ///	@return			0 : 成功 それ以外 : 失敗
+	# ///	@author			Yuta Yoshinaga
+	# ///	@date			2018.04.01
+	# ///
+	# ////////////////////////////////////////////////////////////////////////////////
+	def getEdgeSideZero(y, x)
+		ret = -1
+		if (\
+				(y == 0 && x == 0)\
+			||	(y == 0 && x == (@mMasuCnt-1))\
+			||	(y == (@mMasuCnt-1) && x == 0)\
+			||	(y == (@mMasuCnt-1) && x == (@mMasuCnt-1))\
+		) then
+			ret = 0
+		end
+		return ret
+	end
+
+	# ////////////////////////////////////////////////////////////////////////////////
+	# ///	@brief			指定座標が角の一つ手前か取得
+	# ///	@fn				getEdgeSideOne(y, x)
+	# ///	@param[in]		y			Y座標
+	# ///	@param[in]		x			X座標
+	# ///	@return			0 : 成功 それ以外 : 失敗
+	# ///	@author			Yuta Yoshinaga
+	# ///	@date			2018.04.01
+	# ///
+	# ////////////////////////////////////////////////////////////////////////////////
+	def getEdgeSideOne(y, x)
+		ret = -1
+		if(\
+				(y == 0 && x == 1)\
+			||	(y == 0 && x == (@mMasuCnt-2))\
+			||	(y == 1 && x == 0)\
+			||	(y == 1 && x == 1)\
+			||	(y == 1 && x == (@mMasuCnt-2))\
+			||	(y == 1 && x == (@mMasuCnt-1))\
+			||	(y == (@mMasuCnt-2) && x == 0)\
+			||	(y == (@mMasuCnt-2) && x == 1)\
+			||	(y == (@mMasuCnt-2) && x == (@mMasuCnt-2))\
+			||	(y == (@mMasuCnt-2) && x == (@mMasuCnt-1))\
+			||	(y == (@mMasuCnt-1) && x == 1)\
+			||	(y == (@mMasuCnt-1) && x == (@mMasuCnt-2))\
+		) then
+			ret = 0
+		end
+		return ret
+	end
+
+	# ////////////////////////////////////////////////////////////////////////////////
+	# ///	@brief			指定座標が角の二つ手前か取得
+	# ///	@fn				getEdgeSideTwo(y, x)
+	# ///	@param[in]		y			Y座標
+	# ///	@param[in]		x			X座標
+	# ///	@return			0 : 成功 それ以外 : 失敗
+	# ///	@author			Yuta Yoshinaga
+	# ///	@date			2018.04.01
+	# ///
+	# ////////////////////////////////////////////////////////////////////////////////
+	def getEdgeSideTwo(y, x)
+		ret = -1
+		if(\
+				(y == 0 && x == 2)\
+			||	(y == 0 && x == (@mMasuCnt-3))\
+			||	(y == 2 && x == 0)\
+			||	(y == 2 && x == 2)\
+			||	(y == 2 && x == (@mMasuCnt-3))\
+			||	(y == 2 && x == (@mMasuCnt-1))\
+			||	(y == (@mMasuCnt-3) && x == 0)\
+			||	(y == (@mMasuCnt-3) && x == 2)\
+			||	(y == (@mMasuCnt-3) && x == (@mMasuCnt-3))\
+			||	(y == (@mMasuCnt-3) && x == (@mMasuCnt-1))\
+			||	(y == (@mMasuCnt-1) && x == 2)\
+			||	(y == (@mMasuCnt-1) && x == (@mMasuCnt-3))\
+		) then
+			ret = 0
+		end
+		return ret
+	end
+
+	# ////////////////////////////////////////////////////////////////////////////////
+	# ///	@brief			指定座標が角の三つ以上手前か取得
+	# ///	@fn				getEdgeSideThree(y, x)
+	# ///	@param[in]		y			Y座標
+	# ///	@param[in]		x			X座標
+	# ///	@return			0 : 成功 それ以外 : 失敗
+	# ///	@author			Yuta Yoshinaga
+	# ///	@date			2018.04.01
+	# ///
+	# ////////////////////////////////////////////////////////////////////////////////
+	def getEdgeSideThree(y, x)
+		ret = -1
+		if(\
+				(y == 0 && (3 <= x && x <= (@mMasuCnt-4)))\
+			||	((3 <= y && y <= (@mMasuCnt-4)) && x == 0)\
+			||	(y == (@mMasuCnt-1) && (3 <= x && x <= (@mMasuCnt-4)))\
+			||	((3 <= y && y <= (@mMasuCnt-4)) && x == (@mMasuCnt-1))\
+		) then
+			ret = 0
+		end
+		return ret
+	end
+
 =begin 
-	////////////////////////////////////////////////////////////////////////////////
-	///	@brief			角の隣に置いても角を取られないマス検索
-	///	@fn				public int checkEdge(int y,int x)
-	///	@param[in]		int color		色
-	///	@param[in]		int y			Y座標
-	///	@param[in]		int x			X座標
-	///	@return			0 : 取られる それ以外 : 取られない
-	///	@author			Yuta Yoshinaga
-	///	@date			2018.04.01
-	///
-	////////////////////////////////////////////////////////////////////////////////
-	public int checkEdge(int color,int y,int x)
-	{
-		int style = 0,flg1 = 0,flg2 = 0;
-		int loop,loop2;
-		if(y == 0 && x == 1){
-			for(loop = x,flg1 = 0,flg2 = 0;loop < this.mMasuCnt;loop++){
-				if(this.getMasuSts(y,loop) == color) flg1 = 1;
-				if(flg1 == 1 && this.getMasuSts(y,loop) == ReversiConst.REVERSI_STS_NONE) break;
-				if((flg1 == 1) && (this.getMasuSts(y,loop) != color) && (this.getMasuSts(y,loop) != ReversiConst.REVERSI_STS_NONE)) flg2 = 1;
-			}
-			if((flg1 == 1) && (flg2 == 0)) style = 1;
-		}
-		if(y == 1 && x == 0){
-			for(loop = y,flg1 = 0,flg2 = 0;loop < this.mMasuCnt;loop++){
-				if(this.getMasuSts(loop,x) == color) flg1 = 1;
-				if(flg1 == 1 && this.getMasuSts(loop,x) == ReversiConst.REVERSI_STS_NONE) break;
-				if((flg1 == 1) && (this.getMasuSts(loop,x) != color) && (this.getMasuSts(loop,x) != ReversiConst.REVERSI_STS_NONE)) flg2 = 1;
-			}
-			if((flg1 == 1) && (flg2 == 0)) style = 1;
-		}
-		if(y == 1 && x == 1){
-			for(loop = y,flg1 = 0,flg2 = 0;loop < this.mMasuCnt;loop++){
-				if(this.getMasuSts(loop,loop) == color) flg1 = 1;
-				if(flg1 == 1 && this.getMasuSts(loop,loop) == ReversiConst.REVERSI_STS_NONE) break;
-				if((flg1 == 1) && (this.getMasuSts(loop,loop) != color) && (this.getMasuSts(loop,loop) != ReversiConst.REVERSI_STS_NONE)) flg2 = 1;
-			}
-			if((flg1 == 1) && (flg2 == 0)) style = 1;
-		}
-		if(y == 0 && x == (this.mMasuCnt-2)){
-			for(loop = x,flg1 = 0,flg2 = 0;loop > 0;loop--){
-				if(this.getMasuSts(y,loop) == color) flg1 = 1;
-				if(flg1 == 1 && this.getMasuSts(y,loop) == ReversiConst.REVERSI_STS_NONE) break;
-				if((flg1 == 1) && (this.getMasuSts(y,loop) != color) && (this.getMasuSts(y,loop) != ReversiConst.REVERSI_STS_NONE)) flg2 = 1;
-			}
-			if((flg1 == 1) && (flg2 == 0)) style = 1;
-		}
-		if(y == 1 && x == (this.mMasuCnt-1)){
-			for(loop = y,flg1 = 0,flg2 = 0;loop < this.mMasuCnt;loop++){
-				if(this.getMasuSts(loop,x) == color) flg1 = 1;
-				if(flg1 == 1 && this.getMasuSts(loop,x) == ReversiConst.REVERSI_STS_NONE) break;
-				if((flg1 == 1) && (this.getMasuSts(loop,x) != color) && (this.getMasuSts(loop,x) != ReversiConst.REVERSI_STS_NONE)) flg2 = 1;
-			}
-			if((flg1 == 1) && (flg2 == 0)) style = 1;
-		}
-		if(y == 1 && x == (this.mMasuCnt-2)){
-			for(loop = y,loop2 = x,flg1 = 0,flg2 = 0;loop < this.mMasuCnt;loop++,loop2--){
-				if(this.getMasuSts(loop,loop2) == color) flg1 = 1;
-				if(flg1 == 1 && this.getMasuSts(loop,loop2) == ReversiConst.REVERSI_STS_NONE) break;
-				if((flg1 == 1) && (this.getMasuSts(loop,loop2) != color) && (this.getMasuSts(loop,loop2) != ReversiConst.REVERSI_STS_NONE)) flg2 = 1;
-			}
-			if((flg1 == 1) && (flg2 == 0)) style = 1;
-		}
-		if(y == (this.mMasuCnt-2) && x == 0){
-			for(loop = y,flg1 = 0,flg2 = 0;loop > 0;loop--){
-				if(this.getMasuSts(loop,x) == color) flg1=1;
-				if(flg1 == 1 && this.getMasuSts(loop,x) == ReversiConst.REVERSI_STS_NONE) break;
-				if((flg1 == 1) && (this.getMasuSts(loop,x) != color) && (this.getMasuSts(loop,x) != ReversiConst.REVERSI_STS_NONE)) flg2 = 1;
-			}
-			if((flg1 == 1) && (flg2 == 0)) style = 1;
-		}
-		if(y == (this.mMasuCnt-1) && x == 1){
-			for(loop = x,flg1 = 0,flg2 = 0;loop < this.mMasuCnt;loop++){
-				if(this.getMasuSts(y,loop) == color) flg1 = 1;
-				if(flg1 == 1 && this.getMasuSts(y,loop) == ReversiConst.REVERSI_STS_NONE) break;
-				if((flg1 == 1) && (this.getMasuSts(y,loop) != color) && (this.getMasuSts(y,loop) != ReversiConst.REVERSI_STS_NONE)) flg2 = 1;
-			}
-			if((flg1 == 1) && (flg2 == 0)) style = 1;
-		}
-		if(y == (this.mMasuCnt-2) && x == 1){
-			for(loop = y,loop2 = x,flg1 = 0,flg2 = 0;loop > 0;loop--,loop2++){
-				if(this.getMasuSts(loop,loop2) == color) flg1 = 1;
-				if(flg1 == 1 && this.getMasuSts(loop,loop2) == ReversiConst.REVERSI_STS_NONE) break;
-				if((flg1 == 1) && (this.getMasuSts(loop,loop2) != color) && (this.getMasuSts(loop,loop2) != ReversiConst.REVERSI_STS_NONE)) flg2 = 1;
-			}
-			if((flg1 == 1) && (flg2 == 0)) style = 1;
-		}
-		if(y == (this.mMasuCnt-2) && x == (this.mMasuCnt-1)){
-			for(loop = y,flg1 = 0,flg2 = 0;loop > 0;loop--){
-				if(this.getMasuSts(loop,x) == color) flg1 = 1;
-				if(flg1 == 1 && this.getMasuSts(loop,x) == ReversiConst.REVERSI_STS_NONE) break;
-				if((flg1 == 1) && (this.getMasuSts(loop,x) != color) && (this.getMasuSts(loop,x) != ReversiConst.REVERSI_STS_NONE)) flg2 = 1;
-			}
-			if((flg1 == 1) && (flg2 == 0)) style = 1;
-		}
-		if(y == (this.mMasuCnt-1) && x == (this.mMasuCnt-2)){
-			for(loop = x,flg1 = 0,flg2 = 0;loop > 0;loop--){
-				if(this.getMasuSts(y,loop) == color) flg1 = 1;
-				if(flg1 == 1 && this.getMasuSts(y,loop) == ReversiConst.REVERSI_STS_NONE) break;
-				if((flg1 == 1) && (this.getMasuSts(y,loop) != color) && (this.getMasuSts(y,loop) != ReversiConst.REVERSI_STS_NONE)) flg2 = 1;
-			}
-			if((flg1 == 1) && (flg2 == 0)) style = 1;
-		}
-		if(y == (this.mMasuCnt-2) && x == (this.mMasuCnt-2)){
-			for(loop = y,loop2 = x,flg1 = 0,flg2 = 0;loop > 0;loop--,loop2--){
-				if(this.getMasuSts(loop,loop2) == color) flg1 = 1;
-				if(flg1 == 1 && this.getMasuSts(loop,loop2) == ReversiConst.REVERSI_STS_NONE) break;
-				if((flg1 == 1) && (this.getMasuSts(loop,loop2) != color) && (this.getMasuSts(loop,loop2) != ReversiConst.REVERSI_STS_NONE)) flg2 = 1;
-			}
-			if((flg1 == 1) && (flg2 == 0)) style = 1;
-		}
-
-		return style;
-	}
-
-	////////////////////////////////////////////////////////////////////////////////
-	///	@brief			指定座標が角か取得
-	///	@fn				public int getEdgeSideZero(int y,int x)
-	///	@param[in]		int y			Y座標
-	///	@param[in]		int x			X座標
-	///	@return			0 : 成功 それ以外 : 失敗
-	///	@author			Yuta Yoshinaga
-	///	@date			2018.04.01
-	///
-	////////////////////////////////////////////////////////////////////////////////
-	public int getEdgeSideZero(int y,int x)
-	{
-		int ret = -1;
-		if(
-				(y == 0 && x == 0)
-			||	(y == 0 && x == (this.mMasuCnt-1))
-			||	(y == (this.mMasuCnt-1) && x == 0)
-			||	(y == (this.mMasuCnt-1) && x == (this.mMasuCnt-1))
-		){
-			ret = 0;
-		}
-		return ret;
-	}
-
-	////////////////////////////////////////////////////////////////////////////////
-	///	@brief			指定座標が角の一つ手前か取得
-	///	@fn				public int getEdgeSideOne(int y,int x)
-	///	@param[in]		int y			Y座標
-	///	@param[in]		int x			X座標
-	///	@return			0 : 成功 それ以外 : 失敗
-	///	@author			Yuta Yoshinaga
-	///	@date			2018.04.01
-	///
-	////////////////////////////////////////////////////////////////////////////////
-	public int getEdgeSideOne(int y,int x)
-	{
-		int ret = -1;
-		if(
-				(y == 0 && x == 1)
-			||	(y == 0 && x == (this.mMasuCnt-2))
-			||	(y == 1 && x == 0)
-			||	(y == 1 && x == 1)
-			||	(y == 1 && x == (this.mMasuCnt-2))
-			||	(y == 1 && x == (this.mMasuCnt-1))
-			||	(y == (this.mMasuCnt-2) && x == 0)
-			||	(y == (this.mMasuCnt-2) && x == 1)
-			||	(y == (this.mMasuCnt-2) && x == (this.mMasuCnt-2))
-			||	(y == (this.mMasuCnt-2) && x == (this.mMasuCnt-1))
-			||	(y == (this.mMasuCnt-1) && x == 1)
-			||	(y == (this.mMasuCnt-1) && x == (this.mMasuCnt-2))
-		){
-			ret = 0;
-		}
-		return ret;
-	}
-
-	////////////////////////////////////////////////////////////////////////////////
-	///	@brief			指定座標が角の二つ手前か取得
-	///	@fn				public int getEdgeSideTwo(int y,int x)
-	///	@param[in]		int y			Y座標
-	///	@param[in]		int x			X座標
-	///	@return			0 : 成功 それ以外 : 失敗
-	///	@author			Yuta Yoshinaga
-	///	@date			2018.04.01
-	///
-	////////////////////////////////////////////////////////////////////////////////
-	public int getEdgeSideTwo(int y,int x)
-	{
-		int ret = -1;
-		if(
-				(y == 0 && x == 2)
-			||	(y == 0 && x == (this.mMasuCnt-3))
-			||	(y == 2 && x == 0)
-			||	(y == 2 && x == 2)
-			||	(y == 2 && x == (this.mMasuCnt-3))
-			||	(y == 2 && x == (this.mMasuCnt-1))
-			||	(y == (this.mMasuCnt-3) && x == 0)
-			||	(y == (this.mMasuCnt-3) && x == 2)
-			||	(y == (this.mMasuCnt-3) && x == (this.mMasuCnt-3))
-			||	(y == (this.mMasuCnt-3) && x == (this.mMasuCnt-1))
-			||	(y == (this.mMasuCnt-1) && x == 2)
-			||	(y == (this.mMasuCnt-1) && x == (this.mMasuCnt-3))
-		){
-			ret = 0;
-		}
-		return ret;
-	}
-
-	////////////////////////////////////////////////////////////////////////////////
-	///	@brief			指定座標が角の三つ以上手前か取得
-	///	@fn				public int getEdgeSideThree(int y,int x)
-	///	@param[in]		int y			Y座標
-	///	@param[in]		int x			X座標
-	///	@return			0 : 成功 それ以外 : 失敗
-	///	@author			Yuta Yoshinaga
-	///	@date			2018.04.01
-	///
-	////////////////////////////////////////////////////////////////////////////////
-	public int getEdgeSideThree(int y,int x){
-		int ret = -1;
-		if(
-				(y == 0 && (3 <= x && x <= (this.mMasuCnt-4)))
-			||	((3 <= y && y <= (this.mMasuCnt-4)) && x == 0)
-			||	(y == (this.mMasuCnt-1) && (3 <= x && x <= (this.mMasuCnt-4)))
-			||	((3 <= y && y <= (this.mMasuCnt-4)) && x == (this.mMasuCnt-1))
-		){
-			ret = 0;
-		}
-		return ret;
-	}
-
 	private
 	# ////////////////////////////////////////////////////////////////////////////////
 	# ///	@brief			各コマの置ける場所等のステータス作成
