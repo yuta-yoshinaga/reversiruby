@@ -860,203 +860,213 @@ class Reversi
 		return ret
 	end
 
-=begin 
 	private
 	# ////////////////////////////////////////////////////////////////////////////////
 	# ///	@brief			各コマの置ける場所等のステータス作成
-	# ///	@fn				private int makeMasuSts(int color)
-	# ///	@param[in]		int color		ステータスを作成するコマ
+	# ///	@fn				makeMasuSts(color)
+	# ///	@param[in]		color		ステータスを作成するコマ
 	# ///	@return			ありません
 	# ///	@author			Yuta Yoshinaga
 	# ///	@date			2018.04.01
 	# ///
 	# ////////////////////////////////////////////////////////////////////////////////
-	private int makeMasuSts(int color)
-	{
-		int flg,okflg = 0,cnt1,cnt2,count1,count2 = 0,ret = -1,countMax = 0,loop;
-		for(int i = 0;i < this.mMasuCnt;i++){								// 初期化
-			for(int j = 0;j < this.mMasuCnt;j++){
-				if(color == ReversiConst.REVERSI_STS_BLACK){
-					this.mMasuStsEnaB[i][j] = 0;
-					this.mMasuStsCntB[i][j] = 0;
-				}else{
-					this.mMasuStsEnaW[i][j] = 0;
-					this.mMasuStsCntW[i][j] = 0;
-				}
-			}
-		}
+	def makeMasuSts(color)
+		flg = 0
+		okflg = 0
+		cnt1 = 0
+		cnt2 = 0
+		count1 = 0
+		count2 = 0
+		ret = -1
+		countMax = 0
+		loop1 = 0
+		for i in 0..(@mMasuCnt - 1) do
+			for j in 0..(@mMasuCnt - 1) do
+				if (color == ReversiConst.REVERSI_STS_BLACK) then
+					@mMasuStsEnaB[i][j] = 0
+					@mMasuStsCntB[i][j] = 0
+				else
+					@mMasuStsEnaW[i][j] = 0
+					@mMasuStsCntW[i][j] = 0
+				end
+			end
+		end
 
-		loop = this.mMasuCnt * this.mMasuCnt;
-		for(int i = 0;i < loop;i++){										// 初期化
-			if(color == ReversiConst.REVERSI_STS_BLACK){
-				this.mMasuPointB[i].setX(0);
-				this.mMasuPointB[i].setY(0);
-			}else{
-				this.mMasuPointW[i].setX(0);
-				this.mMasuPointW[i].setY(0);
-			}
-		}
-		if(color == ReversiConst.REVERSI_STS_BLACK){
-			this.mMasuPointCntB	= 0;
-		}else{
-			this.mMasuPointCntW	= 0;
-		}
-		this.mMasuBetCntB	= 0;
-		this.mMasuBetCntW	= 0;
+		loop1 = @mMasuCnt * @mMasuCnt;
+		for i in 0..(loop1 - 1) do
+			if (color == ReversiConst.REVERSI_STS_BLACK) then
+				@mMasuPointB[i].setX(0)
+				@mMasuPointB[i].setY(0)
+			else
+				@mMasuPointW[i].setX(0)
+				@mMasuPointW[i].setY(0)
+			end
+		end
+		if (color == ReversiConst.REVERSI_STS_BLACK) then
+			@mMasuPointCntB	= 0
+		else
+			@mMasuPointCntW	= 0
+		end
+		@mMasuBetCntB = 0
+		@mMasuBetCntW = 0
 
-		for(int i = 0;i < this.mMasuCnt;i++){
-			for(int j = 0;j < this.mMasuCnt;j++){
-				okflg = 0;
-				count2 = 0;
-				if(this.mMasuSts[i][j] == ReversiConst.REVERSI_STS_NONE){	// 何も置かれていないマスなら
-					cnt1 = i;
-					count1 = flg =0;
-					// *** 上方向を調べる *** //
-					while((cnt1 > 0) && (this.mMasuSts[cnt1-1][j] != ReversiConst.REVERSI_STS_NONE && this.mMasuSts[cnt1-1][j] != color)){
+		for i in 0..(@mMasuCnt - 1) do
+			for j in 0..(@mMasuCnt - 1) do
+				okflg = 0
+				count2 = 0
+				if (@mMasuSts[i][j] == ReversiConst.REVERSI_STS_NONE) then
+					# // 何も置かれていないマスなら
+					cnt1 = i
+					count1 = flg = 0
+					# // *** 上方向を調べる *** //
+					while ((cnt1 > 0) && (@mMasuSts[cnt1-1][j] != ReversiConst.REVERSI_STS_NONE && @mMasuSts[cnt1-1][j] != color)) do
+						flg = 1
+						cnt1 -= 1
+						count1 += 1
+					end
+					if ((cnt1 > 0) && (flg == 1) && (@mMasuSts[cnt1-1][j] == color)) then
+						okflg = 1
+						count2 += count1
+					end
+					cnt1 = i
+					count1 = flg = 0
+					# // *** 下方向を調べる *** //
+					while ((cnt1 < (@mMasuCnt-1)) && (@mMasuSts[cnt1+1][j] != ReversiConst.REVERSI_STS_NONE && @mMasuSts[cnt1+1][j] != color)) do
+						flg = 1
+						cnt1 += 1
+						count1 += 1
+					end
+					if ((cnt1 < (@mMasuCnt-1)) && (flg == 1) && (@mMasuSts[cnt1+1][j] == color)) then
+						okflg = 1
+						count2 += count1
+					end
+					cnt2 = j
+					count1 = flg = 0
+					# // *** 右方向を調べる *** //
+					while ((cnt2 < (@mMasuCnt-1)) && (@mMasuSts[i][cnt2+1] != ReversiConst.REVERSI_STS_NONE && @mMasuSts[i][cnt2+1] != color)) do
+						flg = 1
+						cnt2 += 1
+						count1 += 1
+					end
+					if ((cnt2 < (@mMasuCnt-1)) && (flg == 1) && (@mMasuSts[i][cnt2+1] == color)) then
+						okflg = 1
+						count2 += count1
+					end
+					cnt2 = j
+					count1 = flg = 0
+					# // *** 左方向を調べる *** //
+					while ((cnt2 > 0) && (@mMasuSts[i][cnt2-1] != ReversiConst.REVERSI_STS_NONE && @mMasuSts[i][cnt2-1] != color)) do
+						flg = 1
+						cnt2 -= 1
+						count1 += 1
+					end
+					if ((cnt2 > 0) && (flg == 1) && (@mMasuSts[i][cnt2-1] == color)) then
+						okflg = 1
+						count2 += count1
+					end
+					cnt2 = j
+					cnt1 = i
+					count1 = flg = 0
+					# // *** 右上方向を調べる *** //
+					while (((cnt2 < (@mMasuCnt-1)) && (cnt1 > 0)) && (@mMasuSts[cnt1-1][cnt2+1] != ReversiConst.REVERSI_STS_NONE && @mMasuSts[cnt1-1][cnt2+1] != color)) do
 						flg = 1;
-						cnt1--;
-						count1++;
-					}
-					if((cnt1 > 0) && (flg == 1) && (this.mMasuSts[cnt1-1][j] == color)){
-						okflg = 1;
-						count2 += count1;
-					}
-					cnt1 = i;
-					count1 = flg = 0;
-					// *** 下方向を調べる *** //
-					while((cnt1 < (this.mMasuCnt-1)) && (this.mMasuSts[cnt1+1][j] != ReversiConst.REVERSI_STS_NONE && this.mMasuSts[cnt1+1][j] != color)){
+						cnt1 -= 1
+						cnt2 += 1
+						count1 += 1
+					end
+					if (((cnt2 < (@mMasuCnt-1)) && (cnt1 > 0)) && (flg == 1) && (@mMasuSts[cnt1-1][cnt2+1] == color)) then
+						okflg = 1
+						count2 += count1
+					end
+					cnt2 = j
+					cnt1 = i
+					count1 = flg = 0
+					# // *** 左上方向を調べる *** //
+					while (((cnt2 > 0) && (cnt1 > 0)) && (@mMasuSts[cnt1-1][cnt2-1] != ReversiConst.REVERSI_STS_NONE && @mMasuSts[cnt1-1][cnt2-1] != color)) do
 						flg = 1;
-						cnt1++;
-						count1++;
-					}
-					if((cnt1 < (this.mMasuCnt-1)) && (flg == 1) && (this.mMasuSts[cnt1+1][j] == color)){
-						okflg = 1;
-						count2 += count1;
-					}
-					cnt2 = j;
-					count1 = flg = 0;
-					// *** 右方向を調べる *** //
-					while((cnt2 < (this.mMasuCnt-1)) && (this.mMasuSts[i][cnt2+1] != ReversiConst.REVERSI_STS_NONE && this.mMasuSts[i][cnt2+1] != color)){
-						flg = 1;
-						cnt2++;
-						count1++;
-					}
-					if((cnt2 < (this.mMasuCnt-1)) && (flg == 1) && (this.mMasuSts[i][cnt2+1] == color)){
-						okflg = 1;
-						count2 += count1;
-					}
-					cnt2 = j;
-					count1 = flg = 0;
-					// *** 左方向を調べる *** //
-					while((cnt2 > 0) && (this.mMasuSts[i][cnt2-1] != ReversiConst.REVERSI_STS_NONE && this.mMasuSts[i][cnt2-1] != color)){
-						flg = 1;
-						cnt2--;
-						count1++;
-					}
-					if((cnt2 > 0) && (flg == 1) && (this.mMasuSts[i][cnt2-1] == color)){
-						okflg = 1;
-						count2 += count1;
-					}
-					cnt2 = j;
-					cnt1 = i;
-					count1 = flg = 0;
-					// *** 右上方向を調べる *** //
-					while(((cnt2 < (this.mMasuCnt-1)) && (cnt1 > 0)) && (this.mMasuSts[cnt1-1][cnt2+1] != ReversiConst.REVERSI_STS_NONE && this.mMasuSts[cnt1-1][cnt2+1] != color)){
-						flg = 1;
-						cnt1--;
-						cnt2++;
-						count1++;
-					}
-					if(((cnt2 < (this.mMasuCnt-1)) && (cnt1 > 0)) && (flg == 1) && (this.mMasuSts[cnt1-1][cnt2+1] == color)){
-						okflg = 1;
-						count2 += count1;
-					}
-					cnt2 = j;
-					cnt1 = i;
-					count1 = flg = 0;
-					// *** 左上方向を調べる *** //
-					while(((cnt2 > 0) && (cnt1 > 0)) && (this.mMasuSts[cnt1-1][cnt2-1] != ReversiConst.REVERSI_STS_NONE && this.mMasuSts[cnt1-1][cnt2-1] != color)){
-						flg = 1;
-						cnt1--;
-						cnt2--;
-						count1++;
-					}
-					if(((cnt2 > 0) && (cnt1 > 0)) && (flg == 1) && (this.mMasuSts[cnt1-1][cnt2-1] == color)){
-						okflg = 1;
-						count2 += count1;
-					}
-					cnt2 = j;
-					cnt1 = i;
-					count1 = flg = 0;
-					// *** 右下方向を調べる *** //
-					while(((cnt2 < (this.mMasuCnt-1)) && (cnt1 < (this.mMasuCnt-1))) && (this.mMasuSts[cnt1+1][cnt2+1] != ReversiConst.REVERSI_STS_NONE && this.mMasuSts[cnt1+1][cnt2+1] != color)){
-						flg = 1;
-						cnt1++;
-						cnt2++;
-						count1++;
-					}
-					if(((cnt2 < (this.mMasuCnt-1)) && (cnt1 < (this.mMasuCnt-1))) && (flg == 1) && (this.mMasuSts[cnt1+1][cnt2+1] == color)){
-						okflg = 1;
-						count2 += count1;
-					}
-					cnt2 = j;
-					cnt1 = i;
-					count1 = flg = 0;
-					// *** 左下方向を調べる *** //
-					while(((cnt2 > 0) && (cnt1 < (this.mMasuCnt-1))) && (this.mMasuSts[cnt1+1][cnt2-1] != ReversiConst.REVERSI_STS_NONE && this.mMasuSts[cnt1+1][cnt2-1] != color)){
-						flg = 1;
-						cnt1++;
-						cnt2--;
-						count1++;
-					}
-					if(((cnt2 > 0) && (cnt1 < (this.mMasuCnt-1))) && (flg == 1) && (this.mMasuSts[cnt1+1][cnt2-1] == color)){
-						okflg = 1;
-						count2 += count1;
-					}
-					if(okflg == 1){
-						if(color == ReversiConst.REVERSI_STS_BLACK){
-							this.mMasuStsEnaB[i][j] = 1;
-							this.mMasuStsCntB[i][j] = count2;
-							// *** 置ける場所をリニアに保存、置けるポイント数も保存 *** //
-							this.mMasuPointB[this.mMasuPointCntB].setY(i);
-							this.mMasuPointB[this.mMasuPointCntB].setX(j);
-							this.mMasuPointCntB++;
-						}else{
-							this.mMasuStsEnaW[i][j] = 1;
-							this.mMasuStsCntW[i][j] = count2;
-							// *** 置ける場所をリニアに保存、置けるポイント数も保存 *** //
-							this.mMasuPointW[this.mMasuPointCntW].setY(i);
-							this.mMasuPointW[this.mMasuPointCntW].setX(j);
-							this.mMasuPointCntW++;
-						}
-						ret = 0;
-						if(countMax < count2) countMax = count2;
-					}
-				}else if(this.mMasuSts[i][j] == ReversiConst.REVERSI_STS_BLACK){
-					this.mMasuBetCntB++;
-				}else if(this.mMasuSts[i][j] == ReversiConst.REVERSI_STS_WHITE){
-					this.mMasuBetCntW++;
-				}
-			}
-		}
+						cnt1 -= 1
+						cnt2 -= 1
+						count1 += 1
+					end
+					if (((cnt2 > 0) && (cnt1 > 0)) && (flg == 1) && (@mMasuSts[cnt1-1][cnt2-1] == color)) then
+						okflg = 1
+						count2 += count1
+					end
+					cnt2 = j
+					cnt1 = i
+					count1 = flg = 0
+					#// *** 右下方向を調べる *** //
+					while (((cnt2 < (@mMasuCnt-1)) && (cnt1 < (@mMasuCnt-1))) && (@mMasuSts[cnt1+1][cnt2+1] != ReversiConst.REVERSI_STS_NONE && @mMasuSts[cnt1+1][cnt2+1] != color)) do
+						flg = 1
+						cnt1 += 1
+						cnt2 += 1
+						count1 += 1
+					end
+					if (((cnt2 < (@mMasuCnt-1)) && (cnt1 < (@mMasuCnt-1))) && (flg == 1) && (@mMasuSts[cnt1+1][cnt2+1] == color)) then
+						okflg = 1
+						count2 += count1
+					end
+					cnt2 = j
+					cnt1 = i
+					count1 = flg = 0
+					# // *** 左下方向を調べる *** //
+					while (((cnt2 > 0) && (cnt1 < (@mMasuCnt-1))) && (@mMasuSts[cnt1+1][cnt2-1] != ReversiConst.REVERSI_STS_NONE && @mMasuSts[cnt1+1][cnt2-1] != color)) do
+						flg = 1
+						cnt1 += 1
+						cnt2 -= 1
+						count1 += 1
+					end
+					if (((cnt2 > 0) && (cnt1 < (@mMasuCnt-1))) && (flg == 1) && (@mMasuSts[cnt1+1][cnt2-1] == color)) then
+						okflg = 1
+						count2 += count1
+					end
+					if (okflg == 1) then
+						if (color == ReversiConst.REVERSI_STS_BLACK) then
+							@mMasuStsEnaB[i][j] = 1
+							@mMasuStsCntB[i][j] = count2
+							# // *** 置ける場所をリニアに保存、置けるポイント数も保存 *** //
+							@mMasuPointB[@mMasuPointCntB].setY(i)
+							@mMasuPointB[@mMasuPointCntB].setX(j)
+							@mMasuPointCntB += 1
+						else
+							@mMasuStsEnaW[i][j] = 1
+							@mMasuStsCntW[i][j] = count2
+							# // *** 置ける場所をリニアに保存、置けるポイント数も保存 *** //
+							@mMasuPointW[@mMasuPointCntW].setY(i)
+							@mMasuPointW[@mMasuPointCntW].setX(j)
+							@mMasuPointCntW += 1
+						end
+						ret = 0
+						if (countMax < count2) then
+							countMax = count2
+						end
+					end
+				elsif (@mMasuSts[i][j] == ReversiConst.REVERSI_STS_BLACK) then
+					@mMasuBetCntB += 1
+				elsif (@mMasuSts[i][j] == ReversiConst.REVERSI_STS_WHITE) then
+					@mMasuBetCntW += 1
+				end
+			end
+		end
 
-		// *** 一番枚数を獲得できるマスを設定 *** //
-		for(int i = 0;i < this.mMasuCnt;i++){
-			for(int j = 0;j < this.mMasuCnt;j++){
-				if(color == ReversiConst.REVERSI_STS_BLACK){
-					if(this.mMasuStsEnaB[i][j] != 0 && this.mMasuStsCntB[i][j] == countMax){
-						this.mMasuStsEnaB[i][j] = 2;
-					}
-				}else{
-					if(this.mMasuStsEnaW[i][j] != 0 && this.mMasuStsCntW[i][j] == countMax){
-						this.mMasuStsEnaW[i][j] = 2;
-					}
-				}
-			}
-		}
-		return ret;
-	}
+		# // *** 一番枚数を獲得できるマスを設定 *** //
+		for i in 0..(@mMasuCnt - 1) do
+			for j in 0..(@mMasuCnt - 1) do
+				if (color == ReversiConst.REVERSI_STS_BLACK) then
+					if (@mMasuStsEnaB[i][j] != 0 && @mMasuStsCntB[i][j] == countMax) then
+						@mMasuStsEnaB[i][j] = 2
+					end
+				else
+					if (@mMasuStsEnaW[i][j] != 0 && @mMasuStsCntW[i][j] == countMax) then
+						@mMasuStsEnaW[i][j] = 2
+					end
+				end
+			end
+		end
+		return ret
+	end
 
+=begin 
 	////////////////////////////////////////////////////////////////////////////////
 	///	@brief			コマをひっくり返す
 	///	@fn				private void revMasuSts(int color,int y,int x)
