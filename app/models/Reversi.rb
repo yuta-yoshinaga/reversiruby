@@ -1066,197 +1066,248 @@ class Reversi
 		return ret
 	end
 
+	# ////////////////////////////////////////////////////////////////////////////////
+	# ///	@brief			コマをひっくり返す
+	# ///	@fn				revMasuSts(color, y, x)
+	# ///	@param[in]		color		ひっくり返す元コマ
+	# ///	@param[in]		y			ひっくり返す元コマのY座標
+	# ///	@param[in]		x			ひっくり返す元コマのX座標
+	# ///	@return			ありません
+	# ///	@author			Yuta Yoshinaga
+	# ///	@date			2018.04.01
+	# ///
+	# ////////////////////////////////////////////////////////////////////////////////
+	def revMasuSts(color, y, x)
+		cnt1 = 0
+		cnt2 = 0
+		rcnt1 = 0
+		rcnt2 = 0
+		flg = 0
+		# // *** 左方向にある駒を調べる *** //
+		flg = 0
+		cnt1 = x
+		cnt2 = y
+		while (cnt1 > 0) do
+			if (@mMasuSts[cnt2][cnt1-1] != ReversiConst.REVERSI_STS_NONE && @mMasuSts[cnt2][cnt1-1] != color) then
+				# // *** プレイヤー以外の色の駒があるなら *** //
+				cnt1 -= 1
+			elsif (@mMasuSts[cnt2][cnt1-1] == color) then
+				flg = 1
+				break
+			elsif (@mMasuSts[cnt2][cnt1-1] == ReversiConst.REVERSI_STS_NONE) then
+				break
+			end
+		end
+		if (flg == 1) then
+			# // *** 駒をひっくり返す *** //
+			rcnt1 = cnt1
+			while (rcnt1 < x) do
+				@mMasuSts[cnt2][rcnt1] = color
+				rcnt1 += 1
+			end
+		end
+
+		# // *** 右方向にある駒を調べる *** //
+		flg = 0
+		cnt1 = x
+		cnt2 = y
+		while (cnt1 < (@mMasuCnt-1)) do
+			if (@mMasuSts[cnt2][cnt1+1] != ReversiConst.REVERSI_STS_NONE && @mMasuSts[cnt2][cnt1+1] != color) then
+				# // *** プレイヤー以外の色の駒があるなら *** //
+				cnt1 += 1
+			elsif (@mMasuSts[cnt2][cnt1+1] == color) then
+				flg = 1
+				break
+			elsif (@mMasuSts[cnt2][cnt1+1] == ReversiConst.REVERSI_STS_NONE) then
+				break
+			end
+		end
+		if (flg == 1) then
+			# // *** 駒をひっくり返す *** //
+			rcnt1 = cnt1
+			while (rcnt1 > x) do
+				@mMasuSts[cnt2][rcnt1] = color
+				rcnt1 -= 1
+			end
+		end
+
+		# // *** 上方向にある駒を調べる *** //
+		flg = 0
+		cnt1 = x
+		cnt2 = y
+		while (cnt2 > 0) do
+			if (@mMasuSts[cnt2-1][cnt1] != ReversiConst.REVERSI_STS_NONE && @mMasuSts[cnt2-1][cnt1] != color) then
+				# // *** プレイヤー以外の色の駒があるなら *** //
+				cnt2 -= 1
+			elsif (@mMasuSts[cnt2-1][cnt1] == color) then
+				flg = 1
+				break
+			elsif (@mMasuSts[cnt2-1][cnt1] == ReversiConst.REVERSI_STS_NONE) then
+				break
+			end
+		end
+		if (flg == 1) then
+			# // *** 駒をひっくり返す *** //
+			rcnt1 = cnt2
+			while (rcnt1 < y) do
+				@mMasuSts[rcnt1][cnt1] = color
+				rcnt1 += 1
+			end
+		end
+
+		# // *** 下方向にある駒を調べる *** //
+		flg = 0
+		cnt1 = x
+		cnt2 = y
+		while (cnt2 < (@mMasuCnt-1)) do
+			if (@mMasuSts[cnt2+1][cnt1] != ReversiConst.REVERSI_STS_NONE && @mMasuSts[cnt2+1][cnt1] != color) then
+				# // *** プレイヤー以外の色の駒があるなら *** //
+				cnt2 += 1
+			elsif (@mMasuSts[cnt2+1][cnt1] == color) then
+				flg = 1
+				break
+			elsif (@mMasuSts[cnt2+1][cnt1] == ReversiConst.REVERSI_STS_NONE) then
+				break
+			end
+		end
+		if (flg == 1) then
+			# // *** 駒をひっくり返す *** //
+			rcnt1 = cnt2
+			while (rcnt1 > y) do
+				@mMasuSts[rcnt1][cnt1] = color
+				rcnt1 -= 1
+			end
+		end
+
+		# // *** 左上方向にある駒を調べる *** //
+		flg = 0
+		cnt1 = x
+		cnt2 = y
+		while (cnt2 > 0 && cnt1 > 0) do
+			if (@mMasuSts[cnt2-1][cnt1-1] != ReversiConst.REVERSI_STS_NONE && @mMasuSts[cnt2-1][cnt1-1] != color) then
+				#// *** プレイヤー以外の色の駒があるなら *** //
+				cnt2 -= 1
+				cnt1 -= 1
+			elsif (@mMasuSts[cnt2-1][cnt1-1] == color) then
+				flg = 1
+				break
+			elsif (@mMasuSts[cnt2-1][cnt1-1] == ReversiConst.REVERSI_STS_NONE) then
+				break
+			end
+		end
+		if (flg == 1) then
+			# // *** 駒をひっくり返す *** //
+			rcnt1 = cnt2
+			rcnt2 = cnt1
+			while ((rcnt1 < y) && (rcnt2 < x)) do
+				@mMasuSts[rcnt1][rcnt2] = color
+				rcnt1 += 1
+				rcnt2 += 1
+			end
+		end
+
+		# // *** 左下方向にある駒を調べる *** //
+		flg = 0
+		cnt1 = x
+		cnt2 = y
+		while (cnt2 < (@mMasuCnt-1) && cnt1 > 0) do
+			if (@mMasuSts[cnt2+1][cnt1-1] != ReversiConst.REVERSI_STS_NONE && @mMasuSts[cnt2+1][cnt1-1] != color) then
+				# // *** プレイヤー以外の色の駒があるなら *** //
+				cnt2 += 1
+				cnt1 -= 1
+			elsif (@mMasuSts[cnt2+1][cnt1-1] == color) then
+				flg = 1
+				break
+			elsif (@mMasuSts[cnt2+1][cnt1-1] == ReversiConst.REVERSI_STS_NONE) then
+				break
+			end
+		end
+		if (flg == 1) then
+			# // *** 駒をひっくり返す *** //
+			rcnt1 = cnt2
+			rcnt2 = cnt1
+			while ((rcnt1 > y) && (rcnt2 < x)) do
+				@mMasuSts[rcnt1][rcnt2] = color
+				rcnt1 -= 1
+				rcnt2 += 1
+			end
+		end
+
+		# // *** 右上方向にある駒を調べる *** //
+		flg = 0
+		cnt1 = x
+		cnt2 = y
+		while (cnt2 > 0 && cnt1 < (@mMasuCnt-1)) do
+			if (@mMasuSts[cnt2-1][cnt1+1] != ReversiConst.REVERSI_STS_NONE && @mMasuSts[cnt2-1][cnt1+1] != color) then
+				# // *** プレイヤー以外の色の駒があるなら *** //
+				cnt2 -= 1
+				cnt1 += 1
+			elsif (@mMasuSts[cnt2-1][cnt1+1] == color) then
+				flg = 1
+				break
+			elsif (@mMasuSts[cnt2-1][cnt1+1] == ReversiConst.REVERSI_STS_NONE) then
+				break
+			end
+		end
+		if (flg == 1) then
+			# // *** 駒をひっくり返す *** //
+			rcnt1 = cnt2
+			rcnt2 = cnt1
+			while ((rcnt1 < y) && (rcnt2 > x)) do
+				@mMasuSts[rcnt1][rcnt2] = color
+				rcnt1 += 1
+				rcnt2 -= 1
+			end
+		end
+
+		# // *** 右下方向にある駒を調べる *** //
+		flg = 0
+		cnt1 = x
+		cnt2 = y
+		while (cnt2 < (@mMasuCnt-1) && cnt1 < (@mMasuCnt-1)) do
+			if (@mMasuSts[cnt2+1][cnt1+1] != ReversiConst.REVERSI_STS_NONE && @mMasuSts[cnt2+1][cnt1+1] != color) then
+				# // *** プレイヤー以外の色の駒があるなら *** //
+				cnt2 += 1
+				cnt1 += 1
+			elsif (@mMasuSts[cnt2+1][cnt1+1] == color) then
+				flg = 1
+				break
+			elsif (@mMasuSts[cnt2+1][cnt1+1] == ReversiConst.REVERSI_STS_NONE) then
+				break
+			end
+		end
+		if (flg == 1) then
+			# // *** 駒をひっくり返す *** //
+			rcnt1 = cnt2
+			rcnt2 = cnt1
+			while((rcnt1 > y) && (rcnt2 > x)) do
+				@mMasuSts[rcnt1][rcnt2] = color
+				rcnt1 -= 1
+				rcnt2 -= 1
+			end
+		end
+	end
+
+	# ////////////////////////////////////////////////////////////////////////////////
+	# ///	@brief			パラメーター範囲チェック
+	# ///	@fn				checkPara(para, min, max)
+	# ///	@param[in]		para		チェックパラメーター
+	# ///	@param[in]		min			パラメーター最小値
+	# ///	@param[in]		max			パラメーター最大値
+	# ///	@return			0 : 成功 それ以外 : 失敗
+	# ///	@author			Yuta Yoshinaga
+	# ///	@date			2018.04.01
+	# ///
+	# ////////////////////////////////////////////////////////////////////////////////
+	def checkPara(para, min, max)
+		ret = -1
+		if (min <= para && para <= max) then
+			ret = 0
+		end
+		return ret
+	end
+
 =begin 
-	////////////////////////////////////////////////////////////////////////////////
-	///	@brief			コマをひっくり返す
-	///	@fn				private void revMasuSts(int color,int y,int x)
-	///	@param[in]		int color		ひっくり返す元コマ
-	///	@param[in]		int y			ひっくり返す元コマのY座標
-	///	@param[in]		int x			ひっくり返す元コマのX座標
-	///	@return			ありません
-	///	@author			Yuta Yoshinaga
-	///	@date			2018.04.01
-	///
-	////////////////////////////////////////////////////////////////////////////////
-	private void revMasuSts(int color,int y,int x)
-	{
-		int cnt1,cnt2,rcnt1,rcnt2,flg=0;
-
-		// *** 左方向にある駒を調べる *** //
-		for(flg = 0,cnt1 = x,cnt2 = y;cnt1 > 0;){
-			if(this.mMasuSts[cnt2][cnt1-1] != ReversiConst.REVERSI_STS_NONE && this.mMasuSts[cnt2][cnt1-1] != color){
-				// *** プレイヤー以外の色の駒があるなら *** //
-				cnt1--;
-			}else if(this.mMasuSts[cnt2][cnt1-1] == color){
-				flg = 1;
-				break;
-			}else if(this.mMasuSts[cnt2][cnt1-1] == ReversiConst.REVERSI_STS_NONE){
-				break;
-			}
-		}
-		if(flg == 1){
-			// *** 駒をひっくり返す *** //
-			for(rcnt1 = cnt1;rcnt1 < x;rcnt1++){
-				this.mMasuSts[cnt2][rcnt1] = color;
-			}
-		}
-
-		// *** 右方向にある駒を調べる *** //
-		for(flg = 0,cnt1 = x,cnt2 = y;cnt1 < (this.mMasuCnt-1);){
-			if(this.mMasuSts[cnt2][cnt1+1] != ReversiConst.REVERSI_STS_NONE && this.mMasuSts[cnt2][cnt1+1] != color){
-				// *** プレイヤー以外の色の駒があるなら *** //
-				cnt1++;
-			}else if(this.mMasuSts[cnt2][cnt1+1] == color){
-				flg = 1;
-				break;
-			}else if(this.mMasuSts[cnt2][cnt1+1] == ReversiConst.REVERSI_STS_NONE){
-				break;
-			}
-		}
-		if(flg == 1){
-			// *** 駒をひっくり返す *** //
-			for(rcnt1 = cnt1;rcnt1 > x;rcnt1--){
-				this.mMasuSts[cnt2][rcnt1] = color;
-			}
-		}
-
-		// *** 上方向にある駒を調べる *** //
-		for(flg = 0,cnt1 = x,cnt2 = y;cnt2 > 0;){
-			if(this.mMasuSts[cnt2-1][cnt1] != ReversiConst.REVERSI_STS_NONE && this.mMasuSts[cnt2-1][cnt1] != color){
-				// *** プレイヤー以外の色の駒があるなら *** //
-				cnt2--;
-			}else if(this.mMasuSts[cnt2-1][cnt1] == color){
-				flg = 1;
-				break;
-			}else if(this.mMasuSts[cnt2-1][cnt1] == ReversiConst.REVERSI_STS_NONE){
-				break;
-			}
-		}
-		if(flg == 1){
-			// *** 駒をひっくり返す *** //
-			for(rcnt1 = cnt2;rcnt1 < y;rcnt1++){
-				this.mMasuSts[rcnt1][cnt1] = color;
-			}
-		}
-
-		// *** 下方向にある駒を調べる *** //
-		for(flg = 0,cnt1 = x,cnt2 = y;cnt2 < (this.mMasuCnt-1);){
-			if(this.mMasuSts[cnt2+1][cnt1] != ReversiConst.REVERSI_STS_NONE && this.mMasuSts[cnt2+1][cnt1] != color){
-				// *** プレイヤー以外の色の駒があるなら *** //
-				cnt2++;
-			}else if(this.mMasuSts[cnt2+1][cnt1] == color){
-				flg = 1;
-				break;
-			}else if(this.mMasuSts[cnt2+1][cnt1] == ReversiConst.REVERSI_STS_NONE){
-				break;
-			}
-		}
-		if(flg == 1){
-			// *** 駒をひっくり返す *** //
-			for(rcnt1 = cnt2;rcnt1 > y;rcnt1--){
-				this.mMasuSts[rcnt1][cnt1] = color;
-			}
-		}
-
-		// *** 左上方向にある駒を調べる *** //
-		for(flg = 0,cnt1 = x,cnt2 = y;cnt2 > 0 && cnt1 > 0;){
-			if(this.mMasuSts[cnt2-1][cnt1-1] != ReversiConst.REVERSI_STS_NONE && this.mMasuSts[cnt2-1][cnt1-1] != color){
-				// *** プレイヤー以外の色の駒があるなら *** //
-				cnt2--;
-				cnt1--;
-			}else if(this.mMasuSts[cnt2-1][cnt1-1] == color){
-				flg = 1;
-				break;
-			}else if(this.mMasuSts[cnt2-1][cnt1-1] == ReversiConst.REVERSI_STS_NONE){
-				break;
-			}
-		}
-		if(flg == 1){
-			// *** 駒をひっくり返す *** //
-			for(rcnt1 = cnt2,rcnt2 = cnt1;(rcnt1 < y) && (rcnt2 < x);rcnt1++,rcnt2++){
-				this.mMasuSts[rcnt1][rcnt2] = color;
-			}
-		}
-
-		// *** 左下方向にある駒を調べる *** //
-		for(flg = 0,cnt1 = x,cnt2 = y;cnt2 < (this.mMasuCnt-1) && cnt1 > 0;){
-			if(this.mMasuSts[cnt2+1][cnt1-1] != ReversiConst.REVERSI_STS_NONE && this.mMasuSts[cnt2+1][cnt1-1] != color){
-				// *** プレイヤー以外の色の駒があるなら *** //
-				cnt2++;
-				cnt1--;
-			}else if(this.mMasuSts[cnt2+1][cnt1-1] == color){
-				flg = 1;
-				break;
-			}else if(this.mMasuSts[cnt2+1][cnt1-1] == ReversiConst.REVERSI_STS_NONE){
-				break;
-			}
-		}
-		if(flg == 1){
-			// *** 駒をひっくり返す *** //
-			for(rcnt1 = cnt2,rcnt2 = cnt1;(rcnt1 > y) && (rcnt2 < x);rcnt1--,rcnt2++){
-				this.mMasuSts[rcnt1][rcnt2] = color;
-			}
-		}
-
-		// *** 右上方向にある駒を調べる *** //
-		for(flg = 0,cnt1 = x,cnt2 = y;cnt2 > 0 && cnt1 < (this.mMasuCnt-1);){
-			if(this.mMasuSts[cnt2-1][cnt1+1] != ReversiConst.REVERSI_STS_NONE && this.mMasuSts[cnt2-1][cnt1+1] != color){
-				// *** プレイヤー以外の色の駒があるなら *** //
-				cnt2--;
-				cnt1++;
-			}else if(this.mMasuSts[cnt2-1][cnt1+1] == color){
-				flg = 1;
-				break;
-			}else if(this.mMasuSts[cnt2-1][cnt1+1] == ReversiConst.REVERSI_STS_NONE){
-				break;
-			}
-		}
-		if(flg == 1){
-			// *** 駒をひっくり返す *** //
-			for(rcnt1 = cnt2,rcnt2 = cnt1;(rcnt1 < y) && (rcnt2 > x);rcnt1++,rcnt2--){
-				this.mMasuSts[rcnt1][rcnt2] = color;
-			}
-		}
-
-		// *** 右下方向にある駒を調べる *** //
-		for(flg = 0,cnt1 = x,cnt2 = y;cnt2 < (this.mMasuCnt-1) && cnt1 < (this.mMasuCnt-1);){
-			if(this.mMasuSts[cnt2+1][cnt1+1] != ReversiConst.REVERSI_STS_NONE && this.mMasuSts[cnt2+1][cnt1+1] != color){
-				// *** プレイヤー以外の色の駒があるなら *** //
-				cnt2++;
-				cnt1++;
-			}else if(this.mMasuSts[cnt2+1][cnt1+1] == color){
-				flg = 1;
-				break;
-			}else if(this.mMasuSts[cnt2+1][cnt1+1] == ReversiConst.REVERSI_STS_NONE){
-				break;
-			}
-		}
-		if(flg == 1){
-			// *** 駒をひっくり返す *** //
-			for(rcnt1 = cnt2,rcnt2 = cnt1;(rcnt1 > y) && (rcnt2 > x);rcnt1--,rcnt2--){
-				this.mMasuSts[rcnt1][rcnt2] = color;
-			}
-		}
-	}
-
-	////////////////////////////////////////////////////////////////////////////////
-	///	@brief			パラメーター範囲チェック
-	///	@fn				private int checkPara(int para,int min,int max)
-	///	@param[in]		int para		チェックパラメーター
-	///	@param[in]		int min			パラメーター最小値
-	///	@param[in]		int max			パラメーター最大値
-	///	@return			0 : 成功 それ以外 : 失敗
-	///	@author			Yuta Yoshinaga
-	///	@date			2018.04.01
-	///
-	////////////////////////////////////////////////////////////////////////////////
-	private int checkPara(int para,int min,int max)
-	{
-		int ret = -1;
-		if(min <= para && para <= max) ret = 0;
-		return ret;
-	}
-
 	////////////////////////////////////////////////////////////////////////////////
 	///	@brief			解析を行う(黒)
 	///	@fn				private void AnalysisReversiBlack()
