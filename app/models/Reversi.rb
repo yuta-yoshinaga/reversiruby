@@ -1307,147 +1307,160 @@ class Reversi
 		return ret
 	end
 
+	# ////////////////////////////////////////////////////////////////////////////////
+	# ///	@brief			解析を行う(黒)
+	# ///	@fn				AnalysisReversiBlack()
+	# ///	@return			ありません
+	# ///	@author			Yuta Yoshinaga
+	# ///	@date			2018.04.01
+	# ///
+	# ////////////////////////////////////////////////////////////////////////////////
+	def AnalysisReversiBlack()
+		tmpX = 0
+		tmpY = 0
+		sum = 0
+		sumOwn = 0
+		tmpGoodPoint = 0
+		tmpBadPoint = 0
+		tmpD1 = 0.0
+		tmpD2 = 0.0
+		for cnt in 0..(@mMasuPointCntB - 1) do
+			# // *** 現在ステータスを一旦コピー *** //
+			tmpMasu = Array.new(@mMasuCntMax).map{Array.new(@mMasuCntMax,0)}
+			tmpMasuEnaB = Array.new(@mMasuCntMax).map{Array.new(@mMasuCntMax,0)}
+			tmpMasuEnaW = Array.new(@mMasuCntMax).map{Array.new(@mMasuCntMax,0)}
+			tmpMasu = Marshal.load(Marshal.dump(@mMasuSts))
+			tmpMasuEnaB = Marshal.load(Marshal.dump(@mMasuStsEnaB))
+			tmpMasuEnaW = Marshal.load(Marshal.dump(@mMasuStsEnaW))
+
+			tmpY = @mMasuPointB[cnt].getY()
+			tmpX = @mMasuPointB[cnt].getX()
+			@mMasuSts[tmpY][tmpX] = ReversiConst.REVERSI_STS_BLACK				# // 仮に置く
+			self.revMasuSts(ReversiConst.REVERSI_STS_BLACK,tmpY,tmpX)			# // 仮にひっくり返す
+			self.makeMasuSts(ReversiConst.REVERSI_STS_BLACK)
+			self.makeMasuSts(ReversiConst.REVERSI_STS_WHITE)
+			# // *** このマスに置いた場合の解析を行う *** //
+			if (self.getColorEna(ReversiConst.REVERSI_STS_WHITE) != 0) then		# // 相手がパス
+				@mMasuStsPassB[tmpY][tmpX] = 1
+			end
+			if (self.getEdgeSideZero(tmpY,tmpX) == 0) then						# // 置いた場所が角
+				@mMasuStsAnzB[tmpY][tmpX].setOwnEdgeCnt(@mMasuStsAnzB[tmpY][tmpX].getOwnEdgeCnt() + 1)
+				@mMasuStsAnzB[tmpY][tmpX].setGoodPoint(@mMasuStsAnzB[tmpY][tmpX].getGoodPoint() + 10000 * @mMasuStsCntB[tmpY][tmpX])
+			elsif (self.getEdgeSideOne(tmpY,tmpX) == 0) then					# // 置いた場所が角の一つ手前
+				@mMasuStsAnzB[tmpY][tmpX].setOwnEdgeSideOneCnt(@mMasuStsAnzB[tmpY][tmpX].getOwnEdgeSideOneCnt() + 1)
+				if (self.checkEdge(ReversiConst.REVERSI_STS_BLACK,tmpY,tmpX) != 0) then	# // 角を取られない
+					@mMasuStsAnzB[tmpY][tmpX].setGoodPoint(@mMasuStsAnzB[tmpY][tmpX].getGoodPoint() + 10 * @mMasuStsCntB[tmpY][tmpX])
+				else															# // 角を取られる
+					@mMasuStsAnzB[tmpY][tmpX].setBadPoint(@mMasuStsAnzB[tmpY][tmpX].getBadPoint() + 100000)
+				end
+			elsif (self.getEdgeSideTwo(tmpY,tmpX) == 0) then					# // 置いた場所が角の二つ手前
+				@mMasuStsAnzB[tmpY][tmpX].setOwnEdgeSideTwoCnt(@mMasuStsAnzB[tmpY][tmpX].getOwnEdgeSideTwoCnt() + 1)
+				@mMasuStsAnzB[tmpY][tmpX].setGoodPoint(@mMasuStsAnzB[tmpY][tmpX].getGoodPoint() + 1000 * @mMasuStsCntB[tmpY][tmpX])
+			elsif (self.getEdgeSideThree(tmpY,tmpX) == 0) then					# // 置いた場所が角の三つ手前
+				@mMasuStsAnzB[tmpY][tmpX].setOwnEdgeSideThreeCnt(@mMasuStsAnzB[tmpY][tmpX].getOwnEdgeSideThreeCnt() + 1);
+				@mMasuStsAnzB[tmpY][tmpX].setGoodPoint(@mMasuStsAnzB[tmpY][tmpX].getGoodPoint() + 100 * @mMasuStsCntB[tmpY][tmpX])
+			else																# // 置いた場所がその他
+				@mMasuStsAnzB[tmpY][tmpX].setOwnEdgeSideOtherCnt(@mMasuStsAnzB[tmpY][tmpX].getOwnEdgeSideOtherCnt() + 1);
+				@mMasuStsAnzB[tmpY][tmpX].setGoodPoint(@mMasuStsAnzB[tmpY][tmpX].getGoodPoint() + 10 * @mMasuStsCntB[tmpY][tmpX])
+			end
+			sum = 0
+			sumOwn = 0
+			for i in 0..(@mMasuCnt - 1) do
+				for j in 0..(@mMasuCnt - 1) do
+					tmpBadPoint = 0
+					tmpGoodPoint = 0
+					if (self.getMasuStsEna(ReversiConst.REVERSI_STS_WHITE,i,j) != 0) then
+						sum += @mMasuStsCntW[i][j];								# // 相手の獲得予定枚数
+						# // *** 相手の獲得予定の最大数保持 *** //
+						if (self.mMasuStsAnzB[tmpY][tmpX].getMax() < @mMasuStsCntW[i][j]) then
+							@mMasuStsAnzB[tmpY][tmpX].setMax(@mMasuStsCntW[i][j])
+						end
+						# // *** 相手の獲得予定の最小数保持 *** //
+						if (self.mMasuStsCntW[i][j] < @mMasuStsAnzB[tmpY][tmpX].getMin()) then
+							@mMasuStsAnzB[tmpY][tmpX].setMin(@mMasuStsCntW[i][j])
+						end
+						@mMasuStsAnzB[tmpY][tmpX].setPointCnt(@mMasuStsAnzB[tmpY][tmpX].getPointCnt() + 1)			# // 相手の置ける場所の数
+						if (self.getEdgeSideZero(i,j) == 0) then				# // 置く場所が角
+							@mMasuStsAnzB[tmpY][tmpX].setEdgeCnt(@mMasuStsAnzB[tmpY][tmpX].getEdgeCnt() + 1)
+							tmpBadPoint = 100000 * @mMasuStsCntW[i][j]
+						elsif (self.getEdgeSideOne(i,j) == 0) then				# // 置く場所が角の一つ手前
+							@mMasuStsAnzB[tmpY][tmpX].setEdgeSideOneCnt(@mMasuStsAnzB[tmpY][tmpX].getEdgeSideOneCnt() + 1)
+							tmpBadPoint = 0
+						elsif (self.getEdgeSideTwo(i,j) == 0) then				# // 置く場所が角の二つ手前
+							@mMasuStsAnzB[tmpY][tmpX].setEdgeSideTwoCnt(@mMasuStsAnzB[tmpY][tmpX].getEdgeSideTwoCnt() + 1)
+							tmpBadPoint = 1 * @mMasuStsCntW[i][j]
+						elsif (self.getEdgeSideThree(i,j) == 0) then			# // 置く場所が角の三つ手前
+							@mMasuStsAnzB[tmpY][tmpX].setEdgeSideThreeCnt(@mMasuStsAnzB[tmpY][tmpX].getEdgeSideThreeCnt() + 1)
+							tmpBadPoint = 1 * @mMasuStsCntW[i][j]
+						else													# // 置く場所がその他
+							@mMasuStsAnzB[tmpY][tmpX].setEdgeSideOtherCnt(@mMasuStsAnzB[tmpY][tmpX].getEdgeSideOtherCnt() + 1)
+							tmpBadPoint = 1 * @mMasuStsCntW[i][j]
+						end
+						if (tmpMasuEnaW[i][j] != 0) then
+							tmpBadPoint = 0;									# // ステータス変化していないなら
+						end
+					end
+					if (self.getMasuStsEna(ReversiConst.REVERSI_STS_BLACK,i,j) != 0) then
+						sumOwn += @mMasuStsCntB[i][j]							# // 自分の獲得予定枚数
+						# // *** 自分の獲得予定の最大数保持 *** //
+						if (@mMasuStsAnzB[tmpY][tmpX].getOwnMax() < @mMasuStsCntB[i][j])
+							@mMasuStsAnzB[tmpY][tmpX].setOwnMax(@mMasuStsCntB[i][j])
+						end
+						# // *** 自分の獲得予定の最小数保持 *** //
+						if (@mMasuStsCntB[i][j] < @mMasuStsAnzB[tmpY][tmpX].getOwnMin())
+							@mMasuStsAnzB[tmpY][tmpX].setOwnMin(@mMasuStsCntB[i][j])
+						end
+						@mMasuStsAnzB[tmpY][tmpX].setOwnPointCnt(@mMasuStsAnzB[tmpY][tmpX].getOwnPointCnt() + 1)	# // 自分の置ける場所の数
+						if (self.getEdgeSideZero(i,j) == 0) then				# // 置く場所が角
+							@mMasuStsAnzB[tmpY][tmpX].setOwnEdgeCnt(@mMasuStsAnzB[tmpY][tmpX].getOwnEdgeCnt() + 1)
+							tmpGoodPoint = 100 * @mMasuStsCntB[i][j]
+						elsif(self.getEdgeSideOne(i,j) == 0) then				# // 置く場所が角の一つ手前
+							@mMasuStsAnzB[tmpY][tmpX].setOwnEdgeSideOneCnt(@mMasuStsAnzB[tmpY][tmpX].getOwnEdgeSideOneCnt() + 1)
+							tmpGoodPoint = 0
+						elsif(self.getEdgeSideTwo(i,j) == 0) then				# // 置く場所が角の二つ手前
+							@mMasuStsAnzB[tmpY][tmpX].setOwnEdgeSideTwoCnt(@mMasuStsAnzB[tmpY][tmpX].getOwnEdgeSideTwoCnt() + 1)
+							tmpGoodPoint = 3 * @mMasuStsCntB[i][j]
+						elsif(self.getEdgeSideThree(i,j) == 0) then				# // 置く場所が角の三つ手前
+							@mMasuStsAnzB[tmpY][tmpX].setOwnEdgeSideThreeCnt(@mMasuStsAnzB[tmpY][tmpX].getOwnEdgeSideThreeCnt() + 1)
+							tmpGoodPoint = 2 * @mMasuStsCntB[i][j]
+						else													# // 置く場所がその他
+							@mMasuStsAnzB[tmpY][tmpX].setOwnEdgeSideOtherCnt(@mMasuStsAnzB[tmpY][tmpX].getOwnEdgeSideOtherCnt() + 1)
+							tmpGoodPoint = 1 * @mMasuStsCntB[i][j]
+						end
+						if(tmpMasuEnaB[i][j] != 0) then
+							tmpGoodPoint = 0;									# // ステータス変化していないなら
+						end
+					end
+					if(tmpBadPoint != 0) then
+						@mMasuStsAnzB[tmpY][tmpX].setBadPoint(@mMasuStsAnzB[tmpY][tmpX].getBadPoint() + tmpBadPoint)
+					end
+					if(tmpGoodPoint != 0) then
+						@mMasuStsAnzB[tmpY][tmpX].setGoodPoint(@mMasuStsAnzB[tmpY][tmpX].getGoodPoint() + tmpGoodPoint)
+					end
+				end
+			end
+			# // *** 相手に取られる平均コマ数 *** //
+			if(self.getPointCnt(ReversiConst.REVERSI_STS_WHITE) != 0) then
+				tmpD1 = sum
+				tmpD2 = self.getPointCnt(ReversiConst.REVERSI_STS_WHITE)
+				@mMasuStsAnzB[tmpY][tmpX].setAvg(tmpD1 / tmpD2)
+			end
+
+			# // *** 自分が取れる平均コマ数 *** //
+			if (getPointCnt(ReversiConst.REVERSI_STS_BLACK) != 0) then
+				tmpD1 = sumOwn
+				tmpD2 = self.getPointCnt(ReversiConst.REVERSI_STS_BLACK)
+				@mMasuStsAnzB[tmpY][tmpX].setOwnAvg(tmpD1 / tmpD2)
+			end
+
+			# // *** 元に戻す *** //
+			@mMasuSts = Marshal.load(Marshal.dump(tmpMasu))
+			self.makeMasuSts(ReversiConst.REVERSI_STS_BLACK)
+			self.makeMasuSts(ReversiConst.REVERSI_STS_WHITE)
+		end
+	end
+
 =begin 
-	////////////////////////////////////////////////////////////////////////////////
-	///	@brief			解析を行う(黒)
-	///	@fn				private void AnalysisReversiBlack()
-	///	@return			ありません
-	///	@author			Yuta Yoshinaga
-	///	@date			2018.04.01
-	///
-	////////////////////////////////////////////////////////////////////////////////
-	private void AnalysisReversiBlack()
-	{
-		int tmpX,tmpY,sum,sumOwn,tmpGoodPoint,tmpBadPoint;
-		double tmpD1,tmpD2;
-		for(int cnt = 0;cnt < this.mMasuPointCntB;cnt++){
-			// *** 現在ステータスを一旦コピー *** //
-			int[][] tmpMasu = new int[this.mMasuCntMax][];
-			int[][] tmpMasuEnaB = new int[this.mMasuCntMax][];
-			int[][] tmpMasuEnaW = new int[this.mMasuCntMax][];
-			for (int i = 0; i < this.mMasuCntMax; i++){
-				tmpMasu[i] = new int[this.mMasuSts[i].length];
-				System.arraycopy(this.mMasuSts[i], 0, tmpMasu[i], 0, this.mMasuSts[i].length);
-
-				tmpMasuEnaB[i] = new int[this.mMasuStsEnaB[i].length];
-				System.arraycopy(this.mMasuStsEnaB[i], 0, tmpMasuEnaB[i], 0, this.mMasuStsEnaB[i].length);
-
-				tmpMasuEnaW[i] = new int[this.mMasuStsEnaW[i].length];
-				System.arraycopy(this.mMasuStsEnaW[i], 0, tmpMasuEnaW[i], 0, this.mMasuStsEnaW[i].length);
-			}
-			tmpY = this.mMasuPointB[cnt].getY();
-			tmpX = this.mMasuPointB[cnt].getX();
-			this.mMasuSts[tmpY][tmpX] = ReversiConst.REVERSI_STS_BLACK;			// 仮に置く
-			this.revMasuSts(ReversiConst.REVERSI_STS_BLACK,tmpY,tmpX);			// 仮にひっくり返す
-			this.makeMasuSts(ReversiConst.REVERSI_STS_BLACK);
-			this.makeMasuSts(ReversiConst.REVERSI_STS_WHITE);
-			// *** このマスに置いた場合の解析を行う *** //
-			if(getColorEna(ReversiConst.REVERSI_STS_WHITE) != 0){				// 相手がパス
-				this.mMasuStsPassB[tmpY][tmpX] = 1;
-			}
-			if(this.getEdgeSideZero(tmpY,tmpX) == 0){							// 置いた場所が角
-				this.mMasuStsAnzB[tmpY][tmpX].setOwnEdgeCnt(this.mMasuStsAnzB[tmpY][tmpX].getOwnEdgeCnt() + 1);
-				this.mMasuStsAnzB[tmpY][tmpX].setGoodPoint(this.mMasuStsAnzB[tmpY][tmpX].getGoodPoint() + 10000 * this.mMasuStsCntB[tmpY][tmpX]);
-			}else if(this.getEdgeSideOne(tmpY,tmpX) == 0){						// 置いた場所が角の一つ手前
-				this.mMasuStsAnzB[tmpY][tmpX].setOwnEdgeSideOneCnt(this.mMasuStsAnzB[tmpY][tmpX].getOwnEdgeSideOneCnt() + 1);
-				if(checkEdge(ReversiConst.REVERSI_STS_BLACK,tmpY,tmpX) != 0){	// 角を取られない
-					this.mMasuStsAnzB[tmpY][tmpX].setGoodPoint(this.mMasuStsAnzB[tmpY][tmpX].getGoodPoint() + 10 * this.mMasuStsCntB[tmpY][tmpX]);
-				}else{															// 角を取られる
-					this.mMasuStsAnzB[tmpY][tmpX].setBadPoint(this.mMasuStsAnzB[tmpY][tmpX].getBadPoint() + 100000);
-				}
-			}else if(this.getEdgeSideTwo(tmpY,tmpX) == 0){						// 置いた場所が角の二つ手前
-				this.mMasuStsAnzB[tmpY][tmpX].setOwnEdgeSideTwoCnt(this.mMasuStsAnzB[tmpY][tmpX].getOwnEdgeSideTwoCnt() + 1);
-				this.mMasuStsAnzB[tmpY][tmpX].setGoodPoint(this.mMasuStsAnzB[tmpY][tmpX].getGoodPoint() + 1000 * this.mMasuStsCntB[tmpY][tmpX]);
-			}else if(this.getEdgeSideThree(tmpY,tmpX) == 0){					// 置いた場所が角の三つ手前
-				this.mMasuStsAnzB[tmpY][tmpX].setOwnEdgeSideThreeCnt(this.mMasuStsAnzB[tmpY][tmpX].getOwnEdgeSideThreeCnt() + 1);
-				this.mMasuStsAnzB[tmpY][tmpX].setGoodPoint(this.mMasuStsAnzB[tmpY][tmpX].getGoodPoint() + 100 * this.mMasuStsCntB[tmpY][tmpX]);
-			}else{																// 置いた場所がその他
-				this.mMasuStsAnzB[tmpY][tmpX].setOwnEdgeSideOtherCnt(this.mMasuStsAnzB[tmpY][tmpX].getOwnEdgeSideOtherCnt() + 1);
-				this.mMasuStsAnzB[tmpY][tmpX].setGoodPoint(this.mMasuStsAnzB[tmpY][tmpX].getGoodPoint() + 10 * this.mMasuStsCntB[tmpY][tmpX]);
-			}
-			sum = 0;
-			sumOwn = 0;
-			for(int i = 0;i < this.mMasuCnt;i++){
-				for(int j = 0;j < this.mMasuCnt;j++){
-					tmpBadPoint = 0;
-					tmpGoodPoint = 0;
-					if(this.getMasuStsEna(ReversiConst.REVERSI_STS_WHITE,i,j) != 0){
-						sum += this.mMasuStsCntW[i][j];							// 相手の獲得予定枚数
-						// *** 相手の獲得予定の最大数保持 *** //
-						if(this.mMasuStsAnzB[tmpY][tmpX].getMax() < this.mMasuStsCntW[i][j]) this.mMasuStsAnzB[tmpY][tmpX].setMax(this.mMasuStsCntW[i][j]);
-						// *** 相手の獲得予定の最小数保持 *** //
-						if(this.mMasuStsCntW[i][j] < this.mMasuStsAnzB[tmpY][tmpX].getMin()) this.mMasuStsAnzB[tmpY][tmpX].setMin(this.mMasuStsCntW[i][j]);
-						this.mMasuStsAnzB[tmpY][tmpX].setPointCnt(this.mMasuStsAnzB[tmpY][tmpX].getPointCnt() + 1);			// 相手の置ける場所の数
-						if(this.getEdgeSideZero(i,j) == 0){						// 置く場所が角
-							this.mMasuStsAnzB[tmpY][tmpX].setEdgeCnt(this.mMasuStsAnzB[tmpY][tmpX].getEdgeCnt() + 1);
-							tmpBadPoint = 100000 * this.mMasuStsCntW[i][j];
-						}else if(this.getEdgeSideOne(i,j) == 0){				// 置く場所が角の一つ手前
-							this.mMasuStsAnzB[tmpY][tmpX].setEdgeSideOneCnt(this.mMasuStsAnzB[tmpY][tmpX].getEdgeSideOneCnt() + 1);
-							tmpBadPoint = 0;
-						}else if(this.getEdgeSideTwo(i,j) == 0){				// 置く場所が角の二つ手前
-							this.mMasuStsAnzB[tmpY][tmpX].setEdgeSideTwoCnt(this.mMasuStsAnzB[tmpY][tmpX].getEdgeSideTwoCnt() + 1);
-							tmpBadPoint = 1 * this.mMasuStsCntW[i][j];
-						}else if(this.getEdgeSideThree(i,j) == 0){				// 置く場所が角の三つ手前
-							this.mMasuStsAnzB[tmpY][tmpX].setEdgeSideThreeCnt(this.mMasuStsAnzB[tmpY][tmpX].getEdgeSideThreeCnt() + 1);
-							tmpBadPoint = 1 * this.mMasuStsCntW[i][j];
-						}else{													// 置く場所がその他
-							this.mMasuStsAnzB[tmpY][tmpX].setEdgeSideOtherCnt(this.mMasuStsAnzB[tmpY][tmpX].getEdgeSideOtherCnt() + 1);
-							tmpBadPoint = 1 * this.mMasuStsCntW[i][j];
-						}
-						if(tmpMasuEnaW[i][j] != 0) tmpBadPoint = 0;				// ステータス変化していないなら
-					}
-					if(this.getMasuStsEna(ReversiConst.REVERSI_STS_BLACK,i,j) != 0){
-						sumOwn += this.mMasuStsCntB[i][j];						// 自分の獲得予定枚数
-						// *** 自分の獲得予定の最大数保持 *** //
-						if(this.mMasuStsAnzB[tmpY][tmpX].getOwnMax() < this.mMasuStsCntB[i][j]) this.mMasuStsAnzB[tmpY][tmpX].setOwnMax(this.mMasuStsCntB[i][j]);
-						// *** 自分の獲得予定の最小数保持 *** //
-						if(this.mMasuStsCntB[i][j] < this.mMasuStsAnzB[tmpY][tmpX].getOwnMin()) this.mMasuStsAnzB[tmpY][tmpX].setOwnMin(this.mMasuStsCntB[i][j]);
-						this.mMasuStsAnzB[tmpY][tmpX].setOwnPointCnt(this.mMasuStsAnzB[tmpY][tmpX].getOwnPointCnt() + 1);	// 自分の置ける場所の数
-						if(this.getEdgeSideZero(i,j) == 0){						// 置く場所が角
-							this.mMasuStsAnzB[tmpY][tmpX].setOwnEdgeCnt(this.mMasuStsAnzB[tmpY][tmpX].getOwnEdgeCnt() + 1);
-							tmpGoodPoint = 100 * this.mMasuStsCntB[i][j];
-						}else if(this.getEdgeSideOne(i,j) == 0){				// 置く場所が角の一つ手前
-							this.mMasuStsAnzB[tmpY][tmpX].setOwnEdgeSideOneCnt(this.mMasuStsAnzB[tmpY][tmpX].getOwnEdgeSideOneCnt() + 1);
-							tmpGoodPoint = 0;
-						}else if(this.getEdgeSideTwo(i,j) == 0){				// 置く場所が角の二つ手前
-							this.mMasuStsAnzB[tmpY][tmpX].setOwnEdgeSideTwoCnt(this.mMasuStsAnzB[tmpY][tmpX].getOwnEdgeSideTwoCnt() + 1);
-							tmpGoodPoint = 3 * this.mMasuStsCntB[i][j];
-						}else if(this.getEdgeSideThree(i,j) == 0){				// 置く場所が角の三つ手前
-							this.mMasuStsAnzB[tmpY][tmpX].setOwnEdgeSideThreeCnt(this.mMasuStsAnzB[tmpY][tmpX].getOwnEdgeSideThreeCnt() + 1);
-							tmpGoodPoint = 2 * this.mMasuStsCntB[i][j];
-						}else{													// 置く場所がその他
-							this.mMasuStsAnzB[tmpY][tmpX].setOwnEdgeSideOtherCnt(this.mMasuStsAnzB[tmpY][tmpX].getOwnEdgeSideOtherCnt() + 1);
-							tmpGoodPoint = 1 * this.mMasuStsCntB[i][j];
-						}
-						if(tmpMasuEnaB[i][j] != 0) tmpGoodPoint = 0;			// ステータス変化していないなら
-					}
-					if(tmpBadPoint != 0)	this.mMasuStsAnzB[tmpY][tmpX].setBadPoint(this.mMasuStsAnzB[tmpY][tmpX].getBadPoint()	+ tmpBadPoint);
-					if(tmpGoodPoint != 0)	this.mMasuStsAnzB[tmpY][tmpX].setGoodPoint(this.mMasuStsAnzB[tmpY][tmpX].getGoodPoint() + tmpGoodPoint);
-				}
-			}
-			// *** 相手に取られる平均コマ数 *** //
-			if(getPointCnt(ReversiConst.REVERSI_STS_WHITE) != 0){
-				tmpD1 = (double)sum;
-				tmpD2 = (double)getPointCnt(ReversiConst.REVERSI_STS_WHITE);
-				this.mMasuStsAnzB[tmpY][tmpX].setAvg(tmpD1 / tmpD2);
-			}
-
-			// *** 自分が取れる平均コマ数 *** //
-			if(getPointCnt(ReversiConst.REVERSI_STS_BLACK) != 0){
-				tmpD1 = (double)sumOwn;
-				tmpD2 = (double)getPointCnt(ReversiConst.REVERSI_STS_BLACK);
-				this.mMasuStsAnzB[tmpY][tmpX].setOwnAvg(tmpD1 / tmpD2);
-			}
-
-			// *** 元に戻す *** //
-			for (int i = 0; i < this.mMasuCntMax; i++){
-				System.arraycopy(tmpMasu[i], 0, this.mMasuSts[i], 0, this.mMasuSts[i].length);
-			}
-			this.makeMasuSts(ReversiConst.REVERSI_STS_BLACK);
-			this.makeMasuSts(ReversiConst.REVERSI_STS_WHITE);
-		}
-	}
-
 	////////////////////////////////////////////////////////////////////////////////
 	///	@brief			解析を行う(白)
 	///	@fn				private void AnalysisReversiWhite()
