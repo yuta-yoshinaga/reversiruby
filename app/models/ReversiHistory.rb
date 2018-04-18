@@ -46,8 +46,8 @@ class ReversiHistory
 	# ///
 	# ////////////////////////////////////////////////////////////////////////////////
 	def reset
-		@point.setX(-1)
-		@point.setY(-1)
+		@point.x = -1
+		@point.y = -1
 		@color = -1
 	end
 end
