@@ -66,7 +66,8 @@ class Reversi
 				@mMasuStsAnzB[i][j] = new ReversiAnz()
 			end
 		end
-		@mMasuPointB	= Array.new(@mMasuCntMax).map{Array.new(@mMasuCntMax,nil)}
+		#@mMasuPointB	= Array.new(@mMasuCntMax).map{Array.new(@mMasuCntMax,nil)}
+		@mMasuPointB	= Array.new(@mMasuCntMax,nil)
 		for i in 0..((@mMasuCntMax * @mMasuCntMax) - 1) do
 			@mMasuPointB[i] = new ReversiPoint()
 		end
@@ -80,14 +81,16 @@ class Reversi
 				@mMasuStsAnzW[i][j] = new ReversiAnz()
 			end
 		end
-		@mMasuPointW	= Array.new(@mMasuCntMax).map{Array.new(@mMasuCntMax,nil)}
+		#@mMasuPointW	= Array.new(@mMasuCntMax).map{Array.new(@mMasuCntMax,nil)}
+		@mMasuPointW	= Array.new(@mMasuCntMax,nil)
 		for i in 0..((@mMasuCntMax * @mMasuCntMax) - 1) do
 			@mMasuPointW[i] = new ReversiPoint()
 		end
 		@mMasuPointCntW	= 0;
 		@mMasuBetCntB	= 0;
 		@mMasuBetCntW	= 0;
-		@mMasuHist		= Array.new(@mMasuCntMax).map{Array.new(@mMasuCntMax,nil)}
+		#@mMasuHist		= Array.new(@mMasuCntMax).map{Array.new(@mMasuCntMax,nil)}
+		@mMasuHist		= Array.new(@mMasuCntMax,nil)
 		for i in 0..((@mMasuCntMax * @mMasuCntMax) - 1) do
 			@mMasuHist[i] = new ReversiHistory()
 		end
