@@ -30,7 +30,6 @@ class ReversiPlay
 	attr_accessor :mPassEnaW								# //!< 白のパス有効フラグ
 	attr_accessor :mGameEndSts								# //!< ゲーム終了ステータス
 	attr_accessor :mPlayLock								# //!< プレイロック
-	attr_accessor :r										# //!< 乱数
 	attr_accessor :mDelegate								# //!< デリゲート
 
 	# ////////////////////////////////////////////////////////////////////////////////
@@ -55,847 +54,878 @@ class ReversiPlay
 		@mPassEnaW	= 0
 		@mGameEndSts= 0
 		@mPlayLock	= 0
-		@r			= new Random()
 		@mDelegate	= nil
 	end
 
-=begin
-	////////////////////////////////////////////////////////////////////////////////
-	///	@brief			リバーシプレイ
-	///	@fn				void reversiPlay(int y, int x)
-	///	@param[in]		int y			Y座標
-	///	@param[in]		int x			X座標
-	///	@return			ありません
-	///	@author			Yuta Yoshinaga
-	///	@date			2018.04.01
-	///
-	////////////////////////////////////////////////////////////////////////////////
-	public void reversiPlay(int y, int x)
-	{
-		int update = 0;
-		int cpuEna = 0;
-		int tmpCol = this.mCurColor;
-		int pass = 0;
+	# ////////////////////////////////////////////////////////////////////////////////
+	# ///	@brief			リバーシプレイ
+	# ///	@fn				reversiPlay(y, x)
+	# ///	@param[in]		y			Y座標
+	# ///	@param[in]		x			X座標
+	# ///	@return			ありません
+	# ///	@author			Yuta Yoshinaga
+	# ///	@date			2018.04.01
+	# ///
+	# ////////////////////////////////////////////////////////////////////////////////
+	def reversiPlay(y, x)
+		update = 0
+		cpuEna = 0
+		tmpCol = this.mCurColor
+		pass = 0
 
-		if(this.mPlayLock == 1) return;
-		this.mPlayLock = 1;
-		if (this.mReversi.getColorEna(this.mCurColor) == 0) {
-			if (this.mReversi.setMasuSts(this.mCurColor, y, x) == 0) {
-				if (this.mSetting.getmType() == ReversiConst.DEF_TYPE_HARD) this.mReversi.AnalysisReversi(this.mPassEnaB, this.mPassEnaW);
-				if (this.mSetting.getmAssist() == ReversiConst.DEF_ASSIST_ON) {
-					// *** メッセージ送信 *** //
-					this.execMessage(ReversiConst.LC_MSG_ERASE_INFO_ALL, null);
-				}
-				this.sendDrawMsg(y, x);														// 描画
-				this.drawUpdate(ReversiConst.DEF_ASSIST_OFF);								// その他コマ描画
-				if (this.mReversi.getGameEndSts() == 0) {
-					if (tmpCol == ReversiConst.REVERSI_STS_BLACK) tmpCol = ReversiConst.REVERSI_STS_WHITE;
-					else tmpCol = ReversiConst.REVERSI_STS_BLACK;
-					if (this.mReversi.getColorEna(tmpCol) == 0) {
-						if (this.mSetting.getmMode() == ReversiConst.DEF_MODE_ONE) {		// CPU対戦
-							cpuEna = 1;
-						} else {															// 二人対戦
-							this.mCurColor = tmpCol;
-							this.drawUpdate(this.mSetting.getmAssist());					// 次のプレイヤーコマ描画
-						}
-					} else {
-						// *** パスメッセージ *** //
-						this.reversiPlayPass(tmpCol);
-						pass = 1;
-					}
-				} else {
-					// *** ゲーム終了メッセージ *** //
-					this.reversiPlayEnd();
-				}
-				update = 1;
-			} else {
-				// *** エラーメッセージ *** //
-				this.ViewMsgDlgLocal("エラー", "そのマスには置けません。");
-			}
-		} else {
-			if (this.mReversi.getGameEndSts() == 0) {
-				if (tmpCol == ReversiConst.REVERSI_STS_BLACK) tmpCol = ReversiConst.REVERSI_STS_WHITE;
-				else tmpCol = ReversiConst.REVERSI_STS_BLACK;
-				if (this.mReversi.getColorEna(tmpCol) == 0) {
-					if (this.mSetting.getmMode() == ReversiConst.DEF_MODE_ONE) {			// CPU対戦
-						update = 1;
-						cpuEna = 1;
-					} else {																// 二人対戦
-						this.mCurColor = tmpCol;
-					}
-				} else {
-					// *** パスメッセージ *** //
-					this.reversiPlayPass(tmpCol);
-					pass = 1;
-				}
-			} else {
-				// *** ゲーム終了メッセージ *** //
-				this.reversiPlayEnd();
-			}
-		}
-		if (pass == 1) {
-			if (this.mSetting.getmMode() == ReversiConst.DEF_MODE_ONE) {					// CPU対戦
-				if (this.mSetting.getmAssist() == ReversiConst.DEF_ASSIST_ON) {
-					// *** メッセージ送信 *** //
-					this.execMessage(ReversiConst.LC_MSG_DRAW_INFO_ALL, null);
-				}
-			}
-		}
-		if (update == 1) {
-			int waitTime = 0;
-			if (cpuEna == 1) {
-				waitTime = this.mSetting.getmPlayCpuInterVal();
-			}
-			this.WaitLocal(waitTime);
-			this.reversiPlaySub(cpuEna, tmpCol);
-			this.mPlayLock = 0;
-		}else{
-			this.mPlayLock = 0;
-		}
-	}
+		if (@mPlayLock == 1) then
+			return
+		end
+		@mPlayLock = 1;
+		if (@mReversi.getColorEna(@mCurColor) == 0) then
+			if (@mReversi.setMasuSts(@mCurColor, y, x) == 0) then
+				if (@mSetting.getmType() == ReversiConst.DEF_TYPE_HARD)
+					@mReversi.AnalysisReversi(@mPassEnaB, @mPassEnaW)
+				end
+				if (@mSetting.getmAssist() == ReversiConst.DEF_ASSIST_ON) then
+					# // *** メッセージ送信 *** //
+					self.execMessage(ReversiConst.LC_MSG_ERASE_INFO_ALL, nil)
+				end
+				self.sendDrawMsg(y, x)														# // 描画
+				self.drawUpdate(ReversiConst.DEF_ASSIST_OFF)								# // その他コマ描画
+				if (@mReversi.getGameEndSts() == 0) then
+					if (tmpCol == ReversiConst.REVERSI_STS_BLACK) then
+						tmpCol = ReversiConst.REVERSI_STS_WHITE
+					else
+						tmpCol = ReversiConst.REVERSI_STS_BLACK
+					end
+					if (@mReversi.getColorEna(tmpCol) == 0) then
+						if (@mSetting.getmMode() == ReversiConst.DEF_MODE_ONE) then			# // CPU対戦
+							cpuEna = 1
+						else																# // 二人対戦
+							@mCurColor = tmpCol
+							self.drawUpdate(@mSetting.getmAssist())							# // 次のプレイヤーコマ描画
+						end
+					else
+						# // *** パスメッセージ *** //
+						self.reversiPlayPass(tmpCol)
+						pass = 1
+					end
+				else
+					# // *** ゲーム終了メッセージ *** //
+					self.reversiPlayEnd()
+				end
+				update = 1
+			else
+				# // *** エラーメッセージ *** //
+				self.ViewMsgDlgLocal("エラー", "そのマスには置けません。")
+			end
+		else
+			if (@mReversi.getGameEndSts() == 0) then
+				if (tmpCol == ReversiConst.REVERSI_STS_BLACK) then
+					tmpCol = ReversiConst.REVERSI_STS_WHITE
+				else
+					tmpCol = ReversiConst.REVERSI_STS_BLACK
+				end
+				if (@mReversi.getColorEna(tmpCol) == 0) then
+					if (@mSetting.getmMode() == ReversiConst.DEF_MODE_ONE) then				# // CPU対戦
+						update = 1
+						cpuEna = 1
+					else																	# // 二人対戦
+						@mCurColor = tmpCol
+					end
+				else
+					# // *** パスメッセージ *** //
+					self.reversiPlayPass(tmpCol)
+					pass = 1
+				end
+			else
+				# // *** ゲーム終了メッセージ *** //
+				self.reversiPlayEnd()
+			end
+		end
+		if (pass == 1) then
+			if (@mSetting.getmMode() == ReversiConst.DEF_MODE_ONE) then						# // CPU対戦
+				if (@mSetting.getmAssist() == ReversiConst.DEF_ASSIST_ON) then
+					# // *** メッセージ送信 *** //
+					self.execMessage(ReversiConst.LC_MSG_DRAW_INFO_ALL, nil)
+				end
+			end
+		end
+		if (update == 1) then
+			waitTime = 0
+			if (cpuEna == 1) then
+				waitTime = @mSetting.getmPlayCpuInterVal()
+			end
+			self.WaitLocal(waitTime)
+			self.reversiPlaySub(cpuEna, tmpCol)
+			@mPlayLock = 0
+		else
+			@mPlayLock = 0
+		end
+	end
 
-	////////////////////////////////////////////////////////////////////////////////
-	///	@brief			リバーシプレイサブ
-	///	@fn				void reversiPlaySub(int cpuEna, int tmpCol)
-	///	@param[in]		int cpuEna
-	///	@param[in]		int tmpCol
-	///	@return			ありません
-	///	@author			Yuta Yoshinaga
-	///	@date			2018.04.01
-	///
-	////////////////////////////////////////////////////////////////////////////////
-	public void reversiPlaySub(int cpuEna, int tmpCol)
-	{
-		int ret;
-		for (; ;) {
-			ret = this.reversiPlayCpu(tmpCol, cpuEna);
-			cpuEna = 0;
-			if (ret == 1) {
-				if (this.mReversi.getGameEndSts() == 0) {
-					if (this.mReversi.getColorEna(this.mCurColor) != 0) {
-						// *** パスメッセージ *** //
-						this.reversiPlayPass(this.mCurColor);
-						cpuEna = 1;
-					}
-				} else {
-					// *** ゲーム終了メッセージ *** //
-					this.reversiPlayEnd();
-				}
-			}
-			if (cpuEna == 0) break;
-		}
-	}
+	# ////////////////////////////////////////////////////////////////////////////////
+	# ///	@brief			リバーシプレイサブ
+	# ///	@fn				reversiPlaySub(cpuEna, tmpCol)
+	# ///	@param[in]		cpuEna
+	# ///	@param[in]		tmpCol
+	# ///	@return			ありません
+	# ///	@author			Yuta Yoshinaga
+	# ///	@date			2018.04.01
+	# ///
+	# ////////////////////////////////////////////////////////////////////////////////
+	def reversiPlaySub(cpuEna, tmpCol)
+		ret = 0
+		loop do
+			ret = self.reversiPlayCpu(tmpCol, cpuEna)
+			cpuEna = 0
+			if (ret == 1) then
+				if (@mReversi.getGameEndSts() == 0) then
+					if (@mReversi.getColorEna(@mCurColor) != 0) then
+						# // *** パスメッセージ *** //
+						self.reversiPlayPass(@mCurColor)
+						cpuEna = 1
+					end
+				else
+					# // *** ゲーム終了メッセージ *** //
+					self.reversiPlayEnd()
+				end
+			end
+			if (cpuEna == 0) then
+				break
+			end
+		end
+	end
 
-	////////////////////////////////////////////////////////////////////////////////
-	///	@brief			リバーシプレイ終了
-	///	@fn				void reversiPlayEnd()
-	///	@return			ありません
-	///	@author			Yuta Yoshinaga
-	///	@date			2018.04.01
-	///
-	////////////////////////////////////////////////////////////////////////////////
-	public void reversiPlayEnd()
-	{
-		if (this.mGameEndSts == 0) {
-			this.mGameEndSts = 1;
-			int waitTime = this.gameEndAnimExec();					// 終了アニメ実行
-			this.mPlayLock = 1;
-			this.WaitLocal(waitTime);
-			// *** ゲーム終了メッセージ *** //
-			String tmpMsg1, tmpMsg2, msgStr;
-			int blk, whi;
-			blk = this.mReversi.getBetCnt(ReversiConst.REVERSI_STS_BLACK);
-			whi = this.mReversi.getBetCnt(ReversiConst.REVERSI_STS_WHITE);
-			tmpMsg1 = "プレイヤー1 = " + blk + " プレイヤー2 = " + whi;
-			if (this.mSetting.getmMode() == ReversiConst.DEF_MODE_ONE) {
-				if (whi == blk) tmpMsg2 = "引き分けです。";
-				else if (whi < blk) {
-					if (this.mCurColor == ReversiConst.REVERSI_STS_BLACK) tmpMsg2 = "あなたの勝ちです。";
-					else tmpMsg2 = "あなたの負けです。";
-				} else {
-					if (this.mCurColor == ReversiConst.REVERSI_STS_WHITE) tmpMsg2 = "あなたの勝ちです。";
-					else tmpMsg2 = "あなたの負けです。";
-				}
-			} else {
-				if (whi == blk) tmpMsg2 = "引き分けです。";
-				else if (whi < blk) tmpMsg2 = "プレイヤー1の勝ちです。";
-				else tmpMsg2 = "プレイヤー2の勝ちです。";
-			}
-			msgStr = tmpMsg1 + tmpMsg2;
-			this.ViewMsgDlgLocal("ゲーム終了", msgStr);
+	# ////////////////////////////////////////////////////////////////////////////////
+	# ///	@brief			リバーシプレイ終了
+	# ///	@fn				reversiPlayEnd()
+	# ///	@return			ありません
+	# ///	@author			Yuta Yoshinaga
+	# ///	@date			2018.04.01
+	# ///
+	# ////////////////////////////////////////////////////////////////////////////////
+	def reversiPlayEnd()
+		if (@mGameEndSts == 0) then
+			@mGameEndSts = 1;
+			waitTime = self.gameEndAnimExec()					# // 終了アニメ実行
+			@mPlayLock = 1
+			self.WaitLocal(waitTime)
+			# // *** ゲーム終了メッセージ *** //
+			blk = @mReversi.getBetCnt(ReversiConst.REVERSI_STS_BLACK)
+			whi = @mReversi.getBetCnt(ReversiConst.REVERSI_STS_WHITE)
+			tmpMsg1 = "プレイヤー1 = " + blk + " プレイヤー2 = " + whi
+			if (@mSetting.getmMode() == ReversiConst.DEF_MODE_ONE) then
+				if (whi == blk) then
+					tmpMsg2 = "引き分けです。"
+				elsif (whi < blk) then
+					if (@mCurColor == ReversiConst.REVERSI_STS_BLACK) then
+						tmpMsg2 = "あなたの勝ちです。"
+					else
+						tmpMsg2 = "あなたの負けです。"
+					end
+				else
+					if (@mCurColor == ReversiConst.REVERSI_STS_WHITE) then
+						tmpMsg2 = "あなたの勝ちです。"
+					else
+						tmpMsg2 = "あなたの負けです。"
+					end
+				end
+			else
+				if (whi == blk) then
+					tmpMsg2 = "引き分けです。"
+				elsif (whi < blk) then
+					tmpMsg2 = "プレイヤー1の勝ちです。"
+				else
+					tmpMsg2 = "プレイヤー2の勝ちです。"
+				end
+			end
+			msgStr = tmpMsg1 + tmpMsg2
+			self.ViewMsgDlgLocal("ゲーム終了", msgStr)
+			if (@mSetting.getmEndAnim() == ReversiConst.DEF_END_ANIM_ON) then
+				# // *** メッセージ送信 *** //
+				self.execMessage(ReversiConst.LC_MSG_CUR_COL, nil)
+				# // *** メッセージ送信 *** //
+				self.execMessage(ReversiConst.LC_MSG_CUR_STS, nil)
+			end
+		end
+	end
 
-			if (this.mSetting.getmEndAnim() == ReversiConst.DEF_END_ANIM_ON) {
-				// *** メッセージ送信 *** //
-				this.execMessage(ReversiConst.LC_MSG_CUR_COL, null);
-				// *** メッセージ送信 *** //
-				this.execMessage(ReversiConst.LC_MSG_CUR_STS, null);
-			}
-		}
-	}
+	# ////////////////////////////////////////////////////////////////////////////////
+	# ///	@brief			リバーシプレイパス
+	# ///	@fn				reversiPlayPass(color)
+	# ///	@param[in]		color		パス色
+	# ///	@return			ありません
+	# ///	@author			Yuta Yoshinaga
+	# ///	@date			2018.04.01
+	# ///
+	# ////////////////////////////////////////////////////////////////////////////////
+	def reversiPlayPass(color)
+		# // *** パスメッセージ *** //
+		if (@mSetting.getmMode() == ReversiConst.DEF_MODE_ONE) then
+			if (color == @mCurColor) then
+				self.ViewMsgDlgLocal("", "あなたはパスです。")
+			else
+				self.ViewMsgDlgLocal("", "CPUはパスです。")
+			end
+		else
+			if (color == ReversiConst.REVERSI_STS_BLACK) then
+				self.ViewMsgDlgLocal("", "プレイヤー1はパスです。")
+			else
+				self.ViewMsgDlgLocal("", "プレイヤー2はパスです。")
+			end
+		end
+	end
 
-	////////////////////////////////////////////////////////////////////////////////
-	///	@brief			リバーシプレイパス
-	///	@fn				void reversiPlayPass(int color)
-	///	@param[in]		int color		パス色
-	///	@return			ありません
-	///	@author			Yuta Yoshinaga
-	///	@date			2018.04.01
-	///
-	////////////////////////////////////////////////////////////////////////////////
-	public void reversiPlayPass(int color)
-	{
-		// *** パスメッセージ *** //
-		if (this.mSetting.getmMode() == ReversiConst.DEF_MODE_ONE) {
-			if (color == this.mCurColor) this.ViewMsgDlgLocal("", "あなたはパスです。");
-			else this.ViewMsgDlgLocal("", "CPUはパスです。");
-		} else {
-			if (color == ReversiConst.REVERSI_STS_BLACK) this.ViewMsgDlgLocal("", "プレイヤー1はパスです。");
-			else this.ViewMsgDlgLocal("", "プレイヤー2はパスです。");
-		}
-	}
+	# ////////////////////////////////////////////////////////////////////////////////
+	# ///	@brief			リバーシプレイコンピューター
+	# ///	@fn				reversiPlayCpu(color, cpuEna)
+	# ///	@param[in]		color		CPU色
+	# ///	@param[in]		cpuEna		CPU有効フラグ
+	# ///	@return			ありません
+	# ///	@author			Yuta Yoshinaga
+	# ///	@date			2018.04.01
+	# ///
+	# ////////////////////////////////////////////////////////////////////////////////
+	def reversiPlayCpu(color, cpuEna)
+		update = 0
+		setY = 0
+		setX = 0
 
-	////////////////////////////////////////////////////////////////////////////////
-	///	@brief			リバーシプレイコンピューター
-	///	@fn				int reversiPlayCpu(int color, int cpuEna)
-	///	@param[in]		int color		CPU色
-	///	@param[in]		int cpuEna		CPU有効フラグ
-	///	@return			ありません
-	///	@author			Yuta Yoshinaga
-	///	@date			2018.04.01
-	///
-	////////////////////////////////////////////////////////////////////////////////
-	public int reversiPlayCpu(int color, int cpuEna)
-	{
-		int update = 0;
-		int setY;
-		int setX;
+		loop do
+			if (cpuEna == 1) then
+				cpuEna = 0
+				# // *** CPU対戦 *** //
+				pCnt = @mReversi.getPointCnt(color)
+				pInfo = @mReversi.getPoint(color, rand(pCnt))
+				if (pInfo != nil) then
+					setY = pInfo.y
+					setX = pInfo.x
+					if (@mSetting.getmType() != ReversiConst.DEF_TYPE_EASY) then	# // 強いコンピューター
+						cpuflg0 = 0
+						cpuflg1 = 0
+						cpuflg2 = 0
+						cpuflg3 = 0
+						mem = -1
+						mem2 = -1
+						mem3 = -1
+						mem4 = -1
+						rcnt1 = 0
+						rcnt2 = 0
+						kadocnt = 0
+						loop1 = @mSetting.getmMasuCnt() * @mSetting.getmMasuCnt()
+						pcnt = 0
+						passCnt = 0
+						if (color == ReversiConst.REVERSI_STS_BLACK) then
+							othColor = ReversiConst.REVERSI_STS_WHITE
+						else
+							othColor = ReversiConst.REVERSI_STS_BLACK
+						end
+						othBet = this.mReversi.getBetCnt(othColor)					# // 対戦相手のコマ数
+						ownBet = this.mReversi.getBetCnt(color)						# // 自分のコマ数
+						endZone = 0
+						if ((loop1 - (othBet + ownBet)) <= 16) then
+							endZone = 1												# // ゲーム終盤フラグON
+						end
+						for i in 0..(loop1 - 1) do
+							this.mCpu[i].x = 0
+							this.mCpu[i].y = 0
+							this.mEdge[i].x = 0
+							this.mEdge[i].y = 0
+						end
 
-		for (; ;) {
-			if (cpuEna == 1) {
-				cpuEna = 0;
-				// *** CPU対戦 *** //
-				int pCnt = this.mReversi.getPointCnt(color);
-				ReversiPoint pInfo = this.mReversi.getPoint(color, r.nextInt(pCnt));
-				if (pInfo != null) {
-					setY = pInfo.getY();
-					setX = pInfo.getX();
-					if (this.mSetting.getmType() != ReversiConst.DEF_TYPE_EASY) {	// 強いコンピューター
-						int cpuflg0, cpuflg1, cpuflg2, cpuflg3, mem, mem2, mem3, mem4, rcnt1, rcnt2, kadocnt, loop, pcnt, passCnt, othColor, othBet, ownBet, endZone;
-						cpuflg0 = 0;
-						cpuflg1 = 0;
-						cpuflg2 = 0;
-						cpuflg3 = 0;
-						mem = -1;
-						mem2 = -1;
-						mem3 = -1;
-						mem4 = -1;
-						rcnt1 = 0;
-						rcnt2 = 0;
-						kadocnt = 0;
-						loop = this.mSetting.getmMasuCnt() * this.mSetting.getmMasuCnt();
-						pcnt = 0;
-						passCnt = 0;
-						if (color == ReversiConst.REVERSI_STS_BLACK) othColor = ReversiConst.REVERSI_STS_WHITE;
-						else othColor = ReversiConst.REVERSI_STS_BLACK;
-						othBet = this.mReversi.getBetCnt(othColor);					// 対戦相手のコマ数
-						ownBet = this.mReversi.getBetCnt(color);					// 自分のコマ数
-						endZone = 0;
-						if ((loop - (othBet + ownBet)) <= 16) endZone = 1;			// ゲーム終盤フラグON
-						for (int i = 0; i < loop; i++) {
-							this.mCpu[i].setX(0);
-							this.mCpu[i].setY (0);
-							this.mEdge[i].setX(0);
-							this.mEdge[i].setY(0);
-						}
+						for i in 0..(@mSetting.getmMasuCnt() - 1) do
+							for j in 0..(@mSetting.getmMasuCnt() - 1) do
+								if (@mReversi.getMasuStsEna(color, i, j) != 0) then
+									# // *** 角の一つ手前なら別のとこに格納 *** //
+									if (@mReversi.getEdgeSideOne(i, j) == 0) then
+										@mEdge[kadocnt].x = j
+										@mEdge[kadocnt].y = i
+										kadocnt += 1
+									else
+										this.mCpu[rcnt1].x = j
+										this.mCpu[rcnt1].y = i
+										rcnt1 += 1
+									end
+									if (@mSetting.getmType() == ReversiConst.DEF_TYPE_NOR) then
+										# // *** 角に置けるなら優先的にとらせるため場所を記憶させる *** //
+										if (@mReversi.getEdgeSideZero(i, j) == 0) then
+											cpuflg1 = 1
+											rcnt2 = (rcnt1 - 1)
+										end
+										# // *** 角の二つ手前も優先的にとらせるため場所を記憶させる *** //
+										if (cpuflg1 == 0) then
+											if (@mReversi.getEdgeSideTwo(i, j) == 0) then
+												cpuflg2 = 1
+												rcnt2 = (rcnt1 - 1)
+											end
+										end
+										# // *** 角の三つ手前も優先的にとらせるため場所を記憶させる *** //
+										if (cpuflg1 == 0 && cpuflg2 == 0) then
+											if (@mReversi.getEdgeSideThree(i, j) == 0) then
+												cpuflg0 = 1
+												rcnt2 = (rcnt1 - 1)
+											end
+										end
+									end
+									# // *** パーフェクトゲームなら *** //
+									if (@mReversi.getMasuStsCnt(color, i, j) == othBet) then
+										setY = i
+										setX = j
+										pcnt = 1
+									end
+									# // *** 相手をパスさせるなら *** //
+									if (pcnt == 0) then
+										if (@mReversi.getPassEna(color, i, j) != 0) then
+											setY = i
+											setX = j
+											passCnt = 1
+										end
+									end
+								end
+							end
+						end
 
-						for (int i = 0; i < this.mSetting.getmMasuCnt(); i++) {
-							for (int j = 0; j < this.mSetting.getmMasuCnt(); j++) {
-								if (this.mReversi.getMasuStsEna(color, i, j) != 0) {
-									// *** 角の一つ手前なら別のとこに格納 *** //
-									if (this.mReversi.getEdgeSideOne(i, j) == 0) {
-										this.mEdge[kadocnt].setX(j);
-										this.mEdge[kadocnt].setY(i);
-										kadocnt++;
-									} else {
-										this.mCpu[rcnt1].setX(j);
-										this.mCpu[rcnt1].setY(i);
-										rcnt1++;
-									}
-									if (this.mSetting.getmType() == ReversiConst.DEF_TYPE_NOR) {
-										// *** 角に置けるなら優先的にとらせるため場所を記憶させる *** //
-										if (this.mReversi.getEdgeSideZero(i, j) == 0) {
-											cpuflg1 = 1;
-											rcnt2 = (rcnt1 - 1);
-										}
-										// *** 角の二つ手前も優先的にとらせるため場所を記憶させる *** //
-										if (cpuflg1 == 0) {
-											if (this.mReversi.getEdgeSideTwo(i, j) == 0) {
-												cpuflg2 = 1;
-												rcnt2 = (rcnt1 - 1);
-											}
-										}
-										// *** 角の三つ手前も優先的にとらせるため場所を記憶させる *** //
-										if (cpuflg1 == 0 && cpuflg2 == 0) {
-											if (this.mReversi.getEdgeSideThree(i, j) == 0) {
-												cpuflg0 = 1;
-												rcnt2 = (rcnt1 - 1);
-											}
-										}
-									}
-									// *** パーフェクトゲームなら *** //
-									if (this.mReversi.getMasuStsCnt(color, i, j) == othBet) {
-										setY = i;
-										setX = j;
-										pcnt = 1;
-									}
-									// *** 相手をパスさせるなら *** //
-									if (pcnt == 0) {
-										if (this.mReversi.getPassEna(color, i, j) != 0) {
-											setY = i;
-											setX = j;
-											passCnt = 1;
-										}
-									}
-								}
-							}
-						}
+						if (pcnt == 0 && passCnt == 0) then
+							badPoint = -1
+							goodPoint = -1
+							pointCnt = -1
+							ownPointCnt = -1
+							tmpAnz = nil
+							if (rcnt1 != 0) then
+								for i in 0..(rcnt1 - 1) do
+									if (@mSetting.getmType() == ReversiConst.DEF_TYPE_HARD) then
+										tmpAnz = @mReversi.getPointAnz(color, @mCpu[i].y, @mCpu[i].x)
+										if (tmpAnz != nil) then
+											if (badPoint == -1) then
+												badPoint = tmpAnz.getBadPoint()
+												goodPoint = tmpAnz.getGoodPoint()
+												pointCnt = tmpAnz.getPointCnt()
+												ownPointCnt = tmpAnz.getOwnPointCnt()
+												mem2 = i
+												mem3 = i
+												mem4 = i
+											else
+												if (tmpAnz.getBadPoint() < badPoint) then
+													badPoint = tmpAnz.getBadPoint()
+													mem2 = i
+												end
+												if (goodPoint < tmpAnz.getGoodPoint()) then
+													goodPoint = tmpAnz.getGoodPoint()
+													mem3 = i
+												end
+												if (tmpAnz.getPointCnt() < pointCnt) then
+													pointCnt = tmpAnz.getPointCnt()
+													ownPointCnt = tmpAnz.getOwnPointCnt()
+													mem4 = i
+												elsif (tmpAnz.getPointCnt() == pointCnt) then
+													if (ownPointCnt < tmpAnz.getOwnPointCnt()) then
+														ownPointCnt = tmpAnz.getOwnPointCnt()
+														mem4 = i
+													end
+												end
+											end
+										end
+									end
+									if (@mReversi.getMasuStsEna(color, @mCpu[i].y, @mCpu[i].x) == 2) then
+										mem = i
+									end
+								end
+								if (mem2 != -1) then
+									if (endZone != 0) then								# // 終盤なら枚数重視
+										if (mem3 != -1) then
+											mem2 = mem3
+										end
+									else
+										if (mem4 != -1) then
+											mem2 = mem4
+										end
+									end
+									mem = mem2
+								end
+								if (mem == -1)
+									mem = rand(rcnt1)
+								end
+							elsif (kadocnt != 0) then
+								for i in 0..(kadocnt - 1) do
+									if (@mSetting.getmType() == ReversiConst.DEF_TYPE_HARD) then
+										tmpAnz = @mReversi.getPointAnz(color, @mEdge[i].y, @mEdge[i].x)
+										if (tmpAnz != nil) then
+											if (badPoint == -1) then
+												badPoint = tmpAnz.getBadPoint()
+												goodPoint = tmpAnz.getGoodPoint()
+												pointCnt = tmpAnz.getPointCnt()
+												ownPointCnt = tmpAnz.getOwnPointCnt()
+												mem2 = i
+												mem3 = i
+												mem4 = i
+											else
+												if (tmpAnz.getBadPoint() < badPoint) then
+													badPoint = tmpAnz.getBadPoint()
+													mem2 = i
+												end
+												if (goodPoint < tmpAnz.getGoodPoint()) then
+													goodPoint = tmpAnz.getGoodPoint()
+													mem3 = i
+												end
+												if (tmpAnz.getPointCnt() < pointCnt) then
+													pointCnt = tmpAnz.getPointCnt()
+													ownPointCnt = tmpAnz.getOwnPointCnt()
+													mem4 = i
+												elsif (tmpAnz.getPointCnt() == pointCnt) then
+													if (ownPointCnt < tmpAnz.getOwnPointCnt()) then
+														ownPointCnt = tmpAnz.getOwnPointCnt()
+														mem4 = i
+													end
+												end
+											end
+										end
+									end
+									if (@mReversi.getMasuStsEna(color, @mEdge[i].y, @mEdge[i].x) == 2) then
+										mem = i
+									end
+								end
+								if (mem2 != -1) then
+									if (endZone != 0) then								# // 終盤なら枚数重視
+										if (mem3 != -1) then
+											mem2 = mem3
+										end
+									else
+										if (mem4 != -1) then
+											mem2 = mem4
+										end
+									end
+									mem = mem2
+								end
+								if (mem == -1) then
+									mem = rand(kadocnt)
+								end
+								# // *** 置いても平気な角があればそこに置く*** //
+								for i in 0..(kadocnt - 1) do
+									if (@mReversi.checkEdge(color, @mEdge[i].y, @mEdge[i].x) != 0) then
+										if ((cpuflg0 == 0) && (cpuflg1 == 0) && (cpuflg2 == 0)) then
+											cpuflg3 = 1
+											rcnt2 = i
+										end
+									end
+								end
+							end
+							if ((cpuflg1 == 0) && (cpuflg2 == 0) && (cpuflg0 == 0) && (cpuflg3 == 0)) then
+								rcnt2 = mem
+							end
+							if (rcnt1 != 0) then
+								setY = @mCpu[rcnt2].y
+								setX = @mCpu[rcnt2].x
+							elsif (kadocnt != 0) then
+								setY = @mEdge[rcnt2].y
+								setX = @mEdge[rcnt2].x
+							end
+						end
+					end
+					if (@mReversi.setMasuSts(color, setY, setX) == 0) then
+						if (@mSetting.getmType() == ReversiConst.DEF_TYPE_HARD)
+							@mReversi.AnalysisReversi(@mPassEnaB, @mPassEnaW)
+						end
+						self.sendDrawMsg(setY, setX)								# // 描画
+						update = 1
+					end
+				end
+			else
+				break
+			end
+		end
+		if (update == 1) then
+			self.drawUpdate(ReversiConst.DEF_ASSIST_OFF)
+			if (@mSetting.getmAssist() == ReversiConst.DEF_ASSIST_ON) then
+				# // *** メッセージ送信 *** //
+				self.execMessage(ReversiConst.LC_MSG_DRAW_INFO_ALL, nil)
+			end
+		end
+		return update
+	end
 
-						if (pcnt == 0 && passCnt == 0) {
-							int badPoint = -1;
-							int goodPoint = -1;
-							int pointCnt = -1;
-							int ownPointCnt = -1;
-							ReversiAnz tmpAnz;
-							if (rcnt1 != 0) {
-								for (int i = 0; i < rcnt1; i++) {
-									if (this.mSetting.getmType() == ReversiConst.DEF_TYPE_HARD) {
-										tmpAnz = this.mReversi.getPointAnz(color, this.mCpu[i].getY(), this.mCpu[i].getX());
-										if (tmpAnz != null) {
-											if (badPoint == -1) {
-												badPoint = tmpAnz.getBadPoint();
-												goodPoint = tmpAnz.getGoodPoint();
-												pointCnt = tmpAnz.getPointCnt();
-												ownPointCnt = tmpAnz.getOwnPointCnt();
-												mem2 = i;
-												mem3 = i;
-												mem4 = i;
-											} else {
-												if (tmpAnz.getBadPoint() < badPoint) {
-													badPoint = tmpAnz.getBadPoint();
-													mem2 = i;
-												}
-												if (goodPoint < tmpAnz.getGoodPoint()) {
-													goodPoint = tmpAnz.getGoodPoint();
-													mem3 = i;
-												}
-												if (tmpAnz.getPointCnt() < pointCnt) {
-													pointCnt = tmpAnz.getPointCnt();
-													ownPointCnt = tmpAnz.getOwnPointCnt();
-													mem4 = i;
-												} else if (tmpAnz.getPointCnt() == pointCnt) {
-													if (ownPointCnt < tmpAnz.getOwnPointCnt()) {
-														ownPointCnt = tmpAnz.getOwnPointCnt();
-														mem4 = i;
-													}
-												}
-											}
-										}
-									}
-									if (this.mReversi.getMasuStsEna(color, this.mCpu[i].getY(), this.mCpu[i].getX()) == 2) {
-										mem = i;
-									}
-								}
-								if (mem2 != -1) {
-									if (endZone != 0) {								// 終盤なら枚数重視
-										if (mem3 != -1) {
-											mem2 = mem3;
-										}
-									} else {
-										if (mem4 != -1) {
-											mem2 = mem4;
-										}
-									}
-									mem = mem2;
-								}
-								if (mem == -1) mem = r.nextInt(rcnt1);
-							} else if (kadocnt != 0) {
-								for (int i = 0; i < kadocnt; i++) {
-									if (this.mSetting.getmType() == ReversiConst.DEF_TYPE_HARD) {
-										tmpAnz = this.mReversi.getPointAnz(color, this.mEdge[i].getY(), this.mEdge[i].getX());
-										if (tmpAnz != null) {
-											if (badPoint == -1) {
-												badPoint = tmpAnz.getBadPoint();
-												goodPoint = tmpAnz.getGoodPoint();
-												pointCnt = tmpAnz.getPointCnt();
-												ownPointCnt = tmpAnz.getOwnPointCnt();
-												mem2 = i;
-												mem3 = i;
-												mem4 = i;
-											} else {
-												if (tmpAnz.getBadPoint() < badPoint) {
-													badPoint = tmpAnz.getBadPoint();
-													mem2 = i;
-												}
-												if (goodPoint < tmpAnz.getGoodPoint()) {
-													goodPoint = tmpAnz.getGoodPoint();
-													mem3 = i;
-												}
-												if (tmpAnz.getPointCnt() < pointCnt) {
-													pointCnt = tmpAnz.getPointCnt();
-													ownPointCnt = tmpAnz.getOwnPointCnt();
-													mem4 = i;
-												} else if (tmpAnz.getPointCnt() == pointCnt) {
-													if (ownPointCnt < tmpAnz.getOwnPointCnt()) {
-														ownPointCnt = tmpAnz.getOwnPointCnt();
-														mem4 = i;
-													}
-												}
-											}
-										}
-									}
-									if (this.mReversi.getMasuStsEna(color, this.mEdge[i].getY(), this.mEdge[i].getX()) == 2) {
-										mem = i;
-									}
-								}
-								if (mem2 != -1) {
-									if (endZone != 0) {								// 終盤なら枚数重視
-										if (mem3 != -1) {
-											mem2 = mem3;
-										}
-									} else {
-										if (mem4 != -1) {
-											mem2 = mem4;
-										}
-									}
-									mem = mem2;
-								}
-								if (mem == -1) mem = r.nextInt(kadocnt);
-								// *** 置いても平気な角があればそこに置く*** //
-								for (int i = 0; i < kadocnt; i++) {
-									if (this.mReversi.checkEdge(color, this.mEdge[i].getY(), this.mEdge[i].getX()) != 0) {
-										if ((cpuflg0 == 0) && (cpuflg1 == 0) && (cpuflg2 == 0)) {
-											cpuflg3 = 1;
-											rcnt2 = i;
-										}
-									}
-								}
-							}
-							if ((cpuflg1 == 0) && (cpuflg2 == 0) && (cpuflg0 == 0) && (cpuflg3 == 0)) {
-								rcnt2 = mem;
-							}
-							if (rcnt1 != 0) {
-								setY = this.mCpu[rcnt2].getY();
-								setX = this.mCpu[rcnt2].getX();
-							} else if (kadocnt != 0) {
-								setY = this.mEdge[rcnt2].getY();
-								setX = this.mEdge[rcnt2].getX();
-							}
-						}
-					}
+	# ////////////////////////////////////////////////////////////////////////////////
+	# ///	@brief			マス描画更新
+	# ///	@fn				drawUpdate(assist)
+	# ///	@param[in]		assist	アシスト設定
+	# ///	@return			ありません
+	# ///	@author			Yuta Yoshinaga
+	# ///	@date			2018.04.01
+	# ///
+	# ////////////////////////////////////////////////////////////////////////////////
+	def drawUpdate(assist)
+		if (assist == ReversiConst.DEF_ASSIST_ON) then
+			for i in 0..(@mSetting.getmMasuCnt() - 1) do
+				for j in 0..(@mSetting.getmMasuCnt() - 1) do
+					self.sendDrawInfoMsg(i, j)
+				end
+			end
+		end
+		waitTime = @mSetting.getmPlayDrawInterVal()
+		for i in 0..(@mSetting.getmMasuCnt() - 1) do
+			for j in 0..(@mSetting.getmMasuCnt() - 1) do
+				if (@mReversi.getMasuSts(i,j) != @mReversi.getMasuStsOld(i,j)) then
+					self.WaitLocal(waitTime)
+					self.sendDrawMsg(i, j)
+				end
+			end
+		end
+		# // *** メッセージ送信 *** //
+		self.execMessage(ReversiConst.LC_MSG_CUR_COL, nil)
+		# // *** メッセージ送信 *** //
+		self.execMessage(ReversiConst.LC_MSG_CUR_STS, nil)
+	end
 
-					if (this.mReversi.setMasuSts(color, setY, setX) == 0) {
-						if (this.mSetting.getmType() == ReversiConst.DEF_TYPE_HARD) this.mReversi.AnalysisReversi(this.mPassEnaB, this.mPassEnaW);
-						this.sendDrawMsg(setY, setX);								// 描画
-						update = 1;
-					}
-				}
-			} else {
-				break;
-			}
-		}
-		if (update == 1) {
-			this.drawUpdate(ReversiConst.DEF_ASSIST_OFF);
-			if (this.mSetting.getmAssist() == ReversiConst.DEF_ASSIST_ON) {
-				// *** メッセージ送信 *** //
-				this.execMessage(ReversiConst.LC_MSG_DRAW_INFO_ALL, null);
-			}
-		}
+	# ////////////////////////////////////////////////////////////////////////////////
+	# ///	@brief			マス描画強制更新
+	# ///	@fn				drawUpdateForcibly(assist)
+	# ///	@param[in]		assist	アシスト設定
+	# ///	@return			ありません
+	# ///	@author			Yuta Yoshinaga
+	# ///	@date			2018.04.01
+	# ///
+	# ////////////////////////////////////////////////////////////////////////////////
+	def drawUpdateForcibly(assist)
+		# // *** メッセージ送信 *** //
+		self.execMessage(ReversiConst.LC_MSG_DRAW_ALL, nil)
+		if (assist == ReversiConst.DEF_ASSIST_ON) then
+			# // *** メッセージ送信 *** //
+			self.execMessage(ReversiConst.LC_MSG_DRAW_INFO_ALL, nil)
+		else
+			# // *** メッセージ送信 *** //
+			self.execMessage(ReversiConst.LC_MSG_ERASE_INFO_ALL, nil)
+		end
+		# // *** メッセージ送信 *** //
+		self.execMessage(ReversiConst.LC_MSG_CUR_COL, nil)
+		# // *** メッセージ送信 *** //
+		self.execMessage(ReversiConst.LC_MSG_CUR_STS, nil)
+	end
 
-		return update;
-	}
 
-	////////////////////////////////////////////////////////////////////////////////
-	///	@brief			マス描画更新
-	///	@fn				void drawUpdate(int assist)
-	///	@param[in]		int assist	アシスト設定
-	///	@return			ありません
-	///	@author			Yuta Yoshinaga
-	///	@date			2018.04.01
-	///
-	////////////////////////////////////////////////////////////////////////////////
-	public void drawUpdate(int assist)
-	{
-		if (assist == ReversiConst.DEF_ASSIST_ON) {
-			for (int i = 0; i < this.mSetting.getmMasuCnt(); i++) {
-				for (int j = 0; j < this.mSetting.getmMasuCnt(); j++) {
-					this.sendDrawInfoMsg(i, j);
-				}
-			}
-		}
-		int waitTime = this.mSetting.getmPlayDrawInterVal();
-		for (int i = 0; i < this.mSetting.getmMasuCnt(); i++) {
-			for (int j = 0; j < this.mSetting.getmMasuCnt(); j++) {
-				if(this.mReversi.getMasuSts(i,j) != this.mReversi.getMasuStsOld(i,j)){
-					this.WaitLocal(waitTime);
-					this.sendDrawMsg(i, j);
-				}
-			}
-		}
-		// *** メッセージ送信 *** //
-		this.execMessage(ReversiConst.LC_MSG_CUR_COL, null);
-		// *** メッセージ送信 *** //
-		this.execMessage(ReversiConst.LC_MSG_CUR_STS, null);
-	}
+	# ////////////////////////////////////////////////////////////////////////////////
+	# ///	@brief			リセット処理
+	# ///	@fn				reset()
+	# ///	@return			ありません
+	# ///	@author			Yuta Yoshinaga
+	# ///	@date			2018.04.01
+	# ///
+	# ////////////////////////////////////////////////////////////////////////////////
+	def reset()
+		@mPassEnaB = 0;
+		@mPassEnaW = 0;
+		if (@mSetting.getmGameSpd() == ReversiConst.DEF_GAME_SPD_FAST) then
+			@mSetting.setmPlayDrawInterVal(ReversiConst.DEF_GAME_SPD_FAST_VAL)					# // 描画のインターバル(msec)
+			@mSetting.setmPlayCpuInterVal(ReversiConst.DEF_GAME_SPD_FAST_VAL2)					# // CPU対戦時のインターバル(msec)
+		elsif (@mSetting.getmGameSpd() == ReversiConst.DEF_GAME_SPD_MID) then
+			@mSetting.setmPlayDrawInterVal( ReversiConst.DEF_GAME_SPD_MID_VAL)					# // 描画のインターバル(msec)
+			@mSetting.setmPlayCpuInterVal(ReversiConst.DEF_GAME_SPD_MID_VAL2)					# // CPU対戦時のインターバル(msec)
+		else
+			@mSetting.setmPlayDrawInterVal(ReversiConst.DEF_GAME_SPD_SLOW_VAL)					# // 描画のインターバル(msec)
+			@mSetting.setmPlayCpuInterVal(ReversiConst.DEF_GAME_SPD_SLOW_VAL2)					# // CPU対戦時のインターバル(msec)
+		end
 
-	////////////////////////////////////////////////////////////////////////////////
-	///	@brief			マス描画強制更新
-	///	@fn				void drawUpdateForcibly(int assist)
-	///	@param[in]		int assist	アシスト設定
-	///	@return			ありません
-	///	@author			Yuta Yoshinaga
-	///	@date			2018.04.01
-	///
-	////////////////////////////////////////////////////////////////////////////////
-	public void drawUpdateForcibly(int assist)
-	{
-		// *** メッセージ送信 *** //
-		this.execMessage(ReversiConst.LC_MSG_DRAW_ALL, null);
-		if (assist == ReversiConst.DEF_ASSIST_ON) {
-			// *** メッセージ送信 *** //
-			this.execMessage(ReversiConst.LC_MSG_DRAW_INFO_ALL, null);
-		} else {
-			// *** メッセージ送信 *** //
-			this.execMessage(ReversiConst.LC_MSG_ERASE_INFO_ALL, null);
-		}
-		// *** メッセージ送信 *** //
-		this.execMessage(ReversiConst.LC_MSG_CUR_COL, null);
-		// *** メッセージ送信 *** //
-		this.execMessage(ReversiConst.LC_MSG_CUR_STS, null);
-	}
+		@mCurColor = @mSetting.getmPlayer()
+		if (@mSetting.getmMode() == ReversiConst.DEF_MODE_TWO)
+			@mCurColor = ReversiConst.REVERSI_STS_BLACK
+		end
 
-	////////////////////////////////////////////////////////////////////////////////
-	///	@brief			リセット処理
-	///	@fn				void reset()
-	///	@return			ありません
-	///	@author			Yuta Yoshinaga
-	///	@date			2018.04.01
-	///
-	////////////////////////////////////////////////////////////////////////////////
-	public void reset()
-	{
-		this.mPassEnaB = 0;
-		this.mPassEnaW = 0;
-		if (this.mSetting.getmGameSpd() == ReversiConst.DEF_GAME_SPD_FAST) {
-			this.mSetting.setmPlayDrawInterVal(ReversiConst.DEF_GAME_SPD_FAST_VAL);					// 描画のインターバル(msec)
-			this.mSetting.setmPlayCpuInterVal(ReversiConst.DEF_GAME_SPD_FAST_VAL2);					// CPU対戦時のインターバル(msec)
-		} else if (this.mSetting.getmGameSpd() == ReversiConst.DEF_GAME_SPD_MID) {
-			this.mSetting.setmPlayDrawInterVal( ReversiConst.DEF_GAME_SPD_MID_VAL);					// 描画のインターバル(msec)
-			this.mSetting.setmPlayCpuInterVal(ReversiConst.DEF_GAME_SPD_MID_VAL2);					// CPU対戦時のインターバル(msec)
-		} else {
-			this.mSetting.setmPlayDrawInterVal(ReversiConst.DEF_GAME_SPD_SLOW_VAL);					// 描画のインターバル(msec)
-			this.mSetting.setmPlayCpuInterVal(ReversiConst.DEF_GAME_SPD_SLOW_VAL2);					// CPU対戦時のインターバル(msec)
-		}
+		@mReversi.setMasuCnt(@mSetting.getmMasuCnt())											# // マスの数設定
 
-		this.mCurColor = this.mSetting.getmPlayer();
-		if (this.mSetting.getmMode() == ReversiConst.DEF_MODE_TWO) this.mCurColor = ReversiConst.REVERSI_STS_BLACK;
+		@mReversi.reset()
+		if (@mSetting.getmMode() == ReversiConst.DEF_MODE_ONE) then
+			if (@mCurColor == ReversiConst.REVERSI_STS_WHITE) then
+				pCnt = @mReversi.getPointCnt(ReversiConst.REVERSI_STS_BLACK)
+				pInfo = @mReversi.getPoint(ReversiConst.REVERSI_STS_BLACK, rand(pCnt))
+				if (pInfo != nil) then
+					@mReversi.setMasuSts(ReversiConst.REVERSI_STS_BLACK, pInfo.y, pInfo.x)
+					if (@mSetting.getmType() == ReversiConst.DEF_TYPE_HARD)
+						@mReversi.AnalysisReversi(@mPassEnaB, @mPassEnaW)
+					end
+				end
+			end
+		end
 
-		this.mReversi.setMasuCnt(this.mSetting.getmMasuCnt());										// マスの数設定
+		@mPlayLock = 1
+		@mGameEndSts = 0
 
-		this.mReversi.reset();
-		if (this.mSetting.getmMode() == ReversiConst.DEF_MODE_ONE) {
-			if (this.mCurColor == ReversiConst.REVERSI_STS_WHITE) {
-				int pCnt = this.mReversi.getPointCnt(ReversiConst.REVERSI_STS_BLACK);
-				ReversiPoint pInfo = this.mReversi.getPoint(ReversiConst.REVERSI_STS_BLACK, r.nextInt(pCnt));
-				if (pInfo != null) {
-					this.mReversi.setMasuSts(ReversiConst.REVERSI_STS_BLACK, pInfo.getY(), pInfo.getX());
-					if (this.mSetting.getmType() == ReversiConst.DEF_TYPE_HARD) this.mReversi.AnalysisReversi(this.mPassEnaB, this.mPassEnaW);
-				}
-			}
-		}
+		self.drawUpdateForcibly(@mSetting.getmAssist())
 
-		this.mPlayLock = 1;
-		this.mGameEndSts = 0;
+		# // *** 終了通知 *** //
+		# // *** メッセージ送信 *** //
+		self.execMessage(ReversiConst.LC_MSG_DRAW_END, nil)
+	end
 
-		this.drawUpdateForcibly(this.mSetting.getmAssist());
+	# ////////////////////////////////////////////////////////////////////////////////
+	# ///	@brief			ゲーム終了アニメーション
+	# ///	@fn				gameEndAnimExec()
+	# ///	@return			ウェイト時間
+	# ///	@author			Yuta Yoshinaga
+	# ///	@date			2018.04.01
+	# ///
+	# ////////////////////////////////////////////////////////////////////////////////
+	def gameEndAnimExec()
+		bCnt = 0
+		wCnt = 0
+		ret = 0
+		if (@mSetting.getmEndAnim() == ReversiConst.DEF_END_ANIM_ON) then
+			bCnt = @mReversi.getBetCnt(ReversiConst.REVERSI_STS_BLACK)
+			wCnt = @mReversi.getBetCnt(ReversiConst.REVERSI_STS_WHITE)
+			# // *** 色、コマ数表示消去 *** //
+			# // *** メッセージ送信 *** //
+			self.execMessage(ReversiConst.LC_MSG_CUR_COL_ERASE, nil)
+			# // *** メッセージ送信 *** //
+			self.execMessage(ReversiConst.LC_MSG_CUR_STS_ERASE, nil)
+			self.WaitLocal(@mSetting.getmEndInterVal())
+			# // *** マス消去 *** //
+			for i in 0..(@mSetting.getmMasuCnt() - 1) do
+				for j in 0..(@mSetting.getmMasuCnt() - 1) do
+					@mReversi.setMasuStsForcibly(ReversiConst.REVERSI_STS_NONE, i, j)
+				end
+			end
+			# // *** メッセージ送信 *** //
+			self.execMessage(ReversiConst.LC_MSG_ERASE_ALL, nil)
+			# // *** マス描画 *** //
+			bCnt2 = 0
+			wCnt2 = 0
+			bEnd = 0
+			wEnd = 0
+			for i in 0..(@mSetting.getmMasuCnt() - 1) do
+				for j in 0..(@mSetting.getmMasuCnt() - 1) do
+					if (bCnt2 < bCnt) then
+						bCnt2 += 1
+						@mReversi.setMasuStsForcibly(ReversiConst.REVERSI_STS_BLACK, i, j)
+						self.sendDrawMsg(i, j)
+					else
+						bEnd = 1
+					end
+					if (wCnt2 < wCnt) then
+						wCnt2 += 1
+						@mReversi.setMasuStsForcibly(ReversiConst.REVERSI_STS_WHITE, (@mSetting.getmMasuCnt() - 1) - i, (@mSetting.getmMasuCnt() - 1) - j)
+						self.sendDrawMsg((@mSetting.getmMasuCnt() - 1) - i, (@mSetting.getmMasuCnt() - 1) - j)
+					else
+						wEnd = 1
+					end
+					if (bEnd == 1 && wEnd == 1) then
+						break
+					else
+						self.WaitLocal(@mSetting.getmEndDrawInterVal())
+					end
+				end
+			end
+			ret = 0
+		end
+		return ret
+	end
 
-		// *** 終了通知 *** //
-		// *** メッセージ送信 *** //
-		this.execMessage(ReversiConst.LC_MSG_DRAW_END, null);
-	}
+	# ////////////////////////////////////////////////////////////////////////////////
+	# ///	@brief			描画メッセージ送信
+	# ///	@fn				sendDrawMsg(y, x)
+	# ///	@param[in]		y			Y座標
+	# ///	@param[in]		x			X座標
+	# ///	@return			ありません
+	# ///	@author			Yuta Yoshinaga
+	# ///	@date			2018.04.01
+	# ///
+	# ////////////////////////////////////////////////////////////////////////////////
+	def sendDrawMsg(y, x)
+		tmpPoint = new ReversiPoint()
+		tmpPoint.y = y
+		tmpPoint.x = x
+		# // *** メッセージ送信 *** //
+		self.execMessage(ReversiConst.LC_MSG_DRAW, tmpPoint)
+	end
 
-	////////////////////////////////////////////////////////////////////////////////
-	///	@brief			ゲーム終了アニメーション
-	///	@fn				int gameEndAnimExec()
-	///	@return			ウェイト時間
-	///	@author			Yuta Yoshinaga
-	///	@date			2018.04.01
-	///
-	////////////////////////////////////////////////////////////////////////////////
-	public int gameEndAnimExec()
-	{
-		int bCnt, wCnt;
-		int ret = 0;
+	# ////////////////////////////////////////////////////////////////////////////////
+	# ///	@brief			情報描画メッセージ送信
+	# ///	@fn				sendDrawInfoMsg(y, x)
+	# ///	@param[in]		y			Y座標
+	# ///	@param[in]		x			X座標
+	# ///	@return			ありません
+	# ///	@author			Yuta Yoshinaga
+	# ///	@date			2018.04.01
+	# ///
+	# ////////////////////////////////////////////////////////////////////////////////
+	def sendDrawInfoMsg(y, x)
+		tmpPoint = new ReversiPoint()
+		tmpPoint.y = y
+		tmpPoint.x = x
+		# // *** メッセージ送信 *** //
+		self.execMessage(ReversiConst.LC_MSG_DRAW_INFO, tmpPoint)
+	end
 
-		if (this.mSetting.getmEndAnim() == ReversiConst.DEF_END_ANIM_ON) {
-			bCnt = this.mReversi.getBetCnt(ReversiConst.REVERSI_STS_BLACK);
-			wCnt = this.mReversi.getBetCnt(ReversiConst.REVERSI_STS_WHITE);
+	private
+	# ////////////////////////////////////////////////////////////////////////////////
+	# ///	@brief			メッセージ
+	# ///	@fn				execMessage(what, obj)
+	# ///	@param[in]		what
+	# ///	@param[in]		obj
+	# ///	@return			ありません
+	# ///	@author			Yuta Yoshinaga
+	# ///	@date			2018.04.01
+	# ///
+	# ////////////////////////////////////////////////////////////////////////////////
+	def execMessage(what, obj)
+		if (what == ReversiConst.LC_MSG_DRAW) then
+			# // *** マス描画 *** //
+			msgPoint = obj
+			dMode = @mReversi.getMasuSts(msgPoint.y, msgPoint.x)
+			dBack = @mReversi.getMasuStsEna(@mCurColor, msgPoint.y, msgPoint.x)
+			dCnt = @mReversi.getMasuStsCnt(@mCurColor, msgPoint.y, msgPoint.x)
+			self.DrawSingleLocal(msgPoint.y, msgPoint.x, dMode, dBack, dCnt)
+		elsif (what == ReversiConst.LC_MSG_ERASE) then
+			# // *** マス消去 *** //
+			msgPoint = obj
+			self.DrawSingleLocal(msgPoint.y, msgPoint.x, 0, 0, "0")
+		elsif (what == ReversiConst.LC_MSG_DRAW_INFO) then
+			# // *** マス情報描画 *** //
+			msgPoint = obj
+			dMode = @mReversi.getMasuSts(msgPoint.y, msgPoint.x)
+			dBack = @mReversi.getMasuStsEna(@mCurColor, msgPoint.y, msgPoint.x)
+			dCnt = @mReversi.getMasuStsCnt(@mCurColor, msgPoint.y, msgPoint.x)
+			self.DrawSingleLocal(msgPoint.y, msgPoint.x, dMode, dBack, dCnt)
+		elsif (what == ReversiConst.LC_MSG_ERASE_INFO) then
+			# // *** マス情報消去 *** //
+			msgPoint = obj
+			dMode = @mReversi.getMasuSts(msgPoint.y, msgPoint.x)
+			self.DrawSingleLocal(msgPoint.y, msgPoint.x, dMode, 0, "0")
+		elsif (what == ReversiConst.LC_MSG_DRAW_ALL) then
+			# // *** 全マス描画 *** //
+			for i in 0..(@mSetting.getmMasuCnt() - 1) do
+				for j in 0..(@mSetting.getmMasuCnt() - 1) do
+					dMode = @mReversi.getMasuSts(i, j)
+					dBack = @mReversi.getMasuStsEna(@mCurColor, i, j)
+					dCnt = @mReversi.getMasuStsCnt(@mCurColor, i, j)
+					self.DrawSingleLocal(i, j, dMode, dBack, dCnt)
+				end
+			end
+		elsif (what == ReversiConst.LC_MSG_ERASE_ALL) then
+			# // *** 全マス消去 *** //
+			for i in 0..(@mSetting.getmMasuCnt() - 1) do
+				for j in 0..(@mSetting.getmMasuCnt() - 1) do
+					self.DrawSingleLocal(i, j, 0, 0, "0")
+				end
+			end
+		elsif (what == ReversiConst.LC_MSG_DRAW_INFO_ALL) then
+			# // *** 全マス情報描画 *** //
+			for i in 0..(@mSetting.getmMasuCnt() - 1) do
+				for j in 0..(@mSetting.getmMasuCnt() - 1) do
+					dMode = @mReversi.getMasuSts(i, j)
+					dBack = @mReversi.getMasuStsEna(@mCurColor, i, j)
+					dCnt = @mReversi.getMasuStsCnt(@mCurColor, i, j)
+					self.DrawSingleLocal(i, j, dMode, dBack, dCnt)
+				end
+			end
+		elsif (what == ReversiConst.LC_MSG_ERASE_INFO_ALL) then
+			# // *** 全マス情報消去 *** //
+			for i in 0..(@mSetting.getmMasuCnt() - 1) do
+				for j in 0..(@mSetting.getmMasuCnt() - 1) do
+					dMode = @mReversi.getMasuSts(i, j)
+					self.DrawSingleLocal(i, j, dMode, 0, "0")
+				end
+			end
+		elsif (what == ReversiConst.LC_MSG_DRAW_END) then
+			@mPlayLock = 0
+		elsif (what == ReversiConst.LC_MSG_CUR_COL) then
+			tmpStr = ""
+			if (@mSetting.getmMode() == ReversiConst.DEF_MODE_ONE) then
+				if (@mCurColor == ReversiConst.REVERSI_STS_BLACK) then
+					tmpStr = "あなたはプレイヤー1です "
+				else
+					tmpStr = "あなたはプレイヤー2です "
+				end
+			else
+				if (@mCurColor == ReversiConst.REVERSI_STS_BLACK)
+					tmpStr = "プレイヤー1の番です "
+				else
+					tmpStr = "プレイヤー2の番です "
+				end
+			end
+			self.CurColMsgLocal(tmpStr)
+		elsif (what == ReversiConst.LC_MSG_CUR_COL_ERASE) then
+			self.CurColMsgLocal("")
+		elsif (what == ReversiConst.LC_MSG_CUR_STS) then
+			tmpStr = "プレイヤー1 = " + @mReversi.getBetCnt(ReversiConst.REVERSI_STS_BLACK) + " プレイヤー2 = " + @mReversi.getBetCnt(ReversiConst.REVERSI_STS_WHITE)
+			self.CurStsMsgLocal(tmpStr)
+		elsif (what == ReversiConst.LC_MSG_CUR_STS_ERASE) then
+			self.CurStsMsgLocal("")
+		elsif (what == ReversiConst.LC_MSG_MSG_DLG) then
+		elsif (what == ReversiConst.LC_MSG_DRAW_ALL_RESET) then
+		end
+	end
 
-			// *** 色、コマ数表示消去 *** //
-			// *** メッセージ送信 *** //
-			this.execMessage(ReversiConst.LC_MSG_CUR_COL_ERASE, null);
-			// *** メッセージ送信 *** //
-			this.execMessage(ReversiConst.LC_MSG_CUR_STS_ERASE, null);
+	# ////////////////////////////////////////////////////////////////////////////////
+	# ///	@brief			メッセージダイアログ
+	# ///	@fn				ViewMsgDlgLocal(title , msg)
+	# ///	@param[in]		title	タイトル
+	# ///	@param[in]		msg		メッセージ
+	# ///	@return			ありません
+	# ///	@author			Yuta Yoshinaga
+	# ///	@date			2018.04.01
+	# ///
+	# ////////////////////////////////////////////////////////////////////////////////
+	def ViewMsgDlgLocal(title , msg)
+		if (@mDelegate != nil) then
+			@mDelegate.ViewMsgDlg(title, msg)
+		end
+	end
 
-			this.WaitLocal(this.mSetting.getmEndInterVal());
-			// *** マス消去 *** //
-			for (int i = 0; i < this.mSetting.getmMasuCnt(); i++) {
-				for (int j = 0; j < this.mSetting.getmMasuCnt(); j++) {
-					this.mReversi.setMasuStsForcibly(ReversiConst.REVERSI_STS_NONE, i, j);
-				}
-			}
-			// *** メッセージ送信 *** //
-			this.execMessage(ReversiConst.LC_MSG_ERASE_ALL, null);
+	# ////////////////////////////////////////////////////////////////////////////////
+	# ///	@brief			1マス描画
+	# ///	@fn				DrawSingleLocal(y, x, sts, bk, text)
+	# ///	@param[in]		y		Y座標
+	# ///	@param[in]		x		X座標
+	# ///	@param[in]		sts		ステータス
+	# ///	@param[in]		bk		背景
+	# ///	@param[in]		text	テキスト
+	# ///	@return			ありません
+	# ///	@author			Yuta Yoshinaga
+	# ///	@date			2018.04.01
+	# ///
+	# ////////////////////////////////////////////////////////////////////////////////
+	def DrawSingleLocal(y, x, sts, bk, text)
+		if (@mDelegate != nil) then
+			@mDelegate.DrawSingle(y, x, sts, bk, text)
+		end
+	end
 
-			// *** マス描画 *** //
-			int bCnt2, wCnt2, bEnd, wEnd;
-			bCnt2 = 0;
-			wCnt2 = 0;
-			bEnd = 0;
-			wEnd = 0;
-			for (int i = 0; i < this.mSetting.getmMasuCnt(); i++) {
-				for (int j = 0; j < this.mSetting.getmMasuCnt(); j++) {
-					if (bCnt2 < bCnt) {
-						bCnt2++;
-						this.mReversi.setMasuStsForcibly(ReversiConst.REVERSI_STS_BLACK, i, j);
-						this.sendDrawMsg(i, j);
-					} else {
-						bEnd = 1;
-					}
-					if (wCnt2 < wCnt) {
-						wCnt2++;
-						this.mReversi.setMasuStsForcibly(ReversiConst.REVERSI_STS_WHITE, (this.mSetting.getmMasuCnt() - 1) - i, (this.mSetting.getmMasuCnt() - 1) - j);
-						this.sendDrawMsg((this.mSetting.getmMasuCnt() - 1) - i, (this.mSetting.getmMasuCnt() - 1) - j);
-					} else {
-						wEnd = 1;
-					}
-					if (bEnd == 1 && wEnd == 1) {
-						break;
-					}else{
-						this.WaitLocal(this.mSetting.getmEndDrawInterVal());
-					}
-				}
-			}
-			ret = 0;
-		}
-		return ret;
-	}
+	# ////////////////////////////////////////////////////////////////////////////////
+	# ///	@brief			現在の色メッセージ
+	# ///	@fn				CurColMsgLocal(text)
+	# ///	@param[in]		text	テキスト
+	# ///	@return			ありません
+	# ///	@author			Yuta Yoshinaga
+	# ///	@date			2018.04.01
+	# ///
+	# ////////////////////////////////////////////////////////////////////////////////
+	def CurColMsgLocal(text)
+		if (@mDelegate != nil) then
+			@mDelegate.CurColMsg(text)
+		end
+	end
 
-	////////////////////////////////////////////////////////////////////////////////
-	///	@brief			描画メッセージ送信
-	///	@fn				void sendDrawMsg(int y, int x)
-	///	@param[in]		int y			Y座標
-	///	@param[in]		int x			X座標
-	///	@return			ありません
-	///	@author			Yuta Yoshinaga
-	///	@date			2018.04.01
-	///
-	////////////////////////////////////////////////////////////////////////////////
-	public void sendDrawMsg(int y, int x)
-	{
-		ReversiPoint mTmpPoint = new ReversiPoint();
-		mTmpPoint.setY(y);
-		mTmpPoint.setX(x);
-		// *** メッセージ送信 *** //
-		this.execMessage(ReversiConst.LC_MSG_DRAW, mTmpPoint);
-	}
+	# ////////////////////////////////////////////////////////////////////////////////
+	# ///	@brief			現在のステータスメッセージ
+	# ///	@fn				CurStsMsgLocal(text)
+	# ///	@param[in]		text	テキスト
+	# ///	@return			ありません
+	# ///	@author			Yuta Yoshinaga
+	# ///	@date			2018.04.01
+	# ///
+	# ////////////////////////////////////////////////////////////////////////////////
+	def CurStsMsgLocal(text)
+		if(@mDelegate != nil)
+			@mDelegate.CurStsMsg(text)
+		end
+	end
 
-	////////////////////////////////////////////////////////////////////////////////
-	///	@brief			情報描画メッセージ送信
-	///	@fn				void sendDrawInfoMsg(int y, int x)
-	///	@param[in]		int y			Y座標
-	///	@param[in]		int x			X座標
-	///	@return			ありません
-	///	@author			Yuta Yoshinaga
-	///	@date			2018.04.01
-	///
-	////////////////////////////////////////////////////////////////////////////////
-	public void sendDrawInfoMsg(int y, int x)
-	{
-		ReversiPoint mTmpPoint = new ReversiPoint();
-		mTmpPoint.setY(y);
-		mTmpPoint.setX(x);
-		// *** メッセージ送信 *** //
-		this.execMessage(ReversiConst.LC_MSG_DRAW_INFO, mTmpPoint);
-	}
-
-	////////////////////////////////////////////////////////////////////////////////
-	///	@brief			メッセージ
-	///	@fn				void execMessage(int what, Object obj)
-	///	@param[in]		int what
-	///	@param[in]		Object obj
-	///	@return			ありません
-	///	@author			Yuta Yoshinaga
-	///	@date			2018.04.01
-	///
-	////////////////////////////////////////////////////////////////////////////////
-	private void execMessage(int what, Object obj)
-	{
-		int dMode, dBack, dCnt;
-		if (what == ReversiConst.LC_MSG_DRAW) {
-			// *** マス描画 *** //
-			ReversiPoint msgPoint = (ReversiPoint)obj;
-			dMode = this.mReversi.getMasuSts(msgPoint.getY(), msgPoint.getX());
-			dBack = this.mReversi.getMasuStsEna(this.mCurColor, msgPoint.getY(), msgPoint.getX());
-			dCnt = this.mReversi.getMasuStsCnt(this.mCurColor, msgPoint.getY(), msgPoint.getX());
-			this.DrawSingleLocal(msgPoint.getY(), msgPoint.getX(), dMode, dBack, String.valueOf(dCnt));
-		} else if (what == ReversiConst.LC_MSG_ERASE) {
-			// *** マス消去 *** //
-			ReversiPoint msgPoint = (ReversiPoint)obj;
-			this.DrawSingleLocal(msgPoint.getY(), msgPoint.getX(), 0, 0, "0");
-		} else if (what == ReversiConst.LC_MSG_DRAW_INFO) {
-			// *** マス情報描画 *** //
-			ReversiPoint msgPoint = (ReversiPoint)obj;
-			dMode = this.mReversi.getMasuSts(msgPoint.getY(), msgPoint.getX());
-			dBack = this.mReversi.getMasuStsEna(this.mCurColor, msgPoint.getY(), msgPoint.getX());
-			dCnt = this.mReversi.getMasuStsCnt(this.mCurColor, msgPoint.getY(), msgPoint.getX());
-			this.DrawSingleLocal(msgPoint.getY(), msgPoint.getX(), dMode, dBack, String.valueOf(dCnt));
-		} else if (what == ReversiConst.LC_MSG_ERASE_INFO) {
-			// *** マス情報消去 *** //
-			ReversiPoint msgPoint = (ReversiPoint)obj;
-			dMode = this.mReversi.getMasuSts(msgPoint.getY(), msgPoint.getX());
-			this.DrawSingleLocal(msgPoint.getY(), msgPoint.getX(), dMode, 0, "0");
-		} else if (what == ReversiConst.LC_MSG_DRAW_ALL) {
-			// *** 全マス描画 *** //
-			for (int i = 0; i < this.mSetting.getmMasuCnt(); i++) {
-				for (int j = 0; j < this.mSetting.getmMasuCnt(); j++) {
-					dMode = this.mReversi.getMasuSts(i, j);
-					dBack = this.mReversi.getMasuStsEna(this.mCurColor, i, j);
-					dCnt = this.mReversi.getMasuStsCnt(this.mCurColor, i, j);
-					this.DrawSingleLocal(i, j, dMode, dBack, String.valueOf(dCnt));
-				}
-			}
-		} else if (what == ReversiConst.LC_MSG_ERASE_ALL) {
-			// *** 全マス消去 *** //
-			for (int i = 0; i < this.mSetting.getmMasuCnt(); i++) {
-				for (int j = 0; j < this.mSetting.getmMasuCnt(); j++) {
-					this.DrawSingleLocal(i, j, 0, 0, "0");
-				}
-			}
-		} else if (what == ReversiConst.LC_MSG_DRAW_INFO_ALL) {
-			// *** 全マス情報描画 *** //
-			for (int i = 0; i < this.mSetting.getmMasuCnt(); i++) {
-				for (int j = 0; j < this.mSetting.getmMasuCnt(); j++) {
-					dMode = this.mReversi.getMasuSts(i, j);
-					dBack = this.mReversi.getMasuStsEna(this.mCurColor, i, j);
-					dCnt = this.mReversi.getMasuStsCnt(this.mCurColor, i, j);
-					this.DrawSingleLocal(i, j, dMode, dBack, String.valueOf(dCnt));
-				}
-			}
-		} else if (what == ReversiConst.LC_MSG_ERASE_INFO_ALL) {
-			// *** 全マス情報消去 *** //
-			for (int i = 0; i < this.mSetting.getmMasuCnt(); i++) {
-				for (int j = 0; j < this.mSetting.getmMasuCnt(); j++) {
-					dMode = this.mReversi.getMasuSts(i, j);
-					this.DrawSingleLocal(i, j, dMode, 0, "0");
-				}
-			}
-		} else if (what == ReversiConst.LC_MSG_DRAW_END) {
-			this.mPlayLock = 0;
-		} else if (what == ReversiConst.LC_MSG_CUR_COL) {
-			String tmpStr = "";
-			if (this.mSetting.getmMode() == ReversiConst.DEF_MODE_ONE) {
-				if (this.mCurColor == ReversiConst.REVERSI_STS_BLACK) tmpStr = "あなたはプレイヤー1です ";
-				else tmpStr = "あなたはプレイヤー2です ";
-			} else {
-				if (this.mCurColor == ReversiConst.REVERSI_STS_BLACK) tmpStr = "プレイヤー1の番です ";
-				else tmpStr = "プレイヤー2の番です ";
-			}
-			this.CurColMsgLocal(tmpStr);
-		} else if (what == ReversiConst.LC_MSG_CUR_COL_ERASE) {
-			this.CurColMsgLocal("");
-		} else if (what == ReversiConst.LC_MSG_CUR_STS) {
-			String tmpStr = "プレイヤー1 = " + this.mReversi.getBetCnt(ReversiConst.REVERSI_STS_BLACK) + " プレイヤー2 = " + this.mReversi.getBetCnt(ReversiConst.REVERSI_STS_WHITE);
-			this.CurStsMsgLocal(tmpStr);
-		} else if (what == ReversiConst.LC_MSG_CUR_STS_ERASE) {
-			this.CurStsMsgLocal("");
-		} else if (what == ReversiConst.LC_MSG_MSG_DLG) {
-		} else if (what == ReversiConst.LC_MSG_DRAW_ALL_RESET) {
-		}
-	}
-
-	////////////////////////////////////////////////////////////////////////////////
-	///	@brief			メッセージダイアログ
-	///	@fn				void ViewMsgDlgLocal(String title , String msg)
-	///	@param[in]		String title	タイトル
-	///	@param[in]		String msg		メッセージ
-	///	@return			ありません
-	///	@author			Yuta Yoshinaga
-	///	@date			2018.04.01
-	///
-	////////////////////////////////////////////////////////////////////////////////
-	private void ViewMsgDlgLocal(String title , String msg)
-	{
-		if(this.mDelegate != null) this.mDelegate.ViewMsgDlg(title, msg);
-	}
-
-	////////////////////////////////////////////////////////////////////////////////
-	///	@brief			1マス描画
-	///	@fn				void DrawSingleLocal(int y, int x, int sts, int bk, String text)
-	///	@param[in]		int y		Y座標
-	///	@param[in]		int x		X座標
-	///	@param[in]		int sts		ステータス
-	///	@param[in]		int bk		背景
-	///	@param[in]		String text	テキスト
-	///	@return			ありません
-	///	@author			Yuta Yoshinaga
-	///	@date			2018.04.01
-	///
-	////////////////////////////////////////////////////////////////////////////////
-	private void DrawSingleLocal(int y, int x, int sts, int bk, String text)
-	{
-		if(this.mDelegate != null) this.mDelegate.DrawSingle(y, x, sts, bk, text);
-	}
-
-	////////////////////////////////////////////////////////////////////////////////
-	///	@brief			現在の色メッセージ
-	///	@fn				void CurColMsgLocal(String text)
-	///	@param[in]		String text	テキスト
-	///	@return			ありません
-	///	@author			Yuta Yoshinaga
-	///	@date			2018.04.01
-	///
-	////////////////////////////////////////////////////////////////////////////////
-	private void CurColMsgLocal(String text)
-	{
-		if(this.mDelegate != null) this.mDelegate.CurColMsg(text);
-	}
-
-	////////////////////////////////////////////////////////////////////////////////
-	///	@brief			現在のステータスメッセージ
-	///	@fn				void CurStsMsgLocal(String text)
-	///	@param[in]		String text	テキスト
-	///	@return			ありません
-	///	@author			Yuta Yoshinaga
-	///	@date			2018.04.01
-	///
-	////////////////////////////////////////////////////////////////////////////////
-	private void CurStsMsgLocal(String text)
-	{
-		if(this.mDelegate != null) this.mDelegate.CurStsMsg(text);
-	}
-
-	////////////////////////////////////////////////////////////////////////////////
-	///	@brief			ウェイト
-	///	@fn				void WaitLocal(int time)
-	///	@param[in]		int time	ウェイト時間(msec)
-	///	@return			ありません
-	///	@author			Yuta Yoshinaga
-	///	@date			2018.04.01
-	///
-	////////////////////////////////////////////////////////////////////////////////
-	private void WaitLocal(int time)
-	{
-		if(this.mDelegate != null) this.mDelegate.Wait(time);
-	}
-=end
+	# ////////////////////////////////////////////////////////////////////////////////
+	# ///	@brief			ウェイト
+	# ///	@fn				WaitLocal(time)
+	# ///	@param[in]		time	ウェイト時間(msec)
+	# ///	@return			ありません
+	# ///	@author			Yuta Yoshinaga
+	# ///	@date			2018.04.01
+	# ///
+	# ////////////////////////////////////////////////////////////////////////////////
+	def WaitLocal(time)
+		if(@mDelegate != nil)
+			@mDelegate.Wait(time)
+		end
+	end
 end
