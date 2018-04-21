@@ -38,6 +38,7 @@ class ReversiSetting
 	attr_accessor :mBackGroundColor												# //!< 背景の色
 	attr_accessor :mBorderColor													# //!< 枠線の色
 
+
 	# ////////////////////////////////////////////////////////////////////////////////
 	# ///	@brief			コンストラクタ
 	# ///	@fn				initialize
@@ -59,16 +60,17 @@ class ReversiSetting
 	# ///
 	# ////////////////////////////////////////////////////////////////////////////////
 	def reset
-		@mMode = ReversiConst.DEF_MODE_ONE								# // 現在のモード
-		@mType = ReversiConst.DEF_TYPE_HARD								# // 現在のタイプ
-		@mPlayer = ReversiConst.REVERSI_STS_BLACK						# // プレイヤーの色
-		@mAssist = ReversiConst.DEF_ASSIST_ON							# // アシスト
-		@mGameSpd = ReversiConst.DEF_GAME_SPD_MID						# // ゲームスピード
-		@mEndAnim = ReversiConst.DEF_END_ANIM_ON						# // ゲーム終了アニメーション
-		@mMasuCntMenu = ReversiConst.DEF_MASU_CNT_8_VAL					# // マスの数
-		@mMasuCnt = ReversiConst.DEF_MASU_CNT_8_VAL						# // マスの数
-		@mPlayCpuInterVal = ReversiConst.DEF_GAME_SPD_MID_VAL2			# // CPU対戦時のインターバル(msec)
-		@mPlayDrawInterVal = ReversiConst.DEF_GAME_SPD_MID_VAL			# // 描画のインターバル(msec)
+		reversiConst = ReversiConst.new()
+		@mMode = reversiConst.DEF_MODE_ONE								# // 現在のモード
+		@mType = reversiConst.DEF_TYPE_HARD							# // 現在のタイプ
+		@mPlayer = reversiConst.REVERSI_STS_BLACK						# // プレイヤーの色
+		@mAssist = reversiConst.DEF_ASSIST_ON							# // アシスト
+		@mGameSpd = reversiConst.DEF_GAME_SPD_MID						# // ゲームスピード
+		@mEndAnim = reversiConst.DEF_END_ANIM_ON						# // ゲーム終了アニメーション
+		@mMasuCntMenu = reversiConst.DEF_MASU_CNT_8_VAL				# // マスの数
+		@mMasuCnt = reversiConst.DEF_MASU_CNT_8_VAL					# // マスの数
+		@mPlayCpuInterVal = reversiConst.DEF_GAME_SPD_MID_VAL2			# // CPU対戦時のインターバル(msec)
+		@mPlayDrawInterVal = reversiConst.DEF_GAME_SPD_MID_VAL			# // 描画のインターバル(msec)
 		@mEndDrawInterVal = 100											# // 終了アニメーション描画のインターバル(msec)
 		@mEndInterVal = 500												# // 終了アニメーションのインターバル(msec)
 		@mPlayerColor1 = "#000000"										# // プレイヤー1の色
