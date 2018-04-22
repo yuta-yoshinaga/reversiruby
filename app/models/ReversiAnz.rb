@@ -24,11 +24,11 @@ class ReversiAnz
 	attr_accessor :min													# //!< 最小値
 	attr_accessor :max													# //!< 最大値
 	attr_accessor :avg													# //!< 平均
-	attr_accessor :ownPointCnt											# //!< 置けるポイント数
+	attr_accessor :pointCnt												# //!< 置けるポイント数
 	attr_accessor :edgeCnt												# //!< 角を取れるポイント数
 	attr_accessor :edgeSideOneCnt										# //!< 角一つ前を取れるポイント数
 	attr_accessor :edgeSideTwoCnt										# //!< 角二つ前を取れるポイント数
-	attr_accessor :ownEdgeSideThreeCnt									# //!< 角三つ前を取れるポイント数
+	attr_accessor :edgeSideThreeCnt										# //!< 角三つ前を取れるポイント数
 	attr_accessor :edgeSideOtherCnt										# //!< それ以外を取れるポイント数
 	attr_accessor :ownMin												# //!< 最小値
 	attr_accessor :ownMax												# //!< 最大値

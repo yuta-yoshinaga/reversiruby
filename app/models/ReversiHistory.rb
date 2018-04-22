@@ -33,7 +33,7 @@ class ReversiHistory
 	# ///
 	# ////////////////////////////////////////////////////////////////////////////////
 	def initialize
-		@point = new ReversiPoint()
+		@point = ReversiPoint.new()
 		self.reset()
 	end
 

@@ -1,0 +1,37 @@
+require 'test_helper'
+
+class ReversiHistoryTest < ActiveSupport::TestCase
+
+  def setup
+    @obj = ReversiHistory.new()
+  end
+
+  test "initialize" do
+    res = false
+    if (@obj != nil) then
+      res = true
+    end
+    assert res
+  end
+
+  test "reset" do
+    res = true
+    if (@obj != nil) then
+      #@obj.reset()
+      if (@obj.point.x != -1) then
+        res = false
+      end
+      if (@obj.point.y != -1) then
+        res = false
+      end
+      if (@obj.color != -1) then
+        res = false
+      end
+      #Rails.logger.debug @obj.to_yaml
+    else
+      res = false
+    end
+    assert res
+  end
+
+end
