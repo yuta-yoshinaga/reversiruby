@@ -15,6 +15,9 @@
 # ///
 # ////////////////////////////////////////////////////////////////////////////////
 
+#$:.unshift File.dirname(__FILE__)  # ロードパスにカレントディレクトリを追加
+require './ReversiConst.rb'
+
 # ////////////////////////////////////////////////////////////////////////////////
 # ///	@class		ReversiSetting
 # ///	@brief		アプリ設定クラス
@@ -37,7 +40,6 @@ class ReversiSetting
 	attr_accessor :mPlayerColor2												# //!< プレイヤー2の色
 	attr_accessor :mBackGroundColor												# //!< 背景の色
 	attr_accessor :mBorderColor													# //!< 枠線の色
-
 
 	# ////////////////////////////////////////////////////////////////////////////////
 	# ///	@brief			コンストラクタ
