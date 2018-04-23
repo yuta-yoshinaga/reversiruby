@@ -15,6 +15,10 @@
 # ///
 # ////////////////////////////////////////////////////////////////////////////////
 
+require_relative './ReversiAnz.rb'
+require_relative './ReversiPoint.rb'
+require_relative './ReversiHistory.rb'
+
 # ////////////////////////////////////////////////////////////////////////////////
 # ///	@class		Reversi
 # ///	@brief		リバーシクラス
@@ -63,36 +67,33 @@ class Reversi
 		@mMasuStsAnzB	= Array.new(@mMasuCntMax).map{Array.new(@mMasuCntMax,nil)}
 		for i in 0..(@mMasuCntMax - 1) do
 			for j in 0..@mMasuCntMax do
-				@mMasuStsAnzB[i][j] = new ReversiAnz()
+				@mMasuStsAnzB[i][j] = ReversiAnz().new()
 			end
 		end
-		#@mMasuPointB	= Array.new(@mMasuCntMax).map{Array.new(@mMasuCntMax,nil)}
 		@mMasuPointB	= Array.new(@mMasuCntMax,nil)
 		for i in 0..((@mMasuCntMax * @mMasuCntMax) - 1) do
-			@mMasuPointB[i] = new ReversiPoint()
+			@mMasuPointB[i] = ReversiPoint().new()
 		end
-		@mMasuPointCntB	= 0;
+		@mMasuPointCntB	= 0
 		@mMasuStsEnaW	= Array.new(@mMasuCntMax).map{Array.new(@mMasuCntMax,0)}
 		@mMasuStsCntW	= Array.new(@mMasuCntMax).map{Array.new(@mMasuCntMax,0)}
 		@mMasuStsPassW	= Array.new(@mMasuCntMax).map{Array.new(@mMasuCntMax,0)}
 		@mMasuStsAnzW	= Array.new(@mMasuCntMax).map{Array.new(@mMasuCntMax,nil)}
 		for i in 0..(@mMasuCntMax - 1) do
 			for j in 0..(@mMasuCntMax - 1) do
-				@mMasuStsAnzW[i][j] = new ReversiAnz()
+				@mMasuStsAnzW[i][j] = ReversiAnz().new()
 			end
 		end
-		#@mMasuPointW	= Array.new(@mMasuCntMax).map{Array.new(@mMasuCntMax,nil)}
 		@mMasuPointW	= Array.new(@mMasuCntMax,nil)
 		for i in 0..((@mMasuCntMax * @mMasuCntMax) - 1) do
-			@mMasuPointW[i] = new ReversiPoint()
+			@mMasuPointW[i] = ReversiPoint().new()
 		end
-		@mMasuPointCntW	= 0;
-		@mMasuBetCntB	= 0;
-		@mMasuBetCntW	= 0;
-		#@mMasuHist		= Array.new(@mMasuCntMax).map{Array.new(@mMasuCntMax,nil)}
+		@mMasuPointCntW	= 0
+		@mMasuBetCntB	= 0
+		@mMasuBetCntW	= 0
 		@mMasuHist		= Array.new(@mMasuCntMax,nil)
 		for i in 0..((@mMasuCntMax * @mMasuCntMax) - 1) do
-			@mMasuHist[i] = new ReversiHistory()
+			@mMasuHist[i] = ReversiHistory().new()
 		end
 		@mMasuHistCur = 0;
 		@mMasuStsOld = Marshal.load(Marshal.dump(@mMasuSts))

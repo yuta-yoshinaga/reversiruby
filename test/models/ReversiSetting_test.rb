@@ -67,8 +67,8 @@ class ReversiSettingTest < ActiveSupport::TestCase
       if (@obj.mBorderColor != "#000000") then
         res = false
       end
-      Rails.logger.debug reversiConst.inspect
-      Rails.logger.debug @obj.inspect
+      #Rails.logger.debug reversiConst.to_yaml
+      #Rails.logger.debug @obj.to_yaml
     else
       res = false
     end

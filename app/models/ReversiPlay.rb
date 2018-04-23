@@ -15,6 +15,10 @@
 # ///
 # ////////////////////////////////////////////////////////////////////////////////
 
+require_relative './Reversi.rb'
+require_relative './ReversiSetting.rb'
+require_relative './ReversiPoint.rb'
+
 # ////////////////////////////////////////////////////////////////////////////////
 # ///	@class		ReversiPlay
 # ///	@brief		リバーシプレイクラス
@@ -41,13 +45,13 @@ class ReversiPlay
 	# ///
 	# ////////////////////////////////////////////////////////////////////////////////
 	def initialize
-		@mReversi	= new Reversi(ReversiConst.DEF_MASU_CNT_MAX_VAL, ReversiConst.DEF_MASU_CNT_MAX_VAL)
-		@mSetting	= new ReversiSetting()
+		@mReversi	= Reversi(ReversiConst.DEF_MASU_CNT_MAX_VAL, ReversiConst.DEF_MASU_CNT_MAX_VAL).new()
+		@mSetting	= ReversiSetting().new()
 		@mCpu		= Array.new(ReversiConst.DEF_MASU_CNT_MAX_VAL * ReversiConst.DEF_MASU_CNT_MAX_VAL,nil)
 		@mEdge		= Array.new(ReversiConst.DEF_MASU_CNT_MAX_VAL * ReversiConst.DEF_MASU_CNT_MAX_VAL,nil)
 		for i in 0..(ReversiConst.DEF_MASU_CNT_MAX_VAL * ReversiConst.DEF_MASU_CNT_MAX_VAL - 1) do
-			this.mCpu[i]	= new ReversiPoint()
-			this.mEdge[i]	= new ReversiPoint()
+			this.mCpu[i]	= ReversiPoint().new()
+			this.mEdge[i]	= ReversiPoint().new()
 		end
 		@mCurColor	= 0
 		@mPassEnaB	= 0
@@ -724,7 +728,7 @@ class ReversiPlay
 	# ///
 	# ////////////////////////////////////////////////////////////////////////////////
 	def sendDrawMsg(y, x)
-		tmpPoint = new ReversiPoint()
+		tmpPoint = ReversiPoint().new()
 		tmpPoint.y = y
 		tmpPoint.x = x
 		# // *** メッセージ送信 *** //
@@ -742,7 +746,7 @@ class ReversiPlay
 	# ///
 	# ////////////////////////////////////////////////////////////////////////////////
 	def sendDrawInfoMsg(y, x)
-		tmpPoint = new ReversiPoint()
+		tmpPoint = ReversiPoint().new()
 		tmpPoint.y = y
 		tmpPoint.x = x
 		# // *** メッセージ送信 *** //
