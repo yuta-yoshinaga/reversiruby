@@ -18,6 +18,7 @@
 require_relative './ReversiAnz.rb'
 require_relative './ReversiPoint.rb'
 require_relative './ReversiHistory.rb'
+require_relative './ReversiConst.rb'
 
 # ////////////////////////////////////////////////////////////////////////////////
 # ///	@class		Reversi
@@ -57,6 +58,8 @@ class Reversi
 	# ///
 	# ////////////////////////////////////////////////////////////////////////////////
 	def initialize(masuCnt,masuMax)
+		@reversiConst	= ReversiConst.new()
+
 		@mMasuCnt		= masuCnt;
 		@mMasuCntMax	= masuMax;
 		@mMasuSts		= Array.new(@mMasuCntMax).map{Array.new(@mMasuCntMax,0)}
@@ -67,12 +70,12 @@ class Reversi
 		@mMasuStsAnzB	= Array.new(@mMasuCntMax).map{Array.new(@mMasuCntMax,nil)}
 		for i in 0..(@mMasuCntMax - 1) do
 			for j in 0..@mMasuCntMax do
-				@mMasuStsAnzB[i][j] = ReversiAnz().new()
+				@mMasuStsAnzB[i][j] = ReversiAnz.new()
 			end
 		end
 		@mMasuPointB	= Array.new(@mMasuCntMax,nil)
 		for i in 0..((@mMasuCntMax * @mMasuCntMax) - 1) do
-			@mMasuPointB[i] = ReversiPoint().new()
+			@mMasuPointB[i] = ReversiPoint.new()
 		end
 		@mMasuPointCntB	= 0
 		@mMasuStsEnaW	= Array.new(@mMasuCntMax).map{Array.new(@mMasuCntMax,0)}
@@ -81,19 +84,19 @@ class Reversi
 		@mMasuStsAnzW	= Array.new(@mMasuCntMax).map{Array.new(@mMasuCntMax,nil)}
 		for i in 0..(@mMasuCntMax - 1) do
 			for j in 0..(@mMasuCntMax - 1) do
-				@mMasuStsAnzW[i][j] = ReversiAnz().new()
+				@mMasuStsAnzW[i][j] = ReversiAnz.new()
 			end
 		end
 		@mMasuPointW	= Array.new(@mMasuCntMax,nil)
 		for i in 0..((@mMasuCntMax * @mMasuCntMax) - 1) do
-			@mMasuPointW[i] = ReversiPoint().new()
+			@mMasuPointW[i] = ReversiPoint.new()
 		end
 		@mMasuPointCntW	= 0
 		@mMasuBetCntB	= 0
 		@mMasuBetCntW	= 0
 		@mMasuHist		= Array.new(@mMasuCntMax,nil)
 		for i in 0..((@mMasuCntMax * @mMasuCntMax) - 1) do
-			@mMasuHist[i] = ReversiHistory().new()
+			@mMasuHist[i] = ReversiHistory.new()
 		end
 		@mMasuHistCur = 0;
 		@mMasuStsOld = Marshal.load(Marshal.dump(@mMasuSts))
@@ -111,7 +114,7 @@ class Reversi
 	def reset
 		for i in 0..(@mMasuCntMax - 1) do
 			for j in 0..(@mMasuCntMax - 1) do
-				@mMasuSts[i][j] = ReversiConst.REVERSI_STS_NONE
+				@mMasuSts[i][j] = @reversiConst.REVERSI_STS_NONE
 				@mMasuStsPassB[i][j] = 0
 				@mMasuStsAnzB[i][j].reset()
 				@mMasuStsPassW[i][j] = 0
@@ -119,12 +122,12 @@ class Reversi
 			end
 		end
 
-		@mMasuSts[(@mMasuCnt >> 1) - 1][(@mMasuCnt >> 1) - 1]	= ReversiConst.REVERSI_STS_BLACK
-		@mMasuSts[(@mMasuCnt >> 1) - 1][(@mMasuCnt >> 1)]		= ReversiConst.REVERSI_STS_WHITE
-		@mMasuSts[(@mMasuCnt >> 1)][(@mMasuCnt >> 1) - 1]		= ReversiConst.REVERSI_STS_WHITE
-		@mMasuSts[(@mMasuCnt >> 1)][(@mMasuCnt >> 1)]			= ReversiConst.REVERSI_STS_BLACK
-		self.makeMasuSts(ReversiConst.REVERSI_STS_BLACK)
-		self.makeMasuSts(ReversiConst.REVERSI_STS_WHITE)
+		@mMasuSts[(@mMasuCnt >> 1) - 1][(@mMasuCnt >> 1) - 1]	= @reversiConst.REVERSI_STS_BLACK
+		@mMasuSts[(@mMasuCnt >> 1) - 1][(@mMasuCnt >> 1)]		= @reversiConst.REVERSI_STS_WHITE
+		@mMasuSts[(@mMasuCnt >> 1)][(@mMasuCnt >> 1) - 1]		= @reversiConst.REVERSI_STS_WHITE
+		@mMasuSts[(@mMasuCnt >> 1)][(@mMasuCnt >> 1)]			= @reversiConst.REVERSI_STS_BLACK
+		self.makeMasuSts(@reversiConst.REVERSI_STS_BLACK)
+		self.makeMasuSts(@reversiConst.REVERSI_STS_WHITE)
 		@mMasuHistCur = 0
 		@mMasuStsOld = Marshal.load(Marshal.dump(@mMasuSts))
 	end
@@ -152,8 +155,8 @@ class Reversi
 		self.AnalysisReversiBlack()									# // 黒解析
 		self.AnalysisReversiWhite()									# // 白解析
 
-		self.makeMasuSts(ReversiConst.REVERSI_STS_BLACK)
-		self.makeMasuSts(ReversiConst.REVERSI_STS_WHITE)
+		self.makeMasuSts(@reversiConst.REVERSI_STS_BLACK)
+		self.makeMasuSts(@reversiConst.REVERSI_STS_WHITE)
 
 		# // *** パスマスを取得 *** //
 		for i in 0..(@mMasuCntMax - 1) do
@@ -222,7 +225,7 @@ class Reversi
 	def getMasuStsEna(color, y, x)
 		ret = 0
 		if (self.checkPara(y,0,@mMasuCnt) == 0 && self.checkPara(x,0,@mMasuCnt) == 0) then
-			if (color == ReversiConst.REVERSI_STS_BLACK) then
+			if (color == @reversiConst.REVERSI_STS_BLACK) then
 				ret = @mMasuStsEnaB[y][x]
 			else
 				ret = @mMasuStsEnaW[y][x]
@@ -245,7 +248,7 @@ class Reversi
 	def getMasuStsCnt(color, y, x)
 		ret = -1
 		if (self.checkPara(y,0,@mMasuCnt) == 0 && self.checkPara(x,0,@mMasuCnt) == 0) then
-			if (color == ReversiConst.REVERSI_STS_BLACK) then
+			if (color == @reversiConst.REVERSI_STS_BLACK) then
 				ret = @mMasuStsCntB[y][x]
 			else
 				ret = @mMasuStsCntW[y][x]
@@ -286,10 +289,10 @@ class Reversi
 	# ////////////////////////////////////////////////////////////////////////////////
 	def getGameEndSts
 		ret = 1
-		if (self.getColorEna(ReversiConst.REVERSI_STS_BLACK) == 0) then
+		if (self.getColorEna(@reversiConst.REVERSI_STS_BLACK) == 0) then
 			ret = 0
 		end
-		if (self.getColorEna(ReversiConst.REVERSI_STS_WHITE) == 0) then
+		if (self.getColorEna(@reversiConst.REVERSI_STS_WHITE) == 0) then
 			ret = 0
 		end
 		return ret
@@ -313,8 +316,8 @@ class Reversi
 			@mMasuStsOld = Marshal.load(Marshal.dump(@mMasuSts))
 			@mMasuSts[y][x] = color
 			self.revMasuSts(color,y,x)
-			self.makeMasuSts(ReversiConst.REVERSI_STS_BLACK)
-			self.makeMasuSts(ReversiConst.REVERSI_STS_WHITE)
+			self.makeMasuSts(@reversiConst.REVERSI_STS_BLACK)
+			self.makeMasuSts(@reversiConst.REVERSI_STS_WHITE)
 			# // *** 履歴保存 *** //
 			if (@mMasuHistCur < (@mMasuCntMax * @mMasuCntMax)) then
 				@mMasuHist[@mMasuHistCur].color = color
@@ -382,7 +385,7 @@ class Reversi
 	def getPoint(color,num)
 		ret = nil
 		if (self.checkPara(num,0,(@mMasuCnt * @mMasuCnt)) == 0) then
-			if(color == ReversiConst.REVERSI_STS_BLACK) then
+			if(color == @reversiConst.REVERSI_STS_BLACK) then
 				ret = @mMasuPointB[num]
 			else
 				ret = @mMasuPointW[num]
@@ -402,7 +405,7 @@ class Reversi
 	# ////////////////////////////////////////////////////////////////////////////////
 	def getPointCnt(color)
 		ret = 0
-		if (color == ReversiConst.REVERSI_STS_BLACK) then
+		if (color == @reversiConst.REVERSI_STS_BLACK) then
 			ret = @mMasuPointCntB
 		else
 			ret = @mMasuPointCntW
@@ -421,7 +424,7 @@ class Reversi
 	# ////////////////////////////////////////////////////////////////////////////////
 	def getBetCnt(color)
 		ret = 0
-		if (color == ReversiConst.REVERSI_STS_BLACK) then
+		if (color == @reversiConst.REVERSI_STS_BLACK) then
 			ret = @mMasuBetCntB
 		else
 			ret = @mMasuBetCntW
@@ -446,7 +449,7 @@ class Reversi
 	def getPassEna(color, y, x)
 		ret = 0
 		if (self.checkPara(y,0,@mMasuCnt) == 0 && self.checkPara(x,0,@mMasuCnt) == 0) then
-			if (color == ReversiConst.REVERSI_STS_BLACK) then
+			if (color == @reversiConst.REVERSI_STS_BLACK) then
 				ret = @mMasuStsPassB[y][x]
 			else
 				ret = @mMasuStsPassW[y][x]
@@ -499,7 +502,7 @@ class Reversi
 	def getPointAnz(color, y, x)
 		ret = nil
 		if (self.checkPara(y,0,@mMasuCnt) == 0 && self.checkPara(x,0,@mMasuCnt) == 0) then
-			if (color == ReversiConst.REVERSI_STS_BLACK) then
+			if (color == @reversiConst.REVERSI_STS_BLACK) then
 				ret = @mMasuStsAnzB[y][x]
 			else
 				ret = @mMasuStsAnzW[y][x]
@@ -532,10 +535,10 @@ class Reversi
 				if (self.getMasuSts(y,loop1) == color) then
 					flg1 = 1
 				end
-				if (flg1 == 1 && self.getMasuSts(y,loop1) == ReversiConst.REVERSI_STS_NONE) then
+				if (flg1 == 1 && self.getMasuSts(y,loop1) == @reversiConst.REVERSI_STS_NONE) then
 					break
 				end
-				if ((flg1 == 1) && (self.getMasuSts(y,loop1) != color) && (self.getMasuSts(y,loop1) != ReversiConst.REVERSI_STS_NONE)) then
+				if ((flg1 == 1) && (self.getMasuSts(y,loop1) != color) && (self.getMasuSts(y,loop1) != @reversiConst.REVERSI_STS_NONE)) then
 					flg2 = 1
 				end
 			end
@@ -550,10 +553,10 @@ class Reversi
 				if (self.getMasuSts(loop1,x) == color) then
 					flg1 = 1
 				end
-				if (flg1 == 1 && self.getMasuSts(loop1,x) == ReversiConst.REVERSI_STS_NONE) then
+				if (flg1 == 1 && self.getMasuSts(loop1,x) == @reversiConst.REVERSI_STS_NONE) then
 					break
 				end
-				if ((flg1 == 1) && (self.getMasuSts(loop1,x) != color) && (self.getMasuSts(loop1,x) != ReversiConst.REVERSI_STS_NONE)) then
+				if ((flg1 == 1) && (self.getMasuSts(loop1,x) != color) && (self.getMasuSts(loop1,x) != @reversiConst.REVERSI_STS_NONE)) then
 					flg2 = 1
 				end
 			end
@@ -568,10 +571,10 @@ class Reversi
 				if (self.getMasuSts(loop1,loop1) == color) then
 					flg1 = 1
 				end
-				if (flg1 == 1 && self.getMasuSts(loop1,loop1) == ReversiConst.REVERSI_STS_NONE) then
+				if (flg1 == 1 && self.getMasuSts(loop1,loop1) == @reversiConst.REVERSI_STS_NONE) then
 					break
 				end
-				if ((flg1 == 1) && (self.getMasuSts(loop1,loop1) != color) && (self.getMasuSts(loop1,loop1) != ReversiConst.REVERSI_STS_NONE)) then
+				if ((flg1 == 1) && (self.getMasuSts(loop1,loop1) != color) && (self.getMasuSts(loop1,loop1) != @reversiConst.REVERSI_STS_NONE)) then
 					flg2 = 1
 				end
 			end
@@ -587,10 +590,10 @@ class Reversi
 				if (self.getMasuSts(y,loop1) == color) then
 					flg1 = 1
 				end
-				if (flg1 == 1 && self.getMasuSts(y,loop1) == ReversiConst.REVERSI_STS_NONE) then
+				if (flg1 == 1 && self.getMasuSts(y,loop1) == @reversiConst.REVERSI_STS_NONE) then
 					break
 				end
-				if ((flg1 == 1) && (self.getMasuSts(y,loop1) != color) && (self.getMasuSts(y,loop1) != ReversiConst.REVERSI_STS_NONE)) then
+				if ((flg1 == 1) && (self.getMasuSts(y,loop1) != color) && (self.getMasuSts(y,loop1) != @reversiConst.REVERSI_STS_NONE)) then
 					flg2 = 1
 				end
 			end
@@ -605,10 +608,10 @@ class Reversi
 				if (self.getMasuSts(loop1,x) == color) then
 					flg1 = 1
 				end
-				if (flg1 == 1 && self.getMasuSts(loop1,x) == ReversiConst.REVERSI_STS_NONE) then
+				if (flg1 == 1 && self.getMasuSts(loop1,x) == @reversiConst.REVERSI_STS_NONE) then
 					break
 				end
-				if ((flg1 == 1) && (self.getMasuSts(loop1,x) != color) && (self.getMasuSts(loop1,x) != ReversiConst.REVERSI_STS_NONE)) then
+				if ((flg1 == 1) && (self.getMasuSts(loop1,x) != color) && (self.getMasuSts(loop1,x) != @reversiConst.REVERSI_STS_NONE)) then
 					flg2 = 1
 				end
 			end
@@ -624,10 +627,10 @@ class Reversi
 				if (self.getMasuSts(loop1,loop2) == color) then
 					flg1 = 1
 				end
-				if (flg1 == 1 && self.getMasuSts(loop1,loop2) == ReversiConst.REVERSI_STS_NONE) then
+				if (flg1 == 1 && self.getMasuSts(loop1,loop2) == @reversiConst.REVERSI_STS_NONE) then
 					break
 				end
-				if ((flg1 == 1) && (self.getMasuSts(loop1,loop2) != color) && (self.getMasuSts(loop1,loop2) != ReversiConst.REVERSI_STS_NONE)) then
+				if ((flg1 == 1) && (self.getMasuSts(loop1,loop2) != color) && (self.getMasuSts(loop1,loop2) != @reversiConst.REVERSI_STS_NONE)) then
 					flg2 = 1
 				end
 				loop2 -= 1
@@ -644,10 +647,10 @@ class Reversi
 				if (self.getMasuSts(loop1,x) == color) then
 					flg1=1
 				end
-				if (flg1 == 1 && self.getMasuSts(loop1,x) == ReversiConst.REVERSI_STS_NONE) then
+				if (flg1 == 1 && self.getMasuSts(loop1,x) == @reversiConst.REVERSI_STS_NONE) then
 					break
 				end
-				if ((flg1 == 1) && (self.getMasuSts(loop1,x) != color) && (self.getMasuSts(loop1,x) != ReversiConst.REVERSI_STS_NONE)) then
+				if ((flg1 == 1) && (self.getMasuSts(loop1,x) != color) && (self.getMasuSts(loop1,x) != @reversiConst.REVERSI_STS_NONE)) then
 					flg2 = 1
 				end
 			end
@@ -662,10 +665,10 @@ class Reversi
 				if (self.getMasuSts(y,loop1) == color) then
 					flg1 = 1
 				end
-				if (flg1 == 1 && self.getMasuSts(y,loop1) == ReversiConst.REVERSI_STS_NONE) then
+				if (flg1 == 1 && self.getMasuSts(y,loop1) == @reversiConst.REVERSI_STS_NONE) then
 					break
 				end
-				if ((flg1 == 1) && (self.getMasuSts(y,loop1) != color) && (self.getMasuSts(y,loop1) != ReversiConst.REVERSI_STS_NONE)) then
+				if ((flg1 == 1) && (self.getMasuSts(y,loop1) != color) && (self.getMasuSts(y,loop1) != @reversiConst.REVERSI_STS_NONE)) then
 					flg2 = 1
 				end
 			end
@@ -682,10 +685,10 @@ class Reversi
 				if (self.getMasuSts(loop1,loop2) == color) then
 					flg1 = 1
 				end
-				if (flg1 == 1 && self.getMasuSts(loop1,loop2) == ReversiConst.REVERSI_STS_NONE) then
+				if (flg1 == 1 && self.getMasuSts(loop1,loop2) == @reversiConst.REVERSI_STS_NONE) then
 					break
 				end
-				if ((flg1 == 1) && (self.getMasuSts(loop1,loop2) != color) && (self.getMasuSts(loop1,loop2) != ReversiConst.REVERSI_STS_NONE)) then
+				if ((flg1 == 1) && (self.getMasuSts(loop1,loop2) != color) && (self.getMasuSts(loop1,loop2) != @reversiConst.REVERSI_STS_NONE)) then
 					flg2 = 1
 				end
 			end
@@ -702,10 +705,10 @@ class Reversi
 				if (self.getMasuSts(loop1,x) == color) then
 					flg1 = 1
 				end
-				if (flg1 == 1 && self.getMasuSts(loop1,x) == ReversiConst.REVERSI_STS_NONE) then
+				if (flg1 == 1 && self.getMasuSts(loop1,x) == @reversiConst.REVERSI_STS_NONE) then
 					break
 				end
-				if ((flg1 == 1) && (self.getMasuSts(loop1,x) != color) && (self.getMasuSts(loop1,x) != ReversiConst.REVERSI_STS_NONE)) then
+				if ((flg1 == 1) && (self.getMasuSts(loop1,x) != color) && (self.getMasuSts(loop1,x) != @reversiConst.REVERSI_STS_NONE)) then
 					flg2 = 1
 				end
 			end
@@ -721,10 +724,10 @@ class Reversi
 				if (self.getMasuSts(y,loop1) == color) then
 					flg1 = 1
 				end
-				if (flg1 == 1 && self.getMasuSts(y,loop1) == ReversiConst.REVERSI_STS_NONE) then
+				if (flg1 == 1 && self.getMasuSts(y,loop1) == @reversiConst.REVERSI_STS_NONE) then
 					break
 				end
-				if ((flg1 == 1) && (self.getMasuSts(y,loop1) != color) && (self.getMasuSts(y,loop1) != ReversiConst.REVERSI_STS_NONE)) then
+				if ((flg1 == 1) && (self.getMasuSts(y,loop1) != color) && (self.getMasuSts(y,loop1) != @reversiConst.REVERSI_STS_NONE)) then
 					flg2 = 1
 				end
 			end
@@ -741,10 +744,10 @@ class Reversi
 				if (self.getMasuSts(loop1,loop2) == color) then
 					flg1 = 1
 				end
-				if (flg1 == 1 && self.getMasuSts(loop1,loop2) == ReversiConst.REVERSI_STS_NONE) then
+				if (flg1 == 1 && self.getMasuSts(loop1,loop2) == @reversiConst.REVERSI_STS_NONE) then
 					break
 				end
-				if ((flg1 == 1) && (self.getMasuSts(loop1,loop2) != color) && (self.getMasuSts(loop1,loop2) != ReversiConst.REVERSI_STS_NONE)) then
+				if ((flg1 == 1) && (self.getMasuSts(loop1,loop2) != color) && (self.getMasuSts(loop1,loop2) != @reversiConst.REVERSI_STS_NONE)) then
 					flg2 = 1
 				end
 			end
@@ -864,7 +867,7 @@ class Reversi
 		return ret
 	end
 
-	private
+	#private
 	# ////////////////////////////////////////////////////////////////////////////////
 	# ///	@brief			各コマの置ける場所等のステータス作成
 	# ///	@fn				makeMasuSts(color)
@@ -886,7 +889,7 @@ class Reversi
 		loop1 = 0
 		for i in 0..(@mMasuCnt - 1) do
 			for j in 0..(@mMasuCnt - 1) do
-				if (color == ReversiConst.REVERSI_STS_BLACK) then
+				if (color == @reversiConst.REVERSI_STS_BLACK) then
 					@mMasuStsEnaB[i][j] = 0
 					@mMasuStsCntB[i][j] = 0
 				else
@@ -898,7 +901,7 @@ class Reversi
 
 		loop1 = @mMasuCnt * @mMasuCnt;
 		for i in 0..(loop1 - 1) do
-			if (color == ReversiConst.REVERSI_STS_BLACK) then
+			if (color == @reversiConst.REVERSI_STS_BLACK) then
 				@mMasuPointB[i].x = 0
 				@mMasuPointB[i].y = 0
 			else
@@ -906,7 +909,7 @@ class Reversi
 				@mMasuPointW[i].y = 0
 			end
 		end
-		if (color == ReversiConst.REVERSI_STS_BLACK) then
+		if (color == @reversiConst.REVERSI_STS_BLACK) then
 			@mMasuPointCntB	= 0
 		else
 			@mMasuPointCntW	= 0
@@ -918,12 +921,12 @@ class Reversi
 			for j in 0..(@mMasuCnt - 1) do
 				okflg = 0
 				count2 = 0
-				if (@mMasuSts[i][j] == ReversiConst.REVERSI_STS_NONE) then
+				if (@mMasuSts[i][j] == @reversiConst.REVERSI_STS_NONE) then
 					# // 何も置かれていないマスなら
 					cnt1 = i
 					count1 = flg = 0
 					# // *** 上方向を調べる *** //
-					while ((cnt1 > 0) && (@mMasuSts[cnt1-1][j] != ReversiConst.REVERSI_STS_NONE && @mMasuSts[cnt1-1][j] != color)) do
+					while ((cnt1 > 0) && (@mMasuSts[cnt1-1][j] != @reversiConst.REVERSI_STS_NONE && @mMasuSts[cnt1-1][j] != color)) do
 						flg = 1
 						cnt1 -= 1
 						count1 += 1
@@ -935,7 +938,7 @@ class Reversi
 					cnt1 = i
 					count1 = flg = 0
 					# // *** 下方向を調べる *** //
-					while ((cnt1 < (@mMasuCnt-1)) && (@mMasuSts[cnt1+1][j] != ReversiConst.REVERSI_STS_NONE && @mMasuSts[cnt1+1][j] != color)) do
+					while ((cnt1 < (@mMasuCnt-1)) && (@mMasuSts[cnt1+1][j] != @reversiConst.REVERSI_STS_NONE && @mMasuSts[cnt1+1][j] != color)) do
 						flg = 1
 						cnt1 += 1
 						count1 += 1
@@ -947,7 +950,7 @@ class Reversi
 					cnt2 = j
 					count1 = flg = 0
 					# // *** 右方向を調べる *** //
-					while ((cnt2 < (@mMasuCnt-1)) && (@mMasuSts[i][cnt2+1] != ReversiConst.REVERSI_STS_NONE && @mMasuSts[i][cnt2+1] != color)) do
+					while ((cnt2 < (@mMasuCnt-1)) && (@mMasuSts[i][cnt2+1] != @reversiConst.REVERSI_STS_NONE && @mMasuSts[i][cnt2+1] != color)) do
 						flg = 1
 						cnt2 += 1
 						count1 += 1
@@ -959,7 +962,7 @@ class Reversi
 					cnt2 = j
 					count1 = flg = 0
 					# // *** 左方向を調べる *** //
-					while ((cnt2 > 0) && (@mMasuSts[i][cnt2-1] != ReversiConst.REVERSI_STS_NONE && @mMasuSts[i][cnt2-1] != color)) do
+					while ((cnt2 > 0) && (@mMasuSts[i][cnt2-1] != @reversiConst.REVERSI_STS_NONE && @mMasuSts[i][cnt2-1] != color)) do
 						flg = 1
 						cnt2 -= 1
 						count1 += 1
@@ -972,7 +975,7 @@ class Reversi
 					cnt1 = i
 					count1 = flg = 0
 					# // *** 右上方向を調べる *** //
-					while (((cnt2 < (@mMasuCnt-1)) && (cnt1 > 0)) && (@mMasuSts[cnt1-1][cnt2+1] != ReversiConst.REVERSI_STS_NONE && @mMasuSts[cnt1-1][cnt2+1] != color)) do
+					while (((cnt2 < (@mMasuCnt-1)) && (cnt1 > 0)) && (@mMasuSts[cnt1-1][cnt2+1] != @reversiConst.REVERSI_STS_NONE && @mMasuSts[cnt1-1][cnt2+1] != color)) do
 						flg = 1;
 						cnt1 -= 1
 						cnt2 += 1
@@ -986,7 +989,7 @@ class Reversi
 					cnt1 = i
 					count1 = flg = 0
 					# // *** 左上方向を調べる *** //
-					while (((cnt2 > 0) && (cnt1 > 0)) && (@mMasuSts[cnt1-1][cnt2-1] != ReversiConst.REVERSI_STS_NONE && @mMasuSts[cnt1-1][cnt2-1] != color)) do
+					while (((cnt2 > 0) && (cnt1 > 0)) && (@mMasuSts[cnt1-1][cnt2-1] != @reversiConst.REVERSI_STS_NONE && @mMasuSts[cnt1-1][cnt2-1] != color)) do
 						flg = 1;
 						cnt1 -= 1
 						cnt2 -= 1
@@ -1000,7 +1003,7 @@ class Reversi
 					cnt1 = i
 					count1 = flg = 0
 					#// *** 右下方向を調べる *** //
-					while (((cnt2 < (@mMasuCnt-1)) && (cnt1 < (@mMasuCnt-1))) && (@mMasuSts[cnt1+1][cnt2+1] != ReversiConst.REVERSI_STS_NONE && @mMasuSts[cnt1+1][cnt2+1] != color)) do
+					while (((cnt2 < (@mMasuCnt-1)) && (cnt1 < (@mMasuCnt-1))) && (@mMasuSts[cnt1+1][cnt2+1] != @reversiConst.REVERSI_STS_NONE && @mMasuSts[cnt1+1][cnt2+1] != color)) do
 						flg = 1
 						cnt1 += 1
 						cnt2 += 1
@@ -1014,7 +1017,7 @@ class Reversi
 					cnt1 = i
 					count1 = flg = 0
 					# // *** 左下方向を調べる *** //
-					while (((cnt2 > 0) && (cnt1 < (@mMasuCnt-1))) && (@mMasuSts[cnt1+1][cnt2-1] != ReversiConst.REVERSI_STS_NONE && @mMasuSts[cnt1+1][cnt2-1] != color)) do
+					while (((cnt2 > 0) && (cnt1 < (@mMasuCnt-1))) && (@mMasuSts[cnt1+1][cnt2-1] != @reversiConst.REVERSI_STS_NONE && @mMasuSts[cnt1+1][cnt2-1] != color)) do
 						flg = 1
 						cnt1 += 1
 						cnt2 -= 1
@@ -1025,7 +1028,7 @@ class Reversi
 						count2 += count1
 					end
 					if (okflg == 1) then
-						if (color == ReversiConst.REVERSI_STS_BLACK) then
+						if (color == @reversiConst.REVERSI_STS_BLACK) then
 							@mMasuStsEnaB[i][j] = 1
 							@mMasuStsCntB[i][j] = count2
 							# // *** 置ける場所をリニアに保存、置けるポイント数も保存 *** //
@@ -1045,9 +1048,9 @@ class Reversi
 							countMax = count2
 						end
 					end
-				elsif (@mMasuSts[i][j] == ReversiConst.REVERSI_STS_BLACK) then
+				elsif (@mMasuSts[i][j] == @reversiConst.REVERSI_STS_BLACK) then
 					@mMasuBetCntB += 1
-				elsif (@mMasuSts[i][j] == ReversiConst.REVERSI_STS_WHITE) then
+				elsif (@mMasuSts[i][j] == @reversiConst.REVERSI_STS_WHITE) then
 					@mMasuBetCntW += 1
 				end
 			end
@@ -1056,7 +1059,7 @@ class Reversi
 		# // *** 一番枚数を獲得できるマスを設定 *** //
 		for i in 0..(@mMasuCnt - 1) do
 			for j in 0..(@mMasuCnt - 1) do
-				if (color == ReversiConst.REVERSI_STS_BLACK) then
+				if (color == @reversiConst.REVERSI_STS_BLACK) then
 					if (@mMasuStsEnaB[i][j] != 0 && @mMasuStsCntB[i][j] == countMax) then
 						@mMasuStsEnaB[i][j] = 2
 					end
@@ -1092,13 +1095,13 @@ class Reversi
 		cnt1 = x
 		cnt2 = y
 		while (cnt1 > 0) do
-			if (@mMasuSts[cnt2][cnt1-1] != ReversiConst.REVERSI_STS_NONE && @mMasuSts[cnt2][cnt1-1] != color) then
+			if (@mMasuSts[cnt2][cnt1-1] != @reversiConst.REVERSI_STS_NONE && @mMasuSts[cnt2][cnt1-1] != color) then
 				# // *** プレイヤー以外の色の駒があるなら *** //
 				cnt1 -= 1
 			elsif (@mMasuSts[cnt2][cnt1-1] == color) then
 				flg = 1
 				break
-			elsif (@mMasuSts[cnt2][cnt1-1] == ReversiConst.REVERSI_STS_NONE) then
+			elsif (@mMasuSts[cnt2][cnt1-1] == @reversiConst.REVERSI_STS_NONE) then
 				break
 			end
 		end
@@ -1116,13 +1119,13 @@ class Reversi
 		cnt1 = x
 		cnt2 = y
 		while (cnt1 < (@mMasuCnt-1)) do
-			if (@mMasuSts[cnt2][cnt1+1] != ReversiConst.REVERSI_STS_NONE && @mMasuSts[cnt2][cnt1+1] != color) then
+			if (@mMasuSts[cnt2][cnt1+1] != @reversiConst.REVERSI_STS_NONE && @mMasuSts[cnt2][cnt1+1] != color) then
 				# // *** プレイヤー以外の色の駒があるなら *** //
 				cnt1 += 1
 			elsif (@mMasuSts[cnt2][cnt1+1] == color) then
 				flg = 1
 				break
-			elsif (@mMasuSts[cnt2][cnt1+1] == ReversiConst.REVERSI_STS_NONE) then
+			elsif (@mMasuSts[cnt2][cnt1+1] == @reversiConst.REVERSI_STS_NONE) then
 				break
 			end
 		end
@@ -1140,13 +1143,13 @@ class Reversi
 		cnt1 = x
 		cnt2 = y
 		while (cnt2 > 0) do
-			if (@mMasuSts[cnt2-1][cnt1] != ReversiConst.REVERSI_STS_NONE && @mMasuSts[cnt2-1][cnt1] != color) then
+			if (@mMasuSts[cnt2-1][cnt1] != @reversiConst.REVERSI_STS_NONE && @mMasuSts[cnt2-1][cnt1] != color) then
 				# // *** プレイヤー以外の色の駒があるなら *** //
 				cnt2 -= 1
 			elsif (@mMasuSts[cnt2-1][cnt1] == color) then
 				flg = 1
 				break
-			elsif (@mMasuSts[cnt2-1][cnt1] == ReversiConst.REVERSI_STS_NONE) then
+			elsif (@mMasuSts[cnt2-1][cnt1] == @reversiConst.REVERSI_STS_NONE) then
 				break
 			end
 		end
@@ -1164,13 +1167,13 @@ class Reversi
 		cnt1 = x
 		cnt2 = y
 		while (cnt2 < (@mMasuCnt-1)) do
-			if (@mMasuSts[cnt2+1][cnt1] != ReversiConst.REVERSI_STS_NONE && @mMasuSts[cnt2+1][cnt1] != color) then
+			if (@mMasuSts[cnt2+1][cnt1] != @reversiConst.REVERSI_STS_NONE && @mMasuSts[cnt2+1][cnt1] != color) then
 				# // *** プレイヤー以外の色の駒があるなら *** //
 				cnt2 += 1
 			elsif (@mMasuSts[cnt2+1][cnt1] == color) then
 				flg = 1
 				break
-			elsif (@mMasuSts[cnt2+1][cnt1] == ReversiConst.REVERSI_STS_NONE) then
+			elsif (@mMasuSts[cnt2+1][cnt1] == @reversiConst.REVERSI_STS_NONE) then
 				break
 			end
 		end
@@ -1188,14 +1191,14 @@ class Reversi
 		cnt1 = x
 		cnt2 = y
 		while (cnt2 > 0 && cnt1 > 0) do
-			if (@mMasuSts[cnt2-1][cnt1-1] != ReversiConst.REVERSI_STS_NONE && @mMasuSts[cnt2-1][cnt1-1] != color) then
+			if (@mMasuSts[cnt2-1][cnt1-1] != @reversiConst.REVERSI_STS_NONE && @mMasuSts[cnt2-1][cnt1-1] != color) then
 				#// *** プレイヤー以外の色の駒があるなら *** //
 				cnt2 -= 1
 				cnt1 -= 1
 			elsif (@mMasuSts[cnt2-1][cnt1-1] == color) then
 				flg = 1
 				break
-			elsif (@mMasuSts[cnt2-1][cnt1-1] == ReversiConst.REVERSI_STS_NONE) then
+			elsif (@mMasuSts[cnt2-1][cnt1-1] == @reversiConst.REVERSI_STS_NONE) then
 				break
 			end
 		end
@@ -1215,14 +1218,14 @@ class Reversi
 		cnt1 = x
 		cnt2 = y
 		while (cnt2 < (@mMasuCnt-1) && cnt1 > 0) do
-			if (@mMasuSts[cnt2+1][cnt1-1] != ReversiConst.REVERSI_STS_NONE && @mMasuSts[cnt2+1][cnt1-1] != color) then
+			if (@mMasuSts[cnt2+1][cnt1-1] != @reversiConst.REVERSI_STS_NONE && @mMasuSts[cnt2+1][cnt1-1] != color) then
 				# // *** プレイヤー以外の色の駒があるなら *** //
 				cnt2 += 1
 				cnt1 -= 1
 			elsif (@mMasuSts[cnt2+1][cnt1-1] == color) then
 				flg = 1
 				break
-			elsif (@mMasuSts[cnt2+1][cnt1-1] == ReversiConst.REVERSI_STS_NONE) then
+			elsif (@mMasuSts[cnt2+1][cnt1-1] == @reversiConst.REVERSI_STS_NONE) then
 				break
 			end
 		end
@@ -1242,14 +1245,14 @@ class Reversi
 		cnt1 = x
 		cnt2 = y
 		while (cnt2 > 0 && cnt1 < (@mMasuCnt-1)) do
-			if (@mMasuSts[cnt2-1][cnt1+1] != ReversiConst.REVERSI_STS_NONE && @mMasuSts[cnt2-1][cnt1+1] != color) then
+			if (@mMasuSts[cnt2-1][cnt1+1] != @reversiConst.REVERSI_STS_NONE && @mMasuSts[cnt2-1][cnt1+1] != color) then
 				# // *** プレイヤー以外の色の駒があるなら *** //
 				cnt2 -= 1
 				cnt1 += 1
 			elsif (@mMasuSts[cnt2-1][cnt1+1] == color) then
 				flg = 1
 				break
-			elsif (@mMasuSts[cnt2-1][cnt1+1] == ReversiConst.REVERSI_STS_NONE) then
+			elsif (@mMasuSts[cnt2-1][cnt1+1] == @reversiConst.REVERSI_STS_NONE) then
 				break
 			end
 		end
@@ -1269,14 +1272,14 @@ class Reversi
 		cnt1 = x
 		cnt2 = y
 		while (cnt2 < (@mMasuCnt-1) && cnt1 < (@mMasuCnt-1)) do
-			if (@mMasuSts[cnt2+1][cnt1+1] != ReversiConst.REVERSI_STS_NONE && @mMasuSts[cnt2+1][cnt1+1] != color) then
+			if (@mMasuSts[cnt2+1][cnt1+1] != @reversiConst.REVERSI_STS_NONE && @mMasuSts[cnt2+1][cnt1+1] != color) then
 				# // *** プレイヤー以外の色の駒があるなら *** //
 				cnt2 += 1
 				cnt1 += 1
 			elsif (@mMasuSts[cnt2+1][cnt1+1] == color) then
 				flg = 1
 				break
-			elsif (@mMasuSts[cnt2+1][cnt1+1] == ReversiConst.REVERSI_STS_NONE) then
+			elsif (@mMasuSts[cnt2+1][cnt1+1] == @reversiConst.REVERSI_STS_NONE) then
 				break
 			end
 		end
@@ -1339,12 +1342,12 @@ class Reversi
 
 			tmpY = @mMasuPointB[cnt].y
 			tmpX = @mMasuPointB[cnt].x
-			@mMasuSts[tmpY][tmpX] = ReversiConst.REVERSI_STS_BLACK				# // 仮に置く
-			self.revMasuSts(ReversiConst.REVERSI_STS_BLACK,tmpY,tmpX)			# // 仮にひっくり返す
-			self.makeMasuSts(ReversiConst.REVERSI_STS_BLACK)
-			self.makeMasuSts(ReversiConst.REVERSI_STS_WHITE)
+			@mMasuSts[tmpY][tmpX] = @reversiConst.REVERSI_STS_BLACK				# // 仮に置く
+			self.revMasuSts(@reversiConst.REVERSI_STS_BLACK,tmpY,tmpX)			# // 仮にひっくり返す
+			self.makeMasuSts(@reversiConst.REVERSI_STS_BLACK)
+			self.makeMasuSts(@reversiConst.REVERSI_STS_WHITE)
 			# // *** このマスに置いた場合の解析を行う *** //
-			if (self.getColorEna(ReversiConst.REVERSI_STS_WHITE) != 0) then		# // 相手がパス
+			if (self.getColorEna(@reversiConst.REVERSI_STS_WHITE) != 0) then		# // 相手がパス
 				@mMasuStsPassB[tmpY][tmpX] = 1
 			end
 			if (self.getEdgeSideZero(tmpY,tmpX) == 0) then						# // 置いた場所が角
@@ -1352,7 +1355,7 @@ class Reversi
 				@mMasuStsAnzB[tmpY][tmpX].goodPoint = @mMasuStsAnzB[tmpY][tmpX].goodPoint + 10000 * @mMasuStsCntB[tmpY][tmpX]
 			elsif (self.getEdgeSideOne(tmpY,tmpX) == 0) then					# // 置いた場所が角の一つ手前
 				@mMasuStsAnzB[tmpY][tmpX].ownEdgeSideOneCnt = @mMasuStsAnzB[tmpY][tmpX].ownEdgeSideOneCnt + 1
-				if (self.checkEdge(ReversiConst.REVERSI_STS_BLACK,tmpY,tmpX) != 0) then	# // 角を取られない
+				if (self.checkEdge(@reversiConst.REVERSI_STS_BLACK,tmpY,tmpX) != 0) then	# // 角を取られない
 					@mMasuStsAnzB[tmpY][tmpX].goodPoint = @mMasuStsAnzB[tmpY][tmpX].goodPoint + 10 * @mMasuStsCntB[tmpY][tmpX]
 				else															# // 角を取られる
 					@mMasuStsAnzB[tmpY][tmpX].badPoint = @mMasuStsAnzB[tmpY][tmpX].badPoint + 100000
@@ -1373,7 +1376,7 @@ class Reversi
 				for j in 0..(@mMasuCnt - 1) do
 					tmpBadPoint = 0
 					tmpGoodPoint = 0
-					if (self.getMasuStsEna(ReversiConst.REVERSI_STS_WHITE,i,j) != 0) then
+					if (self.getMasuStsEna(@reversiConst.REVERSI_STS_WHITE,i,j) != 0) then
 						sum += @mMasuStsCntW[i][j];								# // 相手の獲得予定枚数
 						# // *** 相手の獲得予定の最大数保持 *** //
 						if (self.mMasuStsAnzB[tmpY][tmpX].max < @mMasuStsCntW[i][j]) then
@@ -1404,7 +1407,7 @@ class Reversi
 							tmpBadPoint = 0;									# // ステータス変化していないなら
 						end
 					end
-					if (self.getMasuStsEna(ReversiConst.REVERSI_STS_BLACK,i,j) != 0) then
+					if (self.getMasuStsEna(@reversiConst.REVERSI_STS_BLACK,i,j) != 0) then
 						sumOwn += @mMasuStsCntB[i][j]							# // 自分の獲得予定枚数
 						# // *** 自分の獲得予定の最大数保持 *** //
 						if (@mMasuStsAnzB[tmpY][tmpX].ownMax < @mMasuStsCntB[i][j])
@@ -1444,23 +1447,23 @@ class Reversi
 				end
 			end
 			# // *** 相手に取られる平均コマ数 *** //
-			if(self.getPointCnt(ReversiConst.REVERSI_STS_WHITE) != 0) then
+			if(self.getPointCnt(@reversiConst.REVERSI_STS_WHITE) != 0) then
 				tmpD1 = sum
-				tmpD2 = self.getPointCnt(ReversiConst.REVERSI_STS_WHITE)
+				tmpD2 = self.getPointCnt(@reversiConst.REVERSI_STS_WHITE)
 				@mMasuStsAnzB[tmpY][tmpX].avg = tmpD1 / tmpD2
 			end
 
 			# // *** 自分が取れる平均コマ数 *** //
-			if (self.getPointCnt(ReversiConst.REVERSI_STS_BLACK) != 0) then
+			if (self.getPointCnt(@reversiConst.REVERSI_STS_BLACK) != 0) then
 				tmpD1 = sumOwn
-				tmpD2 = self.getPointCnt(ReversiConst.REVERSI_STS_BLACK)
+				tmpD2 = self.getPointCnt(@reversiConst.REVERSI_STS_BLACK)
 				@mMasuStsAnzB[tmpY][tmpX].ownAvg = tmpD1 / tmpD2
 			end
 
 			# // *** 元に戻す *** //
 			@mMasuSts = Marshal.load(Marshal.dump(tmpMasu))
-			self.makeMasuSts(ReversiConst.REVERSI_STS_BLACK)
-			self.makeMasuSts(ReversiConst.REVERSI_STS_WHITE)
+			self.makeMasuSts(@reversiConst.REVERSI_STS_BLACK)
+			self.makeMasuSts(@reversiConst.REVERSI_STS_WHITE)
 		end
 	end
 
@@ -1492,12 +1495,12 @@ class Reversi
 
 			tmpY = @mMasuPointW[cnt].y
 			tmpX = @mMasuPointW[cnt].x
-			@mMasuSts[tmpY][tmpX] = ReversiConst.REVERSI_STS_WHITE					# // 仮に置く
-			self.revMasuSts(ReversiConst.REVERSI_STS_WHITE,tmpY,tmpX)				# // 仮にひっくり返す
-			self.makeMasuSts(ReversiConst.REVERSI_STS_BLACK)
-			self.makeMasuSts(ReversiConst.REVERSI_STS_WHITE)
+			@mMasuSts[tmpY][tmpX] = @reversiConst.REVERSI_STS_WHITE					# // 仮に置く
+			self.revMasuSts(@reversiConst.REVERSI_STS_WHITE,tmpY,tmpX)				# // 仮にひっくり返す
+			self.makeMasuSts(@reversiConst.REVERSI_STS_BLACK)
+			self.makeMasuSts(@reversiConst.REVERSI_STS_WHITE)
 			# // *** このマスに置いた場合の解析を行う *** //
-			if (self.getColorEna(ReversiConst.REVERSI_STS_BLACK) != 0) then			# // 相手がパス
+			if (self.getColorEna(@reversiConst.REVERSI_STS_BLACK) != 0) then			# // 相手がパス
 				@mMasuStsPassW[tmpY][tmpX] = 1
 			end
 			if (self.getEdgeSideZero(tmpY,tmpX) == 0) then							# // 置いた場所が角
@@ -1505,7 +1508,7 @@ class Reversi
 				@mMasuStsAnzW[tmpY][tmpX].goodPoint = @mMasuStsAnzW[tmpY][tmpX].goodPoint + 10000 * @mMasuStsCntW[tmpY][tmpX]
 			elsif (self.getEdgeSideOne(tmpY,tmpX) == 0) then						# // 置いた場所が角の一つ手前
 				@mMasuStsAnzW[tmpY][tmpX].ownEdgeSideOneCnt = @mMasuStsAnzW[tmpY][tmpX].ownEdgeSideOneCnt + 1
-				if (self.checkEdge(ReversiConst.REVERSI_STS_WHITE,tmpY,tmpX) != 0) then	# // 角を取られない
+				if (self.checkEdge(@reversiConst.REVERSI_STS_WHITE,tmpY,tmpX) != 0) then	# // 角を取られない
 					@mMasuStsAnzW[tmpY][tmpX].goodPoint = @mMasuStsAnzW[tmpY][tmpX].goodPoint + 10 * @mMasuStsCntW[tmpY][tmpX]
 				else																# // 角を取られる
 					@mMasuStsAnzW[tmpY][tmpX].badPoint = @mMasuStsAnzW[tmpY][tmpX].badPoint + 100000
@@ -1526,7 +1529,7 @@ class Reversi
 				for j in 0..(@mMasuCnt - 1) do
 					tmpBadPoint = 0
 					tmpGoodPoint = 0
-					if (self.getMasuStsEna(ReversiConst.REVERSI_STS_BLACK,i,j) != 0) then
+					if (self.getMasuStsEna(@reversiConst.REVERSI_STS_BLACK,i,j) != 0) then
 						sum += @mMasuStsCntB[i][j]								# // 相手の獲得予定枚数
 						# // *** 相手の獲得予定の最大数保持 *** //
 						if (@mMasuStsAnzW[tmpY][tmpX].max < @mMasuStsCntB[i][j]) then
@@ -1557,7 +1560,7 @@ class Reversi
 							tmpBadPoint = 0										# // ステータス変化していないなら
 						end
 					end
-					if (self.getMasuStsEna(ReversiConst.REVERSI_STS_WHITE,i,j) != 0) then
+					if (self.getMasuStsEna(@reversiConst.REVERSI_STS_WHITE,i,j) != 0) then
 						sumOwn += @mMasuStsCntW[i][j]							# // 自分の獲得予定枚数
 						# // *** 自分の獲得予定の最大数保持 *** //
 						if (@mMasuStsAnzW[tmpY][tmpX].ownMax < @mMasuStsCntW[i][j])
@@ -1597,23 +1600,23 @@ class Reversi
 				end
 			end
 			# // *** 相手に取られる平均コマ数 *** //
-			if (self.getPointCnt(ReversiConst.REVERSI_STS_BLACK) != 0) then
+			if (self.getPointCnt(@reversiConst.REVERSI_STS_BLACK) != 0) then
 				tmpD1 = sum
-				tmpD2 = self.getPointCnt(ReversiConst.REVERSI_STS_BLACK)
+				tmpD2 = self.getPointCnt(@reversiConst.REVERSI_STS_BLACK)
 				@mMasuStsAnzW[tmpY][tmpX].avg = tmpD1 / tmpD2
 			end
 
 			# // *** 自分が取れる平均コマ数 *** //
-			if (self.getPointCnt(ReversiConst.REVERSI_STS_WHITE) != 0) then
+			if (self.getPointCnt(@reversiConst.REVERSI_STS_WHITE) != 0) then
 				tmpD1 = sumOwn
-				tmpD2 = self.getPointCnt(ReversiConst.REVERSI_STS_WHITE)
+				tmpD2 = self.getPointCnt(@reversiConst.REVERSI_STS_WHITE)
 				@mMasuStsAnzW[tmpY][tmpX].ownAvg = tmpD1 / tmpD2
 			end
 
 			# // *** 元に戻す *** //
 			@mMasuSts = Marshal.load(Marshal.dump(tmpMasu))
-			self.makeMasuSts(ReversiConst.REVERSI_STS_BLACK)
-			self.makeMasuSts(ReversiConst.REVERSI_STS_WHITE)
+			self.makeMasuSts(@reversiConst.REVERSI_STS_BLACK)
+			self.makeMasuSts(@reversiConst.REVERSI_STS_WHITE)
 		end
 	end
 end

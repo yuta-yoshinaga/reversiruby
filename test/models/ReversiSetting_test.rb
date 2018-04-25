@@ -3,6 +3,8 @@ require 'test_helper'
 class ReversiSettingTest < ActiveSupport::TestCase
 
   def setup
+    @reversiConst = ReversiConst.new()
+    Rails.logger.debug @reversiConst.to_yaml
     @obj = ReversiSetting.new()
   end
 
@@ -18,35 +20,34 @@ class ReversiSettingTest < ActiveSupport::TestCase
     res = true
     if (@obj != nil) then
       #@obj.reset()
-      reversiConst = ReversiConst.new()
-      if (@obj.mMode != reversiConst.DEF_MODE_ONE) then
+      if (@obj.mMode != @reversiConst.DEF_MODE_ONE) then
         res = false
       end
-      if (@obj.mType != reversiConst.DEF_TYPE_HARD) then
+      if (@obj.mType != @reversiConst.DEF_TYPE_HARD) then
         res = false
       end
-      if (@obj.mPlayer != reversiConst.REVERSI_STS_BLACK) then
+      if (@obj.mPlayer != @reversiConst.REVERSI_STS_BLACK) then
         res = false
       end
-      if (@obj.mAssist != reversiConst.DEF_ASSIST_ON) then
+      if (@obj.mAssist != @reversiConst.DEF_ASSIST_ON) then
         res = false
       end
-      if (@obj.mGameSpd != reversiConst.DEF_GAME_SPD_MID) then
+      if (@obj.mGameSpd != @reversiConst.DEF_GAME_SPD_MID) then
         res = false
       end
-      if (@obj.mEndAnim != reversiConst.DEF_END_ANIM_ON) then
+      if (@obj.mEndAnim != @reversiConst.DEF_END_ANIM_ON) then
         res = false
       end
-      if (@obj.mMasuCntMenu != reversiConst.DEF_MASU_CNT_8_VAL) then
+      if (@obj.mMasuCntMenu != @reversiConst.DEF_MASU_CNT_8_VAL) then
         res = false
       end
-      if (@obj.mMasuCnt != reversiConst.DEF_MASU_CNT_8_VAL) then
+      if (@obj.mMasuCnt != @reversiConst.DEF_MASU_CNT_8_VAL) then
         res = false
       end
-      if (@obj.mPlayCpuInterVal != reversiConst.DEF_GAME_SPD_MID_VAL2) then
+      if (@obj.mPlayCpuInterVal != @reversiConst.DEF_GAME_SPD_MID_VAL2) then
         res = false
       end
-      if (@obj.mPlayDrawInterVal != reversiConst.DEF_GAME_SPD_MID_VAL) then
+      if (@obj.mPlayDrawInterVal != @reversiConst.DEF_GAME_SPD_MID_VAL) then
         res = false
       end
       if (@obj.mEndDrawInterVal != 100) then
