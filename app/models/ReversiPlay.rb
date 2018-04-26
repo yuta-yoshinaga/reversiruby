@@ -77,7 +77,7 @@ class ReversiPlay
 	def reversiPlay(y, x)
 		update = 0
 		cpuEna = 0
-		tmpCol = this.mCurColor
+		tmpCol = @mCurColor
 		pass = 0
 
 		if (@mPlayLock == 1) then
@@ -102,7 +102,7 @@ class ReversiPlay
 						tmpCol = @reversiConst.REVERSI_STS_BLACK
 					end
 					if (@mReversi.getColorEna(tmpCol) == 0) then
-						if (@mSetting.getmMode() == @reversiConst.DEF_MODE_ONE) then			# // CPU対戦
+						if (@mSetting.getmMode() == @reversiConst.DEF_MODE_ONE) then		# // CPU対戦
 							cpuEna = 1
 						else																# // 二人対戦
 							@mCurColor = tmpCol
@@ -130,7 +130,7 @@ class ReversiPlay
 					tmpCol = @reversiConst.REVERSI_STS_BLACK
 				end
 				if (@mReversi.getColorEna(tmpCol) == 0) then
-					if (@mSetting.getmMode() == @reversiConst.DEF_MODE_ONE) then				# // CPU対戦
+					if (@mSetting.getmMode() == @reversiConst.DEF_MODE_ONE) then			# // CPU対戦
 						update = 1
 						cpuEna = 1
 					else																	# // 二人対戦
@@ -147,7 +147,7 @@ class ReversiPlay
 			end
 		end
 		if (pass == 1) then
-			if (@mSetting.getmMode() == @reversiConst.DEF_MODE_ONE) then						# // CPU対戦
+			if (@mSetting.getmMode() == @reversiConst.DEF_MODE_ONE) then					# // CPU対戦
 				if (@mSetting.getmAssist() == @reversiConst.DEF_ASSIST_ON) then
 					# // *** メッセージ送信 *** //
 					self.execMessage(@reversiConst.LC_MSG_DRAW_INFO_ALL, nil)
@@ -324,17 +324,17 @@ class ReversiPlay
 						else
 							othColor = @reversiConst.REVERSI_STS_BLACK
 						end
-						othBet = this.mReversi.getBetCnt(othColor)					# // 対戦相手のコマ数
-						ownBet = this.mReversi.getBetCnt(color)						# // 自分のコマ数
+						othBet = @mReversi.getBetCnt(othColor)						# // 対戦相手のコマ数
+						ownBet = @mReversi.getBetCnt(color)							# // 自分のコマ数
 						endZone = 0
 						if ((loop1 - (othBet + ownBet)) <= 16) then
 							endZone = 1												# // ゲーム終盤フラグON
 						end
 						for i in 0..(loop1 - 1) do
-							this.mCpu[i].x = 0
-							this.mCpu[i].y = 0
-							this.mEdge[i].x = 0
-							this.mEdge[i].y = 0
+							@mCpu[i].x = 0
+							@mCpu[i].y = 0
+							@mEdge[i].x = 0
+							@mEdge[i].y = 0
 						end
 
 						for i in 0..(@mSetting.getmMasuCnt() - 1) do
@@ -346,8 +346,8 @@ class ReversiPlay
 										@mEdge[kadocnt].y = i
 										kadocnt += 1
 									else
-										this.mCpu[rcnt1].x = j
-										this.mCpu[rcnt1].y = i
+										@mCpu[rcnt1].x = j
+										@mCpu[rcnt1].y = i
 										rcnt1 += 1
 									end
 									if (@mSetting.getmType() == @reversiConst.DEF_TYPE_NOR) then

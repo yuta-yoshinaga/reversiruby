@@ -187,8 +187,8 @@ class Reversi
 	# ////////////////////////////////////////////////////////////////////////////////
 	def getMasuSts(y,x)
 		ret = -1
-		if (self.checkPara(y,0,@mMasuCnt) == 0 && self.checkPara(x,0,this.mMasuCnt) == 0) then
-			ret = this.mMasuSts[y][x]
+		if (self.checkPara(y, 0, @mMasuCnt) == 0 && self.checkPara(x, 0, @mMasuCnt) == 0) then
+			ret = @mMasuSts[y][x]
 		end
 		return ret
 	end
@@ -359,7 +359,7 @@ class Reversi
 	def setMasuCnt(cnt)
 		ret = -1
 		chg = 0
-		if (checkPara(cnt,0,this.mMasuCntMax) == 0) then
+		if (checkPara(cnt,0,@mMasuCntMax) == 0) then
 			if (@mMasuCnt != cnt) then
 				chg = 1
 			end
