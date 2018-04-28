@@ -83,7 +83,7 @@ class ReversiPlay
 		if (@mPlayLock == 1) then
 			return
 		end
-		@mPlayLock = 1;
+		@mPlayLock = 1
 		if (@mReversi.getColorEna(@mCurColor) == 0) then
 			if (@mReversi.setMasuSts(@mCurColor, y, x) == 0) then
 				if (@mSetting.getmType() == @reversiConst.DEF_TYPE_HARD)
@@ -210,7 +210,7 @@ class ReversiPlay
 	# ////////////////////////////////////////////////////////////////////////////////
 	def reversiPlayEnd()
 		if (@mGameEndSts == 0) then
-			@mGameEndSts = 1;
+			@mGameEndSts = 1
 			waitTime = self.gameEndAnimExec()					# // 終了アニメ実行
 			@mPlayLock = 1
 			self.WaitLocal(waitTime)
@@ -614,8 +614,8 @@ class ReversiPlay
 	# ///
 	# ////////////////////////////////////////////////////////////////////////////////
 	def reset()
-		@mPassEnaB = 0;
-		@mPassEnaW = 0;
+		@mPassEnaB = 0
+		@mPassEnaW = 0
 		if (@mSetting.getmGameSpd() == @reversiConst.DEF_GAME_SPD_FAST) then
 			@mSetting.setmPlayDrawInterVal(@reversiConst.DEF_GAME_SPD_FAST_VAL)					# // 描画のインターバル(msec)
 			@mSetting.setmPlayCpuInterVal(@reversiConst.DEF_GAME_SPD_FAST_VAL2)					# // CPU対戦時のインターバル(msec)

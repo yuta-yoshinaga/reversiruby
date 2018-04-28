@@ -60,8 +60,8 @@ class Reversi
 	def initialize(masuCnt,masuMax)
 		@reversiConst	= ReversiConst.new()
 
-		@mMasuCnt		= masuCnt;
-		@mMasuCntMax	= masuMax;
+		@mMasuCnt		= masuCnt
+		@mMasuCntMax	= masuMax
 		@mMasuSts		= Array.new(@mMasuCntMax).map{Array.new(@mMasuCntMax,0)}
 		@mMasuStsOld	= Array.new(@mMasuCntMax).map{Array.new(@mMasuCntMax,0)}
 		@mMasuStsEnaB	= Array.new(@mMasuCntMax).map{Array.new(@mMasuCntMax,0)}
@@ -98,7 +98,7 @@ class Reversi
 		for i in 0..((@mMasuCntMax * @mMasuCntMax) - 1) do
 			@mMasuHist[i] = ReversiHistory.new()
 		end
-		@mMasuHistCur = 0;
+		@mMasuHistCur = 0
 		@mMasuStsOld = Marshal.load(Marshal.dump(@mMasuSts))
 		self.reset()
 	end
@@ -204,7 +204,7 @@ class Reversi
 	# ///
 	# ////////////////////////////////////////////////////////////////////////////////
 	def getMasuStsOld(y, x)
-		ret = -1;
+		ret = -1
 		if (self.checkPara(y, 0, @mMasuCnt) == 0 && self.checkPara(x, 0, @mMasuCnt) == 0) then
 			ret = @mMasuStsOld[y][x]
 		end
@@ -899,7 +899,7 @@ class Reversi
 			end
 		end
 
-		loop1 = @mMasuCnt * @mMasuCnt;
+		loop1 = @mMasuCnt * @mMasuCnt
 		for i in 0..(loop1 - 1) do
 			if (color == @reversiConst.REVERSI_STS_BLACK) then
 				@mMasuPointB[i].x = 0
@@ -976,7 +976,7 @@ class Reversi
 					count1 = flg = 0
 					# // *** 右上方向を調べる *** //
 					while (((cnt2 < (@mMasuCnt-1)) && (cnt1 > 0)) && (@mMasuSts[cnt1-1][cnt2+1] != @reversiConst.REVERSI_STS_NONE && @mMasuSts[cnt1-1][cnt2+1] != color)) do
-						flg = 1;
+						flg = 1
 						cnt1 -= 1
 						cnt2 += 1
 						count1 += 1
@@ -990,7 +990,7 @@ class Reversi
 					count1 = flg = 0
 					# // *** 左上方向を調べる *** //
 					while (((cnt2 > 0) && (cnt1 > 0)) && (@mMasuSts[cnt1-1][cnt2-1] != @reversiConst.REVERSI_STS_NONE && @mMasuSts[cnt1-1][cnt2-1] != color)) do
-						flg = 1;
+						flg = 1
 						cnt1 -= 1
 						cnt2 -= 1
 						count1 += 1
@@ -1377,7 +1377,7 @@ class Reversi
 					tmpBadPoint = 0
 					tmpGoodPoint = 0
 					if (self.getMasuStsEna(@reversiConst.REVERSI_STS_WHITE,i,j) != 0) then
-						sum += @mMasuStsCntW[i][j];								# // 相手の獲得予定枚数
+						sum += @mMasuStsCntW[i][j]								# // 相手の獲得予定枚数
 						# // *** 相手の獲得予定の最大数保持 *** //
 						if (self.mMasuStsAnzB[tmpY][tmpX].max < @mMasuStsCntW[i][j]) then
 							@mMasuStsAnzB[tmpY][tmpX].max = @mMasuStsCntW[i][j]
@@ -1404,7 +1404,7 @@ class Reversi
 							tmpBadPoint = 1 * @mMasuStsCntW[i][j]
 						end
 						if (tmpMasuEnaW[i][j] != 0) then
-							tmpBadPoint = 0;									# // ステータス変化していないなら
+							tmpBadPoint = 0										# // ステータス変化していないなら
 						end
 					end
 					if (self.getMasuStsEna(@reversiConst.REVERSI_STS_BLACK,i,j) != 0) then
@@ -1435,7 +1435,7 @@ class Reversi
 							tmpGoodPoint = 1 * @mMasuStsCntB[i][j]
 						end
 						if(tmpMasuEnaB[i][j] != 0) then
-							tmpGoodPoint = 0;									# // ステータス変化していないなら
+							tmpGoodPoint = 0									# // ステータス変化していないなら
 						end
 					end
 					if(tmpBadPoint != 0) then
