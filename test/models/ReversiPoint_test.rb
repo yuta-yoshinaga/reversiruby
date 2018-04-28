@@ -4,6 +4,7 @@ class ReversiPointTest < ActiveSupport::TestCase
 
   def setup
     @obj = ReversiPoint.new()
+    #Rails.logger.debug @obj.to_yaml
   end
 
   test "initialize" do

@@ -4,6 +4,7 @@ class ReversiPlayTest < ActiveSupport::TestCase
 
   def setup
     @obj = ReversiPlay.new()
+    #Rails.logger.debug @obj.to_yaml
   end
 
   test "initialize" do

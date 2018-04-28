@@ -4,6 +4,7 @@ class ReversiHistoryTest < ActiveSupport::TestCase
 
   def setup
     @obj = ReversiHistory.new()
+    #Rails.logger.debug @obj.to_yaml
   end
 
   test "initialize" do
@@ -16,19 +17,14 @@ class ReversiHistoryTest < ActiveSupport::TestCase
 
   test "reset" do
     res = true
-    if (@obj != nil) then
-      #@obj.reset()
-      if (@obj.point.x != -1) then
-        res = false
-      end
-      if (@obj.point.y != -1) then
-        res = false
-      end
-      if (@obj.color != -1) then
-        res = false
-      end
-      #Rails.logger.debug @obj.to_yaml
-    else
+    @obj.reset()
+    if (@obj.point.x != -1) then
+      res = false
+    end
+    if (@obj.point.y != -1) then
+      res = false
+    end
+    if (@obj.color != -1) then
       res = false
     end
     assert res
