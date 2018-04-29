@@ -517,7 +517,7 @@ class Reversi
 	# ///	@param[in]		color		色
 	# ///	@param[in]		y			Y座標
 	# ///	@param[in]		x			X座標
-	# ///	@return			0 : 取られる それ以外 : 取られない
+	# ///	@return			0 : 取られない それ以外 : 取られる
 	# ///	@author			Yuta Yoshinaga
 	# ///	@date			2018.04.01
 	# ///
