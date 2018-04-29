@@ -86,10 +86,10 @@ class ReversiPlay
 		@mPlayLock = 1
 		if (@mReversi.getColorEna(@mCurColor) == 0) then
 			if (@mReversi.setMasuSts(@mCurColor, y, x) == 0) then
-				if (@mSetting.getmType() == @reversiConst.DEF_TYPE_HARD)
+				if (@mSetting.mType == @reversiConst.DEF_TYPE_HARD)
 					@mReversi.AnalysisReversi(@mPassEnaB, @mPassEnaW)
 				end
-				if (@mSetting.getmAssist() == @reversiConst.DEF_ASSIST_ON) then
+				if (@mSetting.mAssist == @reversiConst.DEF_ASSIST_ON) then
 					# // *** メッセージ送信 *** //
 					self.execMessage(@reversiConst.LC_MSG_ERASE_INFO_ALL, nil)
 				end
@@ -102,11 +102,11 @@ class ReversiPlay
 						tmpCol = @reversiConst.REVERSI_STS_BLACK
 					end
 					if (@mReversi.getColorEna(tmpCol) == 0) then
-						if (@mSetting.getmMode() == @reversiConst.DEF_MODE_ONE) then		# // CPU対戦
+						if (@mSetting.mMode == @reversiConst.DEF_MODE_ONE) then				# // CPU対戦
 							cpuEna = 1
 						else																# // 二人対戦
 							@mCurColor = tmpCol
-							self.drawUpdate(@mSetting.getmAssist())							# // 次のプレイヤーコマ描画
+							self.drawUpdate(@mSetting.mAssist)								# // 次のプレイヤーコマ描画
 						end
 					else
 						# // *** パスメッセージ *** //
@@ -130,7 +130,7 @@ class ReversiPlay
 					tmpCol = @reversiConst.REVERSI_STS_BLACK
 				end
 				if (@mReversi.getColorEna(tmpCol) == 0) then
-					if (@mSetting.getmMode() == @reversiConst.DEF_MODE_ONE) then			# // CPU対戦
+					if (@mSetting.mMode == @reversiConst.DEF_MODE_ONE) then					# // CPU対戦
 						update = 1
 						cpuEna = 1
 					else																	# // 二人対戦
@@ -147,8 +147,8 @@ class ReversiPlay
 			end
 		end
 		if (pass == 1) then
-			if (@mSetting.getmMode() == @reversiConst.DEF_MODE_ONE) then					# // CPU対戦
-				if (@mSetting.getmAssist() == @reversiConst.DEF_ASSIST_ON) then
+			if (@mSetting.mMode == @reversiConst.DEF_MODE_ONE) then							# // CPU対戦
+				if (@mSetting.mAssist == @reversiConst.DEF_ASSIST_ON) then
 					# // *** メッセージ送信 *** //
 					self.execMessage(@reversiConst.LC_MSG_DRAW_INFO_ALL, nil)
 				end
@@ -157,7 +157,7 @@ class ReversiPlay
 		if (update == 1) then
 			waitTime = 0
 			if (cpuEna == 1) then
-				waitTime = @mSetting.getmPlayCpuInterVal()
+				waitTime = @mSetting.mPlayCpuInterVal
 			end
 			self.WaitLocal(waitTime)
 			self.reversiPlaySub(cpuEna, tmpCol)
@@ -217,8 +217,8 @@ class ReversiPlay
 			# // *** ゲーム終了メッセージ *** //
 			blk = @mReversi.getBetCnt(@reversiConst.REVERSI_STS_BLACK)
 			whi = @mReversi.getBetCnt(@reversiConst.REVERSI_STS_WHITE)
-			tmpMsg1 = "プレイヤー1 = " + blk + " プレイヤー2 = " + whi
-			if (@mSetting.getmMode() == @reversiConst.DEF_MODE_ONE) then
+			tmpMsg1 = "プレイヤー1 = " + blk.to_s + " プレイヤー2 = " + whi.to_s
+			if (@mSetting.mMode == @reversiConst.DEF_MODE_ONE) then
 				if (whi == blk) then
 					tmpMsg2 = "引き分けです。"
 				elsif (whi < blk) then
@@ -245,7 +245,7 @@ class ReversiPlay
 			end
 			msgStr = tmpMsg1 + tmpMsg2
 			self.ViewMsgDlgLocal("ゲーム終了", msgStr)
-			if (@mSetting.getmEndAnim() == @reversiConst.DEF_END_ANIM_ON) then
+			if (@mSetting.mEndAnim == @reversiConst.DEF_END_ANIM_ON) then
 				# // *** メッセージ送信 *** //
 				self.execMessage(@reversiConst.LC_MSG_CUR_COL, nil)
 				# // *** メッセージ送信 *** //
@@ -265,7 +265,7 @@ class ReversiPlay
 	# ////////////////////////////////////////////////////////////////////////////////
 	def reversiPlayPass(color)
 		# // *** パスメッセージ *** //
-		if (@mSetting.getmMode() == @reversiConst.DEF_MODE_ONE) then
+		if (@mSetting.mMode == @reversiConst.DEF_MODE_ONE) then
 			if (color == @mCurColor) then
 				self.ViewMsgDlgLocal("", "あなたはパスです。")
 			else
@@ -304,7 +304,7 @@ class ReversiPlay
 				if (pInfo != nil) then
 					setY = pInfo.y
 					setX = pInfo.x
-					if (@mSetting.getmType() != @reversiConst.DEF_TYPE_EASY) then	# // 強いコンピューター
+					if (@mSetting.mType != @reversiConst.DEF_TYPE_EASY) then		# // 強いコンピューター
 						cpuflg0 = 0
 						cpuflg1 = 0
 						cpuflg2 = 0
@@ -316,7 +316,7 @@ class ReversiPlay
 						rcnt1 = 0
 						rcnt2 = 0
 						kadocnt = 0
-						loop1 = @mSetting.getmMasuCnt() * @mSetting.getmMasuCnt()
+						loop1 = @mSetting.mMasuCnt * @mSetting.mMasuCnt
 						pcnt = 0
 						passCnt = 0
 						if (color == @reversiConst.REVERSI_STS_BLACK) then
@@ -337,8 +337,8 @@ class ReversiPlay
 							@mEdge[i].y = 0
 						end
 
-						for i in 0..(@mSetting.getmMasuCnt() - 1) do
-							for j in 0..(@mSetting.getmMasuCnt() - 1) do
+						for i in 0..(@mSetting.mMasuCnt - 1) do
+							for j in 0..(@mSetting.mMasuCnt - 1) do
 								if (@mReversi.getMasuStsEna(color, i, j) != 0) then
 									# // *** 角の一つ手前なら別のとこに格納 *** //
 									if (@mReversi.getEdgeSideOne(i, j) == 0) then
@@ -350,7 +350,7 @@ class ReversiPlay
 										@mCpu[rcnt1].y = i
 										rcnt1 += 1
 									end
-									if (@mSetting.getmType() == @reversiConst.DEF_TYPE_NOR) then
+									if (@mSetting.mType == @reversiConst.DEF_TYPE_NOR) then
 										# // *** 角に置けるなら優先的にとらせるため場所を記憶させる *** //
 										if (@mReversi.getEdgeSideZero(i, j) == 0) then
 											cpuflg1 = 1
@@ -397,7 +397,7 @@ class ReversiPlay
 							tmpAnz = nil
 							if (rcnt1 != 0) then
 								for i in 0..(rcnt1 - 1) do
-									if (@mSetting.getmType() == @reversiConst.DEF_TYPE_HARD) then
+									if (@mSetting.mType == @reversiConst.DEF_TYPE_HARD) then
 										tmpAnz = @mReversi.getPointAnz(color, @mCpu[i].y, @mCpu[i].x)
 										if (tmpAnz != nil) then
 											if (badPoint == -1) then
@@ -451,7 +451,7 @@ class ReversiPlay
 								end
 							elsif (kadocnt != 0) then
 								for i in 0..(kadocnt - 1) do
-									if (@mSetting.getmType() == @reversiConst.DEF_TYPE_HARD) then
+									if (@mSetting.mType == @reversiConst.DEF_TYPE_HARD) then
 										tmpAnz = @mReversi.getPointAnz(color, @mEdge[i].y, @mEdge[i].x)
 										if (tmpAnz != nil) then
 											if (badPoint == -1) then
@@ -526,7 +526,7 @@ class ReversiPlay
 						end
 					end
 					if (@mReversi.setMasuSts(color, setY, setX) == 0) then
-						if (@mSetting.getmType() == @reversiConst.DEF_TYPE_HARD)
+						if (@mSetting.mType == @reversiConst.DEF_TYPE_HARD)
 							@mReversi.AnalysisReversi(@mPassEnaB, @mPassEnaW)
 						end
 						self.sendDrawMsg(setY, setX)								# // 描画
@@ -539,7 +539,7 @@ class ReversiPlay
 		end
 		if (update == 1) then
 			self.drawUpdate(@reversiConst.DEF_ASSIST_OFF)
-			if (@mSetting.getmAssist() == @reversiConst.DEF_ASSIST_ON) then
+			if (@mSetting.mAssist == @reversiConst.DEF_ASSIST_ON) then
 				# // *** メッセージ送信 *** //
 				self.execMessage(@reversiConst.LC_MSG_DRAW_INFO_ALL, nil)
 			end
@@ -558,15 +558,15 @@ class ReversiPlay
 	# ////////////////////////////////////////////////////////////////////////////////
 	def drawUpdate(assist)
 		if (assist == @reversiConst.DEF_ASSIST_ON) then
-			for i in 0..(@mSetting.getmMasuCnt() - 1) do
-				for j in 0..(@mSetting.getmMasuCnt() - 1) do
+			for i in 0..(@mSetting.mMasuCnt - 1) do
+				for j in 0..(@mSetting.mMasuCnt - 1) do
 					self.sendDrawInfoMsg(i, j)
 				end
 			end
 		end
-		waitTime = @mSetting.getmPlayDrawInterVal()
-		for i in 0..(@mSetting.getmMasuCnt() - 1) do
-			for j in 0..(@mSetting.getmMasuCnt() - 1) do
+		waitTime = @mSetting.mPlayDrawInterVal
+		for i in 0..(@mSetting.mMasuCnt - 1) do
+			for j in 0..(@mSetting.mMasuCnt - 1) do
 				if (@mReversi.getMasuSts(i,j) != @mReversi.getMasuStsOld(i,j)) then
 					self.WaitLocal(waitTime)
 					self.sendDrawMsg(i, j)
@@ -616,32 +616,32 @@ class ReversiPlay
 	def reset()
 		@mPassEnaB = 0
 		@mPassEnaW = 0
-		if (@mSetting.getmGameSpd() == @reversiConst.DEF_GAME_SPD_FAST) then
-			@mSetting.setmPlayDrawInterVal(@reversiConst.DEF_GAME_SPD_FAST_VAL)					# // 描画のインターバル(msec)
-			@mSetting.setmPlayCpuInterVal(@reversiConst.DEF_GAME_SPD_FAST_VAL2)					# // CPU対戦時のインターバル(msec)
-		elsif (@mSetting.getmGameSpd() == @reversiConst.DEF_GAME_SPD_MID) then
-			@mSetting.setmPlayDrawInterVal( @reversiConst.DEF_GAME_SPD_MID_VAL)					# // 描画のインターバル(msec)
-			@mSetting.setmPlayCpuInterVal(@reversiConst.DEF_GAME_SPD_MID_VAL2)					# // CPU対戦時のインターバル(msec)
+		if (@mSetting.mGameSpd == @reversiConst.DEF_GAME_SPD_FAST) then
+			@mSetting.mPlayDrawInterVal = @reversiConst.DEF_GAME_SPD_FAST_VAL					# // 描画のインターバル(msec)
+			@mSetting.mPlayCpuInterVal = @reversiConst.DEF_GAME_SPD_FAST_VAL2					# // CPU対戦時のインターバル(msec)
+		elsif (@mSetting.mGameSpd == @reversiConst.DEF_GAME_SPD_MID) then
+			@mSetting.mPlayDrawInterVal = @reversiConst.DEF_GAME_SPD_MID_VAL					# // 描画のインターバル(msec)
+			@mSetting.mPlayCpuInterVal = @reversiConst.DEF_GAME_SPD_MID_VAL2					# // CPU対戦時のインターバル(msec)
 		else
-			@mSetting.setmPlayDrawInterVal(@reversiConst.DEF_GAME_SPD_SLOW_VAL)					# // 描画のインターバル(msec)
-			@mSetting.setmPlayCpuInterVal(@reversiConst.DEF_GAME_SPD_SLOW_VAL2)					# // CPU対戦時のインターバル(msec)
+			@mSetting.mPlayDrawInterVal = @reversiConst.DEF_GAME_SPD_SLOW_VAL					# // 描画のインターバル(msec)
+			@mSetting.mPlayCpuInterVal = @reversiConst.DEF_GAME_SPD_SLOW_VAL2					# // CPU対戦時のインターバル(msec)
 		end
 
-		@mCurColor = @mSetting.getmPlayer()
-		if (@mSetting.getmMode() == @reversiConst.DEF_MODE_TWO)
+		@mCurColor = @mSetting.mPlayer
+		if (@mSetting.mMode == @reversiConst.DEF_MODE_TWO)
 			@mCurColor = @reversiConst.REVERSI_STS_BLACK
 		end
 
-		@mReversi.setMasuCnt(@mSetting.getmMasuCnt())											# // マスの数設定
+		@mReversi.setMasuCnt(@mSetting.mMasuCnt)												# // マスの数設定
 
 		@mReversi.reset()
-		if (@mSetting.getmMode() == @reversiConst.DEF_MODE_ONE) then
+		if (@mSetting.mMode == @reversiConst.DEF_MODE_ONE) then
 			if (@mCurColor == @reversiConst.REVERSI_STS_WHITE) then
 				pCnt = @mReversi.getPointCnt(@reversiConst.REVERSI_STS_BLACK)
 				pInfo = @mReversi.getPoint(@reversiConst.REVERSI_STS_BLACK, rand(pCnt))
 				if (pInfo != nil) then
 					@mReversi.setMasuSts(@reversiConst.REVERSI_STS_BLACK, pInfo.y, pInfo.x)
-					if (@mSetting.getmType() == @reversiConst.DEF_TYPE_HARD)
+					if (@mSetting.mType == @reversiConst.DEF_TYPE_HARD)
 						@mReversi.AnalysisReversi(@mPassEnaB, @mPassEnaW)
 					end
 				end
@@ -651,7 +651,7 @@ class ReversiPlay
 		@mPlayLock = 1
 		@mGameEndSts = 0
 
-		self.drawUpdateForcibly(@mSetting.getmAssist())
+		self.drawUpdateForcibly(@mSetting.mAssist)
 
 		# // *** 終了通知 *** //
 		# // *** メッセージ送信 *** //
@@ -670,7 +670,7 @@ class ReversiPlay
 		bCnt = 0
 		wCnt = 0
 		ret = 0
-		if (@mSetting.getmEndAnim() == @reversiConst.DEF_END_ANIM_ON) then
+		if (@mSetting.mEndAnim == @reversiConst.DEF_END_ANIM_ON) then
 			bCnt = @mReversi.getBetCnt(@reversiConst.REVERSI_STS_BLACK)
 			wCnt = @mReversi.getBetCnt(@reversiConst.REVERSI_STS_WHITE)
 			# // *** 色、コマ数表示消去 *** //
@@ -678,10 +678,10 @@ class ReversiPlay
 			self.execMessage(@reversiConst.LC_MSG_CUR_COL_ERASE, nil)
 			# // *** メッセージ送信 *** //
 			self.execMessage(@reversiConst.LC_MSG_CUR_STS_ERASE, nil)
-			self.WaitLocal(@mSetting.getmEndInterVal())
+			self.WaitLocal(@mSetting.mEndInterVal)
 			# // *** マス消去 *** //
-			for i in 0..(@mSetting.getmMasuCnt() - 1) do
-				for j in 0..(@mSetting.getmMasuCnt() - 1) do
+			for i in 0..(@mSetting.mMasuCnt - 1) do
+				for j in 0..(@mSetting.mMasuCnt - 1) do
 					@mReversi.setMasuStsForcibly(@reversiConst.REVERSI_STS_NONE, i, j)
 				end
 			end
@@ -692,8 +692,8 @@ class ReversiPlay
 			wCnt2 = 0
 			bEnd = 0
 			wEnd = 0
-			for i in 0..(@mSetting.getmMasuCnt() - 1) do
-				for j in 0..(@mSetting.getmMasuCnt() - 1) do
+			for i in 0..(@mSetting.mMasuCnt - 1) do
+				for j in 0..(@mSetting.mMasuCnt - 1) do
 					if (bCnt2 < bCnt) then
 						bCnt2 += 1
 						@mReversi.setMasuStsForcibly(@reversiConst.REVERSI_STS_BLACK, i, j)
@@ -703,15 +703,15 @@ class ReversiPlay
 					end
 					if (wCnt2 < wCnt) then
 						wCnt2 += 1
-						@mReversi.setMasuStsForcibly(@reversiConst.REVERSI_STS_WHITE, (@mSetting.getmMasuCnt() - 1) - i, (@mSetting.getmMasuCnt() - 1) - j)
-						self.sendDrawMsg((@mSetting.getmMasuCnt() - 1) - i, (@mSetting.getmMasuCnt() - 1) - j)
+						@mReversi.setMasuStsForcibly(@reversiConst.REVERSI_STS_WHITE, (@mSetting.mMasuCnt - 1) - i, (@mSetting.mMasuCnt - 1) - j)
+						self.sendDrawMsg((@mSetting.mMasuCnt - 1) - i, (@mSetting.mMasuCnt - 1) - j)
 					else
 						wEnd = 1
 					end
 					if (bEnd == 1 && wEnd == 1) then
 						break
 					else
-						self.WaitLocal(@mSetting.getmEndDrawInterVal())
+						self.WaitLocal(@mSetting.mEndDrawInterVal)
 					end
 				end
 			end
@@ -793,8 +793,8 @@ class ReversiPlay
 			self.DrawSingleLocal(msgPoint.y, msgPoint.x, dMode, 0, "0")
 		elsif (what == @reversiConst.LC_MSG_DRAW_ALL) then
 			# // *** 全マス描画 *** //
-			for i in 0..(@mSetting.getmMasuCnt() - 1) do
-				for j in 0..(@mSetting.getmMasuCnt() - 1) do
+			for i in 0..(@mSetting.mMasuCnt - 1) do
+				for j in 0..(@mSetting.mMasuCnt - 1) do
 					dMode = @mReversi.getMasuSts(i, j)
 					dBack = @mReversi.getMasuStsEna(@mCurColor, i, j)
 					dCnt = @mReversi.getMasuStsCnt(@mCurColor, i, j)
@@ -803,15 +803,15 @@ class ReversiPlay
 			end
 		elsif (what == @reversiConst.LC_MSG_ERASE_ALL) then
 			# // *** 全マス消去 *** //
-			for i in 0..(@mSetting.getmMasuCnt() - 1) do
-				for j in 0..(@mSetting.getmMasuCnt() - 1) do
+			for i in 0..(@mSetting.mMasuCnt - 1) do
+				for j in 0..(@mSetting.mMasuCnt - 1) do
 					self.DrawSingleLocal(i, j, 0, 0, "0")
 				end
 			end
 		elsif (what == @reversiConst.LC_MSG_DRAW_INFO_ALL) then
 			# // *** 全マス情報描画 *** //
-			for i in 0..(@mSetting.getmMasuCnt() - 1) do
-				for j in 0..(@mSetting.getmMasuCnt() - 1) do
+			for i in 0..(@mSetting.mMasuCnt - 1) do
+				for j in 0..(@mSetting.mMasuCnt - 1) do
 					dMode = @mReversi.getMasuSts(i, j)
 					dBack = @mReversi.getMasuStsEna(@mCurColor, i, j)
 					dCnt = @mReversi.getMasuStsCnt(@mCurColor, i, j)
@@ -820,8 +820,8 @@ class ReversiPlay
 			end
 		elsif (what == @reversiConst.LC_MSG_ERASE_INFO_ALL) then
 			# // *** 全マス情報消去 *** //
-			for i in 0..(@mSetting.getmMasuCnt() - 1) do
-				for j in 0..(@mSetting.getmMasuCnt() - 1) do
+			for i in 0..(@mSetting.mMasuCnt - 1) do
+				for j in 0..(@mSetting.mMasuCnt - 1) do
 					dMode = @mReversi.getMasuSts(i, j)
 					self.DrawSingleLocal(i, j, dMode, 0, "0")
 				end
@@ -830,7 +830,7 @@ class ReversiPlay
 			@mPlayLock = 0
 		elsif (what == @reversiConst.LC_MSG_CUR_COL) then
 			tmpStr = ""
-			if (@mSetting.getmMode() == @reversiConst.DEF_MODE_ONE) then
+			if (@mSetting.mMode == @reversiConst.DEF_MODE_ONE) then
 				if (@mCurColor == @reversiConst.REVERSI_STS_BLACK) then
 					tmpStr = "あなたはプレイヤー1です "
 				else
@@ -847,7 +847,7 @@ class ReversiPlay
 		elsif (what == @reversiConst.LC_MSG_CUR_COL_ERASE) then
 			self.CurColMsgLocal("")
 		elsif (what == @reversiConst.LC_MSG_CUR_STS) then
-			tmpStr = "プレイヤー1 = " + @mReversi.getBetCnt(@reversiConst.REVERSI_STS_BLACK) + " プレイヤー2 = " + @mReversi.getBetCnt(@reversiConst.REVERSI_STS_WHITE)
+			tmpStr = "プレイヤー1 = " + @mReversi.getBetCnt(@reversiConst.REVERSI_STS_BLACK).to_s + " プレイヤー2 = " + @mReversi.getBetCnt(@reversiConst.REVERSI_STS_WHITE).to_s
 			self.CurStsMsgLocal(tmpStr)
 		elsif (what == @reversiConst.LC_MSG_CUR_STS_ERASE) then
 			self.CurStsMsgLocal("")
