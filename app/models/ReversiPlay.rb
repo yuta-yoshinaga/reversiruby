@@ -628,6 +628,9 @@ class ReversiPlay
 		end
 
 		@mCurColor = @mSetting.mPlayer
+		# for debug
+		Rails.logger.debug @mSetting.to_yaml
+
 		if (@mSetting.mMode == @reversiConst.DEF_MODE_TWO)
 			@mCurColor = @reversiConst.REVERSI_STS_BLACK
 		end
