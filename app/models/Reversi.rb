@@ -325,12 +325,6 @@ class Reversi
 				@mMasuHist[@mMasuHistCur].point.x = x
 				@mMasuHistCur += 1
 			end
-		else
-			# for debug
-			Rails.logger.debug color
-			Rails.logger.debug y
-			Rails.logger.debug x
-			#Rails.logger.debug @mMasuStsEnaB.to_yaml
 		end
 		return ret
 	end
