@@ -142,7 +142,7 @@ $(document).ready(function() {
     // *** マスを用意 *** //
     appInit();
     setSetting(reversiSetting);
-    reset();
+    //reset();
     // *** クリックイベント *** //
     $('.reversi_field').on('click', '.square-wrapper', function() {
         var curX = $(this).data('x');

@@ -401,29 +401,29 @@ class ReversiPlay
 										tmpAnz = @mReversi.getPointAnz(color, @mCpu[i].y, @mCpu[i].x)
 										if (tmpAnz != nil) then
 											if (badPoint == -1) then
-												badPoint = tmpAnz.getBadPoint()
-												goodPoint = tmpAnz.getGoodPoint()
-												pointCnt = tmpAnz.getPointCnt()
-												ownPointCnt = tmpAnz.getOwnPointCnt()
+												badPoint = tmpAnz.badPoint
+												goodPoint = tmpAnz.goodPoint
+												pointCnt = tmpAnz.pointCnt
+												ownPointCnt = tmpAnz.ownPointCnt
 												mem2 = i
 												mem3 = i
 												mem4 = i
 											else
-												if (tmpAnz.getBadPoint() < badPoint) then
-													badPoint = tmpAnz.getBadPoint()
+												if (tmpAnz.badPoint < badPoint) then
+													badPoint = tmpAnz.badPoint
 													mem2 = i
 												end
-												if (goodPoint < tmpAnz.getGoodPoint()) then
-													goodPoint = tmpAnz.getGoodPoint()
+												if (goodPoint < tmpAnz.goodPoint) then
+													goodPoint = tmpAnz.goodPoint
 													mem3 = i
 												end
-												if (tmpAnz.getPointCnt() < pointCnt) then
-													pointCnt = tmpAnz.getPointCnt()
-													ownPointCnt = tmpAnz.getOwnPointCnt()
+												if (tmpAnz.pointCnt < pointCnt) then
+													pointCnt = tmpAnz.pointCnt
+													ownPointCnt = tmpAnz.ownPointCnt
 													mem4 = i
-												elsif (tmpAnz.getPointCnt() == pointCnt) then
-													if (ownPointCnt < tmpAnz.getOwnPointCnt()) then
-														ownPointCnt = tmpAnz.getOwnPointCnt()
+												elsif (tmpAnz.pointCnt == pointCnt) then
+													if (ownPointCnt < tmpAnz.ownPointCnt) then
+														ownPointCnt = tmpAnz.ownPointCnt
 														mem4 = i
 													end
 												end
@@ -455,29 +455,29 @@ class ReversiPlay
 										tmpAnz = @mReversi.getPointAnz(color, @mEdge[i].y, @mEdge[i].x)
 										if (tmpAnz != nil) then
 											if (badPoint == -1) then
-												badPoint = tmpAnz.getBadPoint()
-												goodPoint = tmpAnz.getGoodPoint()
-												pointCnt = tmpAnz.getPointCnt()
-												ownPointCnt = tmpAnz.getOwnPointCnt()
+												badPoint = tmpAnz.badPoint
+												goodPoint = tmpAnz.goodPoint
+												pointCnt = tmpAnz.pointCnt
+												ownPointCnt = tmpAnz.ownPointCnt
 												mem2 = i
 												mem3 = i
 												mem4 = i
 											else
-												if (tmpAnz.getBadPoint() < badPoint) then
-													badPoint = tmpAnz.getBadPoint()
+												if (tmpAnz.badPoint < badPoint) then
+													badPoint = tmpAnz.badPoint
 													mem2 = i
 												end
-												if (goodPoint < tmpAnz.getGoodPoint()) then
-													goodPoint = tmpAnz.getGoodPoint()
+												if (goodPoint < tmpAnz.goodPoint) then
+													goodPoint = tmpAnz.goodPoint
 													mem3 = i
 												end
-												if (tmpAnz.getPointCnt() < pointCnt) then
-													pointCnt = tmpAnz.getPointCnt()
-													ownPointCnt = tmpAnz.getOwnPointCnt()
+												if (tmpAnz.pointCnt < pointCnt) then
+													pointCnt = tmpAnz.pointCnt
+													ownPointCnt = tmpAnz.ownPointCnt
 													mem4 = i
-												elsif (tmpAnz.getPointCnt() == pointCnt) then
-													if (ownPointCnt < tmpAnz.getOwnPointCnt()) then
-														ownPointCnt = tmpAnz.getOwnPointCnt()
+												elsif (tmpAnz.pointCnt == pointCnt) then
+													if (ownPointCnt < tmpAnz.ownPointCnt) then
+														ownPointCnt = tmpAnz.ownPointCnt
 														mem4 = i
 													end
 												end

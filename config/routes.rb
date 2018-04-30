@@ -1,4 +1,4 @@
 Rails.application.routes.draw do
-#	protect_from_forgery with: :null_session
+	resources :sessions
 	post   '/FrontController',  to: 'front_controller#post'
 end
