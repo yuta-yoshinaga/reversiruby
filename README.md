@@ -1,24 +1,32 @@
-# README
+# ReversiRuby
+リバーシアルゴリズムをRuby On Railsで実装
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+## Description
+リバーシのアルゴリズムをRubyで実装したプロジェクトです。
+フロントエンドからクリックされたマスの座標を通知されると、そのマスに置けるか否か、置いた結果のマス状況などをレスポンスするようにサーバーサイドが実装されています。
+マスの状況はセッションに保存されており、フロントエンドのGUI設定などはWeb Storageに保存されて、ゲーム開始時にフロントエンドからサーバーへ通知されます。
 
-Things you may want to cover:
+## Usage
+### Install
+```sh
+git clone https://github.com/yuta-yoshinaga/reversiruby.git
+cd reversiruby
+rails server
+```
 
-* Ruby version
+### Deploy
+![herokubutton](https://www.herokucdn.com/deploy/button.svg)  
+[Heroku](https://reversiruby.herokuapp.com/)
 
-* System dependencies
+## Future Releases
+TensorFlowを使って、AIの更新がしたい。
 
-* Configuration
+## Contribution
+1. Fork it  
+2. Create your feature branch  
+3. Commit your changes  
+4. Push to the branch  
+5. Create new Pull Request
 
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+## License
+[MIT](LICENSE)
