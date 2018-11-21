@@ -112,8 +112,8 @@ class Reversi
 	# ///
 	# ////////////////////////////////////////////////////////////////////////////////
 	def reset
-		for i in 0..(@mMasuCntMax - 1) do
-			for j in 0..(@mMasuCntMax - 1) do
+		for i in 0..(@mMasuCnt - 1) do
+			for j in 0..(@mMasuCnt - 1) do
 				@mMasuSts[i][j] = @reversiConst.REVERSI_STS_NONE
 				@mMasuStsPassB[i][j] = 0
 				@mMasuStsAnzB[i][j].reset()
@@ -144,8 +144,8 @@ class Reversi
 	# ///////////////////////////////////////////////////////////////////////////////
 	def AnalysisReversi(bPassEna,wPassEna)
 		# // *** 相手をパスさせることができるマス検索 *** //
-		for i in 0..(@mMasuCntMax - 1) do
-			for j in 0..(@mMasuCntMax - 1) do
+		for i in 0..(@mMasuCnt - 1) do
+			for j in 0..(@mMasuCnt - 1) do
 				@mMasuStsPassB[i][j] = 0
 				@mMasuStsAnzB[i][j].reset()
 				@mMasuStsPassW[i][j] = 0
@@ -159,8 +159,8 @@ class Reversi
 		self.makeMasuSts(@reversiConst.REVERSI_STS_WHITE)
 
 		# // *** パスマスを取得 *** //
-		for i in 0..(@mMasuCntMax - 1) do
-			for j in 0..(@mMasuCntMax - 1) do
+		for i in 0..(@mMasuCnt - 1) do
+			for j in 0..(@mMasuCnt - 1) do
 				if @mMasuStsPassB[i][j] != 0 then
 					if bPassEna != 0 then
 						@mMasuStsEnaB[i][j] = 3
@@ -268,8 +268,8 @@ class Reversi
 	# ////////////////////////////////////////////////////////////////////////////////
 	def getColorEna(color)
 		ret = -1
-		for i in 0..(@mMasuCntMax - 1) do
-			for j in 0..(@mMasuCntMax - 1) do
+		for i in 0..(@mMasuCnt - 1) do
+			for j in 0..(@mMasuCnt - 1) do
 				if (self.getMasuStsEna(color,i,j) != 0) then
 					ret = 0
 					break
