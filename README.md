@@ -15,8 +15,8 @@ rails server
 ```
 
 ### Deploy
-![herokubutton](https://www.herokucdn.com/deploy/button.svg)  
-[Heroku](https://reversiruby.herokuapp.com/)
+[render live](https://reversiruby.onrender.com/)
+[render dev](https://reversiruby-dev.onrender.com/)
 
 ## Future Releases
 TensorFlowを使って、AIの更新がしたい。
